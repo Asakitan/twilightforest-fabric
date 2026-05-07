@@ -1176,11 +1176,30 @@ public final class TFBlocks {
         return new TFRegistryObject<>(block);
     }
 
-    /** Real {@link twilightforest.block.ClimbableHollowLogBlock} with VARIANT + FACING state properties. */
+    /** Real {@link twilightforest.block.ClimbableHollowLogBlock} with VARIANT + FACING state properties.
+     * The climbable variant needs a Supplier&lt;Block&gt; pointing at the matching vertical hollow log
+     * (used at shears-interaction to revert). Codex's hollow-log naming is fully consistent
+     * ({@code hollow_X_log_climbable} ↔ {@code hollow_X_log_vertical}), so the supplier is derived
+     * from the path string and resolves lazily via {@link BuiltInRegistries#BLOCK}. */
     private static TFRegistryObject<Block> hollowLogClimbableBlock(String path, Block fallback) {
         BlockBehaviour.Properties props = hollowLogProps(fallback);
+        net.minecraft.resources.ResourceLocation verticalId = TwilightForestMod.prefix(path.replaceFirst("_climbable$", "_vertical"));
+        java.util.function.Supplier<Block> verticalSupplier = () -> BuiltInRegistries.BLOCK.get(verticalId);
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
-                new twilightforest.block.ClimbableHollowLogBlock(props));
+                new twilightforest.block.ClimbableHollowLogBlock(verticalSupplier, props));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** Real {@link twilightforest.block.VerticalHollowLogBlock} with WATERLOGGED state property and
+     * a Supplier&lt;Block&gt; back-link to the matching climbable hollow log (used at vine/ladder
+     * right-click to convert). Same lazy-resolve trick as {@link #hollowLogClimbableBlock}. */
+    private static TFRegistryObject<Block> hollowLogVerticalBlock(String path, Block fallback) {
+        BlockBehaviour.Properties props = hollowLogProps(fallback);
+        net.minecraft.resources.ResourceLocation climbableId = TwilightForestMod.prefix(path.replaceFirst("_vertical$", "_climbable"));
+        java.util.function.Supplier<Block> climbableSupplier = () -> BuiltInRegistries.BLOCK.get(climbableId);
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.VerticalHollowLogBlock(props, climbableSupplier));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }
