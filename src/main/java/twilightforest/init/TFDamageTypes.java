@@ -37,6 +37,7 @@ public final class TFDamageTypes {
     public static final ResourceKey<DamageType> THORNS = create("thorns");
     public static final ResourceKey<DamageType> FIRE_JET = create("fire_jet");
     public static final ResourceKey<DamageType> SLIDER = create("slider");
+    public static final ResourceKey<DamageType> FIERY = create("fiery");
 
     private TFDamageTypes() {
     }

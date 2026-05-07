@@ -421,7 +421,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> ARCTIC_FUR_BLOCK = solidBlock("arctic_fur_block", Blocks.WHITE_WOOL);
     public static final TFRegistryObject<Block> ALPHA_YETI_FUR_BLOCK = solidBlock("alpha_yeti_fur_block", Blocks.WHITE_WOOL);
     // Burnt thorns
-    public static final TFRegistryObject<Block> BURNT_THORNS = thornsBlock("burnt_thorns", Blocks.BLACK_STAINED_GLASS);
+    public static final TFRegistryObject<Block> BURNT_THORNS = burntThornsBlock("burnt_thorns", Blocks.BLACK_STAINED_GLASS);
 
     // ====== Q13 batch: hollow logs, miniatures, trapped chests, potted saplings, candles, misc ======
 
@@ -618,7 +618,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> SORTING_WALL_HANGING_SIGN = wallHangingSignBlock("sorting_wall_hanging_sign", Blocks.CHERRY_WALL_HANGING_SIGN, net.minecraft.world.level.block.state.properties.WoodType.CHERRY);
 
     // ====== Q19 batch: remaining decoration / "ingot block" variants ======
-    public static final TFRegistryObject<Block> FIERY_BLOCK = solidBlock("fiery_block", Blocks.NETHERITE_BLOCK);
+    public static final TFRegistryObject<Block> FIERY_BLOCK = fieryBlock("fiery_block", Blocks.NETHERITE_BLOCK);
     public static final TFRegistryObject<Block> IRONWOOD_BLOCK = solidBlock("ironwood_block", Blocks.GOLD_BLOCK);
     public static final TFRegistryObject<Block> KNIGHTMETAL_BLOCK = solidBlock("knightmetal_block", Blocks.IRON_BLOCK);
     public static final TFRegistryObject<Block> STEELEAF_BLOCK = solidBlock("steeleaf_block", Blocks.EMERALD_BLOCK);
@@ -956,6 +956,23 @@ public final class TFBlocks {
         // 1:1 upstream ThornsBlock — axis + 6-way connect + waterlogged + thorn-burst-on-break +
         // entity damage. Replaces the older CodexThornsBlock stub.
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.ThornsBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.BurntThornsBlock} — ThornsBlock subclass that
+     * dissolves living/projectile entities on contact (no damage), returns null path-type, and
+     * preserves waterlog state on player-destroy. */
+    private static TFRegistryObject<Block> burntThornsBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.BurntThornsBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.FieryBlock} — full-bright netherite-derived block
+     * that damages entities on step (unless fire-immune or wearing fiery boots). */
+    private static TFRegistryObject<Block> fieryBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.FieryBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }
