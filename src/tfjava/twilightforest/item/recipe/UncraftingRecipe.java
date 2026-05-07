@@ -8,19 +8,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import twilightforest.init.TFRecipes;
 
 import java.util.Arrays;
 
 public class UncraftingRecipe extends ShapedRecipe {
+
 	private final int cost;
 	private final Ingredient input;
 	private final int count;
@@ -34,18 +29,19 @@ public class UncraftingRecipe extends ShapedRecipe {
 		this.pattern = pattern;
 	}
 
-	@Override
+	@Override //This method is never used, but it has to be implemented
 	public boolean matches(CraftingInput input, Level level) {
 		return false;
 	}
 
-	@Override
+	@Override //We have to implement this method, can't really be used since we have multiple outputs
 	public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider) {
 		return ItemStack.EMPTY;
 	}
 
+	//Checks if the itemStack is a part of the ingredient when UncraftingMenu's getRecipesFor() method iterates through all recipes.
 	public boolean isItemStackAnIngredient(ItemStack stack) {
-		return Arrays.stream(this.input.getItems()).anyMatch(itemStack -> stack.getItem() == itemStack.getItem() && stack.getCount() >= this.count);
+		return Arrays.stream(this.input.getItems()).anyMatch(i -> (stack.getItem() == i.getItem() && stack.getCount() >= this.count));
 	}
 
 	@Override
@@ -71,13 +67,15 @@ public class UncraftingRecipe extends ShapedRecipe {
 	}
 
 	public static class Serializer implements RecipeSerializer<UncraftingRecipe> {
+
 		public static final MapCodec<UncraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.INT.optionalFieldOf("cost", -1).forGetter(recipe -> recipe.cost),
-				Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(recipe -> recipe.input),
-				Codec.INT.optionalFieldOf("input_count", 1).forGetter(recipe -> recipe.count),
-				ShapedRecipePattern.MAP_CODEC.forGetter(recipe -> recipe.pattern)
-		).apply(instance, UncraftingRecipe::new));
-		public static final StreamCodec<RegistryFriendlyByteBuf, UncraftingRecipe> STREAM_CODEC = StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
+				Codec.INT.optionalFieldOf("cost", -1).forGetter(o -> o.cost),
+				Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(o -> o.input),
+				Codec.INT.optionalFieldOf("input_count", 1).forGetter(o -> o.count),
+				ShapedRecipePattern.MAP_CODEC.forGetter(o -> o.pattern)
+			).apply(instance, UncraftingRecipe::new)
+		);
+		public static final StreamCodec<RegistryFriendlyByteBuf, UncraftingRecipe> STREAM_CODEC = StreamCodec.of(UncraftingRecipe.Serializer::toNetwork, UncraftingRecipe.Serializer::fromNetwork);
 
 		@Override
 		public MapCodec<UncraftingRecipe> codec() {

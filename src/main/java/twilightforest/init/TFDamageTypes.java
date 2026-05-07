@@ -41,6 +41,11 @@ public final class TFDamageTypes {
     public static final ResourceKey<DamageType> KNIGHTMETAL = create("knightmetal");
     public static final ResourceKey<DamageType> OMINOUS_FIRE = create("ominous_fire");
     public static final ResourceKey<DamageType> REACTOR = create("reactor");
+    public static final ResourceKey<DamageType> THROWN_PICKAXE = create("thrown_pickaxe");
+    public static final ResourceKey<DamageType> THROWN_AXE = create("thrown_axe");
+    public static final ResourceKey<DamageType> STALE_SANDWICH = create("stale_sandwich");
+    public static final ResourceKey<DamageType> TWILIGHT_SCEPTER = create("twilight_scepter");
+    public static final ResourceKey<DamageType> MOONWORM = create("moonworm");
 
     private TFDamageTypes() {
     }

@@ -1,46 +1,48 @@
 package twilightforest.entity.projectile;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFEntities;
-import twilightforest.init.TFItemVisuals;
 import twilightforest.init.TFSounds;
+import twilightforest.loot.TFLootTables;
 
-import java.util.List;
-
-/**
- * Q25 simplified port of MoonwormShot — projectile that places a directional
- * {@code twilightforest:moonworm} on the block face it hits, or splats on
- * entities. Stripped TF deps: TFThrowable parent → ThrowableProjectile;
- * TFDamageTypes → vanilla magic; TFLootTables → no loot drop on failure.
- */
-public class MoonwormShot extends ThrowableProjectile {
+public class MoonwormShot extends TFThrowable {
 
     public MoonwormShot(EntityType<? extends MoonwormShot> type, Level level) {
         super(type, level);
     }
 
     public MoonwormShot(Level level, LivingEntity thrower) {
-        super(TFEntities.MOONWORM_SHOT.get(), thrower, level);
+        super(TFEntities.MOONWORM_SHOT.get(), level, thrower);
         this.shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), 0F, 1.5F, 1.0F);
     }
 
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    public MoonwormShot(Level level, double x, double y, double z) {
+        super(TFEntities.MOONWORM_SHOT.get(), level, x, y, z);
     }
 
     @Override
@@ -59,29 +61,66 @@ public class MoonwormShot extends ThrowableProjectile {
     }
 
     @Override
+    public void handleEntityEvent(byte id) {
+        if (id == EntityEvent.DEATH) {
+            for (int i = 0; i < 8; ++i) {
+                this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SLIME_BLOCK.defaultBlockState()), true, this.getX(), this.getY() + 0.1D, this.getZ(), 0.0D, 0.0D, 0.0D);
+            }
+        } else {
+            super.handleEntityEvent(id);
+        }
+    }
+
+    @Override
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
-        if (this.level().isClientSide()) return;
         BlockPos pos = result.getBlockPos().relative(result.getDirection());
-        BlockState here = this.level().getBlockState(pos);
-        if (here.canBeReplaced() && !here.is(BlockTags.FIRE) && !here.is(Blocks.LAVA)) {
-            this.level().setBlockAndUpdate(pos,
-                    TFBlocks.MOONWORM.get().defaultBlockState()
-                            .setValue(DirectionalBlock.FACING, result.getDirection()));
-            this.level().playSound(null, result.getBlockPos(),
-                    TFSounds.MOONWORM_PLACED, SoundSource.BLOCKS, 1.0F, 1.0F);
+        BlockState currentState = this.level().getBlockState(pos);
+        BlockState placementState = TFBlocks.MOONWORM.get().defaultBlockState().setValue(DirectionalBlock.FACING, result.getDirection());
+        if (currentState.canBeReplaced() && !currentState.is(BlockTags.FIRE) && placementState.canSurvive(this.level(), pos) && !currentState.is(Blocks.LAVA)) {
+            this.level().setBlockAndUpdate(pos, placementState);
+            this.gameEvent(GameEvent.PROJECTILE_LAND, this.getOwner());
+            this.level().playSound(null, result.getBlockPos(), TFSounds.MOONWORM_SQUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
+        } else {
+            this.dropFailedPlacementLoot();
+            this.level().playSound(null, pos, TFSounds.BUG_SQUISH, SoundSource.NEUTRAL, 1.0F, 1.0F);
+            this.gameEvent(GameEvent.ENTITY_DIE);
         }
-        this.discard();
     }
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        if (this.level().isClientSide()) return;
-        if (result.getEntity() instanceof LivingEntity living) {
-            living.hurt(this.damageSources().indirectMagic(this, this.getOwner()),
-                    this.random.nextInt(3) == 0 ? 1.0F : 0.0F);
+        if (result.getEntity() instanceof Player player && !player.hasItemInSlot(EquipmentSlot.HEAD)) {
+            player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TFBlocks.MOONWORM.get()));
+        } else {
+            result.getEntity().hurt(TFDamageTypes.indirectSource(this.level(), TFDamageTypes.MOONWORM, this, this.getOwner()), this.random.nextInt(3) == 0 ? 1.0F : 0.0F);
+            this.dropFailedPlacementLoot();
+            this.level().playSound(null, this.blockPosition(), TFSounds.BUG_SQUISH, SoundSource.NEUTRAL, 1.0F, 1.0F);
+            this.gameEvent(GameEvent.ENTITY_DIE);
         }
-        this.discard();
+    }
+
+    @Override
+    protected void onHit(HitResult result) {
+        super.onHit(result);
+        if (!this.level().isClientSide()) {
+            this.level().broadcastEntityEvent(this, (byte) 3);
+            this.discard();
+        }
+    }
+
+    private void dropFailedPlacementLoot() {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            LootParams ctx = new LootParams.Builder(serverLevel)
+                    .withParameter(LootContextParams.THIS_ENTITY, this)
+                    .withParameter(LootContextParams.ORIGIN, this.position())
+                    .withParameter(LootContextParams.DAMAGE_SOURCE, this.damageSources().fall())
+                    .create(LootContextParamSets.ENTITY);
+            serverLevel.getServer().reloadableRegistries().getLootTable(TFLootTables.MOONWORM_SQUISH_DROPS).getRandomItems(ctx).forEach(stack -> {
+                ItemEntity squish = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack);
+                this.level().addFreshEntity(squish);
+            });
+        }
     }
 }

@@ -90,6 +90,7 @@ import twilightforest.entity.passive.Raven;
 import twilightforest.entity.passive.Squirrel;
 import twilightforest.entity.passive.TinyBird;
 import twilightforest.entity.projectile.IceSnowball;
+import twilightforest.entity.projectile.ChainBlock;
 import twilightforest.entity.projectile.CubeOfAnnihilation;
 import twilightforest.entity.projectile.IceBomb;
 import twilightforest.entity.projectile.FallingIce;
@@ -174,6 +175,14 @@ public final class TFEntities {
     public static final TFRegistryObject<EntityType<IceBomb>> THROWN_ICE = projectile("thrown_ice", EntityType.Builder.<IceBomb>of(IceBomb::new, MobCategory.MISC).sized(0.75F, 0.75F).clientTrackingRange(5).updateInterval(2));
     public static final TFRegistryObject<EntityType<FallingIce>> FALLING_ICE = projectile("falling_ice", EntityType.Builder.<FallingIce>of(FallingIce::new, MobCategory.MISC).sized(0.98F, 0.98F).clientTrackingRange(8).updateInterval(3));
     public static final TFRegistryObject<EntityType<SlimeProjectile>> SLIME_BLOB = projectile("slime_blob", EntityType.Builder.<SlimeProjectile>of(SlimeProjectile::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(5).updateInterval(2));
+    public static final TFRegistryObject<EntityType<ChainBlock>> CHAIN_BLOCK = projectile("chain_block", EntityType.Builder.<ChainBlock>of(ChainBlock::new, MobCategory.MISC).sized(0.6F, 0.6F).clientTrackingRange(8).updateInterval(1));
+    public static final TFRegistryObject<EntityType<twilightforest.entity.projectile.IceArrow>> ICE_ARROW = projectile("ice_arrow", EntityType.Builder.<twilightforest.entity.projectile.IceArrow>of(twilightforest.entity.projectile.IceArrow::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
+    public static final TFRegistryObject<EntityType<twilightforest.entity.projectile.SeekerArrow>> SEEKER_ARROW = projectile("seeker_arrow", EntityType.Builder.<twilightforest.entity.projectile.SeekerArrow>of(twilightforest.entity.projectile.SeekerArrow::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
+    public static final TFRegistryObject<EntityType<twilightforest.entity.projectile.ThrownWep>> THROWN_WEP = projectile("thrown_wep", EntityType.Builder.<twilightforest.entity.projectile.ThrownWep>of(twilightforest.entity.projectile.ThrownWep::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
+    public static final TFRegistryObject<EntityType<twilightforest.entity.CharmEffect>> CHARM_EFFECT = projectile("charm_effect", EntityType.Builder.<twilightforest.entity.CharmEffect>of(twilightforest.entity.CharmEffect::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(8).updateInterval(20));
+    public static final TFRegistryObject<EntityType<twilightforest.entity.ProtectionBox>> PROTECTION_BOX = projectile("protection_box", EntityType.Builder.<twilightforest.entity.ProtectionBox>of(twilightforest.entity.ProtectionBox::new, MobCategory.MISC).sized(1.0F, 1.0F).clientTrackingRange(16).updateInterval(20));
+    public static final TFRegistryObject<EntityType<twilightforest.entity.monster.Boggard>> BOGGARD = entity("boggard", EntityType.Builder.<twilightforest.entity.monster.Boggard>of((type, level) -> new twilightforest.entity.monster.Boggard(type, level), MobCategory.MONSTER).sized(0.6F, 1.8F));
+    public static final TFRegistryObject<EntityType<twilightforest.entity.MagicPainting>> MAGIC_PAINTING = projectile("magic_painting", EntityType.Builder.<twilightforest.entity.MagicPainting>of(twilightforest.entity.MagicPainting::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(10).updateInterval(Integer.MAX_VALUE));
     // Q24 cross-lane addition (Lane A authored with permission, lives under Lane-B-owned TFEntities for projectile registration unity)
     public static final TFRegistryObject<EntityType<twilightforest.entity.projectile.TwilightWandBolt>> WAND_BOLT = projectile("wand_bolt", EntityType.Builder.<twilightforest.entity.projectile.TwilightWandBolt>of(twilightforest.entity.projectile.TwilightWandBolt::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(5).updateInterval(2));
     public static final TFRegistryObject<EntityType<twilightforest.entity.projectile.MoonwormShot>> MOONWORM_SHOT = projectile("moonworm_shot", EntityType.Builder.<twilightforest.entity.projectile.MoonwormShot>of(twilightforest.entity.projectile.MoonwormShot::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(5).updateInterval(2));
@@ -248,6 +257,7 @@ public final class TFEntities {
         FabricDefaultAttributeRegistry.register(UR_GHAST.get(), UrGhast.registerAttributes().build());
         FabricDefaultAttributeRegistry.register(WINTER_WOLF.get(), WinterWolf.registerAttributes().build());
         FabricDefaultAttributeRegistry.register(WRAITH.get(), Wraith.registerAttributes().build());
+        FabricDefaultAttributeRegistry.register(BOGGARD.get(), twilightforest.entity.monster.Boggard.registerAttributes().build());
     }
 
     private static <T extends Mob> TFRegistryObject<EntityType<T>> entity(String path, EntityType.Builder<T> builder) {

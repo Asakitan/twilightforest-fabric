@@ -1,6 +1,9 @@
 package twilightforest.enums;
 
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import twilightforest.block.entity.spawner.BossSpawnerBlockEntity;
+import twilightforest.init.TFBlockEntities;
 
 import java.util.Locale;
 
@@ -39,6 +42,21 @@ public enum BossVariant implements StringRepresentable {
 
 	public TrophyType getTrophyType() {
 		return this.trophyType;
+	}
+
+	public BlockEntityType<? extends BossSpawnerBlockEntity<?>> getType() {
+		return switch (this) {
+			case NAGA -> TFBlockEntities.NAGA_SPAWNER;
+			case LICH -> TFBlockEntities.LICH_SPAWNER;
+			case HYDRA -> TFBlockEntities.HYDRA_SPAWNER;
+			case UR_GHAST -> TFBlockEntities.UR_GHAST_SPAWNER;
+			case KNIGHT_PHANTOM -> TFBlockEntities.KNIGHT_PHANTOM_SPAWNER;
+			case SNOW_QUEEN -> TFBlockEntities.SNOW_QUEEN_SPAWNER;
+			case MINOSHROOM -> TFBlockEntities.MINOSHROOM_SPAWNER;
+			case ALPHA_YETI -> TFBlockEntities.ALPHA_YETI_SPAWNER;
+			case FINAL_BOSS -> TFBlockEntities.FINAL_BOSS_SPAWNER;
+			case QUEST_RAM -> throw new IllegalStateException("Quest Ram has no boss spawner block entity");
+		};
 	}
 
 	public enum TrophyType {

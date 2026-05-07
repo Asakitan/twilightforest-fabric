@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.client.model.SilverfishModel;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -107,6 +108,21 @@ import twilightforest.client.renderer.entity.UpperGoblinKnightRenderer;
 import twilightforest.client.renderer.entity.WraithRenderer;
 import twilightforest.client.renderer.entity.WinterWolfRenderer;
 import twilightforest.TwilightForestMod;
+import twilightforest.block.entity.MasonJarBlockEntity;
+import twilightforest.components.entity.TravellersWingsAttachment;
+import twilightforest.init.TFDataAttachments;
+import twilightforest.item.MagicMapItem;
+import twilightforest.item.MazeMapItem;
+import twilightforest.item.mapdata.TFMagicMapData;
+import twilightforest.item.mapdata.TFMazeMapData;
+import twilightforest.network.GogglesZoomPacket;
+import twilightforest.network.GradualGlidePacket;
+import twilightforest.network.MagicMapPacket;
+import twilightforest.network.MazeMapPacket;
+import twilightforest.network.MovePlayerPacket;
+import twilightforest.network.SetMasonJarItemPacket;
+import twilightforest.network.TravellersWingsStatePacket;
+import twilightforest.network.UpdateThrownPacket;
 
 /**
  * Phase F2 — paired client renderer entry point.
@@ -302,6 +318,114 @@ public final class CodexTwilightClient implements ClientModInitializer {
             mc.execute(() -> {
                 if (mc.level == null) return;
                 spawnGogglesSurveyFlash(mc, payload);
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(MovePlayerPacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.player != null) {
+                    mc.player.push(payload.motionX(), payload.motionY(), payload.motionZ());
+                }
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(UpdateThrownPacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                net.minecraft.world.entity.Entity entity = mc.level.getEntity(payload.entityID());
+                if (entity instanceof net.minecraft.world.entity.player.Player player) {
+                    var attachment = TFDataAttachments.get(player, TFDataAttachments.YETI_THROWING);
+                    net.minecraft.world.entity.Entity throwerEntity = payload.throwerID() != 0 ? mc.level.getEntity(payload.throwerID()) : null;
+                    attachment.setThrown(player, payload.thrown(), throwerEntity instanceof net.minecraft.world.entity.LivingEntity living ? living : null);
+                    attachment.setThrowCooldown(player, payload.throwCooldown());
+                }
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(GradualGlidePacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                net.minecraft.world.entity.player.Player player = mc.level.getPlayerByUUID(payload.playerUUID());
+                if (player != null) {
+                    TFDataAttachments.set(player, TFDataAttachments.IS_GRADUALLY_GLIDING, payload.isGraduallyGliding());
+                }
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(GogglesZoomPacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                net.minecraft.world.entity.player.Player player = mc.level.getPlayerByUUID(payload.playerUUID());
+                if (player != null) {
+                    TFDataAttachments.set(player, TFDataAttachments.IS_USING_GOGGLES_ZOOM_MODIFIER, payload.isUsingZoom());
+                }
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(TravellersWingsStatePacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                net.minecraft.world.entity.Entity entity = mc.level.getEntity(payload.entityId());
+                if (entity instanceof net.minecraft.world.entity.LivingEntity livingEntity) {
+                    TravellersWingsAttachment attachment = TFDataAttachments.get(livingEntity, TFDataAttachments.TRAVELLERS_WINGS);
+                    attachment.state = payload.state();
+                    attachment.sidestepLeft = payload.sidestepLeft();
+                    attachment.doubleJumpTimer = payload.doubleJumpTimer();
+                    attachment.sidestepTimer = payload.sidestepTimer();
+                }
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(SetMasonJarItemPacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                if (mc.level.getBlockEntity(payload.pos()) instanceof MasonJarBlockEntity jar) {
+                    jar.getItemHandler().setItem(payload.stack());
+                    jar.setItemRotation(payload.rotation());
+                    jar.setChanged();
+                }
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(MagicMapPacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                MapRenderer renderer = mc.gameRenderer.getMapRenderer();
+                String name = MagicMapItem.getMapName(payload.inner().mapId().id());
+                TFMagicMapData data = TFMagicMapData.getMagicMapData(mc.level, name);
+                if (data == null) {
+                    data = new TFMagicMapData(0, 0, payload.inner().scale(), false, false, payload.inner().locked(), mc.level.dimension());
+                    TFMagicMapData.registerMagicMapData(mc.level, data, name);
+                }
+                payload.inner().applyToMap(data);
+                data.conqueredStructures.clear();
+                data.conqueredStructures.addAll(payload.conqueredStructures());
+                renderer.update(payload.inner().mapId(), data);
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(MazeMapPacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                MapRenderer renderer = mc.gameRenderer.getMapRenderer();
+                String name = MazeMapItem.getMapName(payload.inner().mapId().id());
+                TFMazeMapData data = TFMazeMapData.getMazeMapData(mc.level, name);
+                if (data == null) {
+                    data = new TFMazeMapData(0, 0, payload.inner().scale(), false, false, payload.inner().locked(), mc.level.dimension());
+                    TFMazeMapData.registerMazeMapData(mc.level, data, name);
+                }
+                data.ore = payload.ore();
+                data.yCenter = payload.yCenter();
+                payload.inner().applyToMap(data);
+                renderer.update(payload.inner().mapId(), data);
             });
         });
 

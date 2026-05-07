@@ -1,6 +1,7 @@
 package twilightforest.data.tags;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import twilightforest.TwilightForestMod;
@@ -18,11 +19,19 @@ public final class ItemTagGenerator {
     public static final TagKey<Item> UNCRAFTING_IGNORES_COST = create("uncrafting_ignores_cost");
     public static final TagKey<Item> IMMUNE_TO_THORNS = create("immune_to_thorns");
     public static final TagKey<Item> SCEPTERS = create("scepters");
+    public static final TagKey<Item> KOBOLD_PACIFICATION_BREADS = create("kobold_pacification_breads");
+    public static final TagKey<Item> KNIGHTMETAL_INGOTS = common("ingots/knightmetal");
+    public static final TagKey<Item> TRAVELLERS_BELT_BLACKLISTED = create("travellers_belt_blacklisted");
+    public static final TagKey<Item> EMPERORS_CLOTH_APPLICABLE = create("emperors_cloth_applicable");
 
     private ItemTagGenerator() {
     }
 
     private static TagKey<Item> create(String path) {
         return TagKey.create(Registries.ITEM, TwilightForestMod.prefix(path));
+    }
+
+    private static TagKey<Item> common(String path) {
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", path));
     }
 }

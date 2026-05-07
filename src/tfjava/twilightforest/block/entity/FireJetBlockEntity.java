@@ -22,8 +22,8 @@ import java.util.List;
  * 1:1 port of upstream {@code twilightforest.block.entity.FireJetBlockEntity}.
  * NF→Fabric translations:
  * <ul>
- *   <li>{@code TFSounds.X.get()} → codex direct {@code SoundEvent} fields.</li>
- *   <li>{@code TFParticleType.LARGE_FLAME.get()} → codex direct {@code ParticleOptions} field.</li>
+ *   <li>{@code TFSounds.X} → codex direct {@code SoundEvent} fields.</li>
+ *   <li>{@code TFParticleType.LARGE_FLAME} → codex direct {@code ParticleOptions} field.</li>
  *   <li>{@code TFDamageTypes.getDamageSource(level, key)} → codex's {@code source(level, key)}.</li>
  * </ul>
  */

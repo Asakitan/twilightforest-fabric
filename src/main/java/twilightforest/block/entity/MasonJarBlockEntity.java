@@ -149,7 +149,7 @@ public class MasonJarBlockEntity extends JarBlockEntity {
         }
 
         public boolean isItemValid(ItemStack stack) {
-            return stack.canFitInsideContainerItems();
+            return stack.getItem().canFitInsideContainerItems();
         }
 
         public ItemStack extractItem(int slot, int amount, boolean simulate) {

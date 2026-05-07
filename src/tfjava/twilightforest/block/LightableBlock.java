@@ -39,7 +39,7 @@ import java.util.Locale;
  *       NeoForge ItemAbilities catalogues tool capabilities at the API layer; Fabric has
  *       no equivalent so we fall back to instanceof checks against the two vanilla
  *       firestarter item classes (modded firestarters that subclass these still work).</li>
- *   <li>{@code TFParticleType.X.get()} → codex's direct {@code ParticleOptions} field.</li>
+ *   <li>{@code TFParticleType.X} → codex's direct {@code ParticleOptions} field.</li>
  * </ul>
  */
 public interface LightableBlock {

@@ -7,16 +7,12 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.world.entity.player.Player;
+import twilightforest.init.TFDataAttachments;
 import twilightforest.init.TFLoot;
 
 import java.util.Set;
 
-/**
- * Fabric port — codec 1:1 with upstream. Runtime simplified: TFDataAttachments
- * .GIANT_PICKAXE_MINING is not ported in this mod; without that per-entity
- * state we cannot detect the giant-pick mine event, so this always returns
- * false (drop nothing extra).
- */
 public record GiantPickUsedCondition(LootContext.EntityTarget target) implements LootItemCondition {
 
     public static final MapCodec<GiantPickUsedCondition> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -35,6 +31,10 @@ public record GiantPickUsedCondition(LootContext.EntityTarget target) implements
 
     @Override
     public boolean test(LootContext context) {
+        if (context.getParamOrNull(this.target.getParam()) instanceof Player player) {
+            var attachment = TFDataAttachments.get(player, TFDataAttachments.GIANT_PICKAXE_MINING);
+            return player.level().getGameTime() == attachment.getMining() && attachment.canMakeGiantBlock();
+        }
         return false;
     }
 

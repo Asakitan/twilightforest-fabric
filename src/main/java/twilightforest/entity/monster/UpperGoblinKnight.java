@@ -41,7 +41,7 @@ import java.util.List;
 
 public class UpperGoblinKnight extends Monster {
     private static final int SHIELD_DAMAGE_THRESHOLD = 10;
-    private static final int HEAVY_SPEAR_TIMER_START = 60;
+    public static final int HEAVY_SPEAR_TIMER_START = 60;
     private static final EntityDataAccessor<Byte> DATA_EQUIP = SynchedEntityData.defineId(UpperGoblinKnight.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> SHIELD_DISABLED = SynchedEntityData.defineId(UpperGoblinKnight.class, EntityDataSerializers.BOOLEAN);
     private static final ResourceLocation ARMOR_ID = TwilightForestMod.prefix("upper_goblin_knight_armor");
@@ -174,7 +174,7 @@ public class UpperGoblinKnight extends Monster {
         return super.doHurtTarget(entity);
     }
 
-    private void landHeavySpearAttack() {
+    public void landHeavySpearAttack() {
         Vec3 look = this.getLookAngle();
         double px = this.getX() + look.x() * 1.25D;
         double py = this.getBoundingBox().minY - (this.isPassenger() ? 0.75D : 0.0D);

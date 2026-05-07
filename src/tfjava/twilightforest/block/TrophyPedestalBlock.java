@@ -40,7 +40,7 @@ import java.util.List;
  *
  * <p>NeoForge → Fabric / codex translations:
  * <ul>
- *   <li>{@code TFSounds.PEDESTAL_ACTIVATE.get()} → codex's direct {@code SoundEvent} field.</li>
+ *   <li>{@code TFSounds.PEDESTAL_ACTIVATE} → codex's direct {@code SoundEvent} field.</li>
  *   <li>{@code PlayerHelper.doesPlayerHaveRequiredAdvancements(player, ResourceLocation)} →
  *       codex's {@code playerHasRequiredAdvancements(player, List)} (List wraps the single id).</li>
  *   <li>{@code TFStats.TROPHY_PEDESTALS_ACTIVATED.get()} → codex stores it as a

@@ -3,10 +3,15 @@ package twilightforest.item;
 import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -18,11 +23,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.init.TFSounds;
+import twilightforest.util.iterators.VoxelBresenhamIterator;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Q37 simplified port of TF {@code OreMagnetItem}: hold + release fires a
@@ -129,5 +138,120 @@ public class OreMagnetItem extends CodexItem {
             }
         }
         player.getCooldowns().addCooldown(this, 20);
+    }
+
+    // -------------------------------------------------------------------------
+    // Static ore-magnet effect used by MineLogCoreBlock
+    // -------------------------------------------------------------------------
+
+    /**
+     * Scans the line from {@code usePos} to {@code destPos} using a Bresenham
+     * voxel iterator, finds the first ore block and the first replaceable block,
+     * then teleports the whole ore vein to the replaceable block position.
+     *
+     * @return number of blocks moved (0 if nothing found or nothing to replace)
+     */
+    public static int doMagnet(Level level, BlockPos usePos, BlockPos destPos) {
+        return doMagnet(level, usePos, destPos, false);
+    }
+
+    public static int doMagnet(ServerLevel level, BlockPos usePos, BlockPos destPos, boolean sourceIsMineCore) {
+        return doMagnet((Level) level, usePos, destPos, sourceIsMineCore);
+    }
+
+    public static int doMagnet(Level level, BlockPos usePos, BlockPos destPos, boolean sourceIsMineCore) {
+        initOre2BlockMap();
+
+        int blocksMoved = 0;
+        BlockState attractedOreBlock = Blocks.AIR.defaultBlockState();
+        BlockState replacementBlock = Blocks.AIR.defaultBlockState();
+        BlockPos foundPos = null;
+        BlockPos basePos = null;
+
+        for (BlockPos coord : new VoxelBresenhamIterator(usePos, destPos)) {
+            BlockState searchState = level.getBlockState(coord);
+            if (basePos == null) {
+                if (isReplaceable(searchState)) {
+                    basePos = coord;
+                }
+            } else if (foundPos == null && !searchState.isAir() && isOre(searchState.getBlock())
+                    && level.getBlockEntity(coord) == null) {
+                attractedOreBlock = searchState;
+                replacementBlock = ORE_TO_BLOCK_REPLACEMENTS
+                        .getOrDefault(attractedOreBlock.getBlock(), Blocks.STONE)
+                        .defaultBlockState();
+                foundPos = coord;
+            }
+        }
+
+        if (basePos != null && foundPos != null && !attractedOreBlock.isAir()) {
+            Set<BlockPos> veinBlocks = new HashSet<>();
+            findVein(level, foundPos, attractedOreBlock, veinBlocks);
+
+            int offX = basePos.getX() - foundPos.getX();
+            int offY = basePos.getY() - foundPos.getY();
+            int offZ = basePos.getZ() - foundPos.getZ();
+
+            for (BlockPos coord : veinBlocks) {
+                BlockPos replacePos = coord.offset(offX, offY, offZ);
+                BlockState replaceState = level.getBlockState(replacePos);
+                if (isReplaceable(replaceState) || replaceState.canBeReplaced() || replaceState.isAir()) {
+                    level.setBlock(coord, replacementBlock, 2);
+                    level.setBlock(replacePos, attractedOreBlock, 2);
+                    if (sourceIsMineCore && level instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(twilightforest.init.TFParticleType.LOG_CORE_PARTICLE,
+                                replacePos.getX() + 0.5D, replacePos.getY() + 0.5D, replacePos.getZ() + 0.5D,
+                                2, 0.25D, 0.25D, 0.25D, 0.0D);
+                    }
+                    blocksMoved++;
+                }
+            }
+        }
+
+        return blocksMoved;
+    }
+
+    private static boolean isReplaceable(BlockState state) {
+        return state.is(BlockTagGenerator.ORE_MAGNET_SAFE_REPLACE_BLOCK);
+    }
+
+    private static boolean isOre(Block ore) {
+        return ORE_TO_BLOCK_REPLACEMENTS.containsKey(ore);
+    }
+
+    private static void findVein(Level level, BlockPos here, BlockState oreState, Set<BlockPos> veinBlocks) {
+        if (veinBlocks.contains(here) || veinBlocks.size() >= 24) return;
+        if (level.getBlockState(here) == oreState) {
+            veinBlocks.add(here);
+            for (Direction dir : Direction.values()) {
+                findVein(level, here.relative(dir), oreState, veinBlocks);
+            }
+        }
+    }
+
+    private static boolean oreCacheNeedsBuild = true;
+    private static final HashMap<Block, Block> ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
+
+    private static void initOre2BlockMap() {
+        if (!oreCacheNeedsBuild) return;
+        List<TagKey<Block>> tags = BuiltInRegistries.BLOCK.getTagNames()
+                .filter(t -> t.location().getNamespace().equals("c"))
+                .collect(Collectors.toList());
+        for (TagKey<Block> tag : tags) {
+            String path = tag.location().getPath();
+            if (!path.startsWith("ores_in_ground/")) continue;
+            String ground = path.substring("ores_in_ground/".length());
+            TagKey<Block> groundTag = TagKey.create(Registries.BLOCK,
+                    ResourceLocation.fromNamespaceAndPath("c", "ore_bearing_ground/" + ground));
+            if (tags.stream().anyMatch(t -> t.location().equals(groundTag.location()))) {
+                BuiltInRegistries.BLOCK.getTag(groundTag).ifPresent(groundHolders ->
+                        BuiltInRegistries.BLOCK.getTag(tag).ifPresent(oreHolders ->
+                                groundHolders.forEach(groundHolder ->
+                                        oreHolders.forEach(oreHolder ->
+                                                ORE_TO_BLOCK_REPLACEMENTS.put(
+                                                        oreHolder.value(), groundHolder.value())))));
+            }
+        }
+        oreCacheNeedsBuild = false;
     }
 }

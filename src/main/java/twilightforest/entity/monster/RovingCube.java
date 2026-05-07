@@ -1,24 +1,13 @@
 package twilightforest.entity.monster;
 
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import twilightforest.init.TFItemVisuals;
-
-import java.util.List;
+import twilightforest.entity.ai.goal.CubeCenterOnSymbolGoal;
+import twilightforest.entity.ai.goal.CubeMoveToRedstoneSymbolsGoal;
+import twilightforest.init.TFParticleType;
 
 public class RovingCube extends Monster {
     public boolean hasFoundSymbol;
@@ -39,12 +28,8 @@ public class RovingCube extends Monster {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.goalSelector.addGoal(0, new CubeMoveToRedstoneSymbolsGoal(this, 1.0D));
+        this.goalSelector.addGoal(1, new CubeCenterOnSymbolGoal(this, 1.0D));
     }
 
     @Override
@@ -55,7 +40,7 @@ public class RovingCube extends Monster {
                 double px = this.xOld + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 2.0F;
                 double py = this.yOld + this.getEyeHeight() - 0.25F + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 2.0F;
                 double pz = this.zOld + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 2.0F;
-                this.level().addParticle(ParticleTypes.PORTAL, px, py, pz, 0.0D, 0.0D, 0.0D);
+                this.level().addParticle(TFParticleType.ANNIHILATE, px, py, pz, 0.0D, 0.0D, 0.0D);
             }
         }
     }

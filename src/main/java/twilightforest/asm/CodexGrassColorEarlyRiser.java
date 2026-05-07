@@ -2,11 +2,9 @@ package twilightforest.asm;
 
 import me.shedaniel.mm.api.ClassTinkerers;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.level.GrassColor;
-import net.minecraft.world.level.biome.Biome;
-import twilightforest.world.components.BiomeGrassColors;
-
-import java.lang.reflect.Proxy;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.block.Blocks;
+import twilightforest.init.TFSounds;
 
 /**
  * Manningham Mills {@code mm:early_risers} entrypoint that grafts five Twilight Forest
@@ -16,81 +14,54 @@ import java.lang.reflect.Proxy;
  *
  * <p>Implementation notes:</p>
  * <ul>
- *   <li>{@code GrassColorModifier} in 1.21.1 has constructor {@code (String, ColorModifier)}.
- *       {@code ColorModifier} is a package-private SAM interface, so we synthesize it via
- *       {@link Proxy#newProxyInstance} keyed by the runtime-mapped intermediary class name
- *       and use a tiny inner-functional-interface {@link Modifier} for the actual math.</li>
- *   <li>Vanilla {@code GrassColorModifier.modifyColor(x, z, c)} delegates to the stored
- *       {@code ColorModifier}, so providing the modifier callback at enum-creation time is
- *       enough — no enum subclassing or Mixin scaffolding required.</li>
- *   <li>Color formulas are verbatim from the NeoForge / Fabric Twilight Forest port
- *       ({@code twilightforest.asm.GrassColorModifier*} classes in the upstream source),
- *       so visuals are 1:1 wherever the modifier actually runs (server worldgen, paired-client
- *       clients that have the same enum, or codex-twilight if the mod is later promoted
- *       to {@code environment="*"}).</li>
- *   <li>Vanilla clients can't run this code, so {@code GrassColorModifierCodecMixin} maps
- *       the TF enum values to vanilla equivalents on encode-to-network — Phase 1 visual
- *       parity is "vanilla-approximate", with full 1:1 deferred to a later phase.</li>
+ *   <li>{@code GrassColorModifier} in 1.21.1 is an abstract enum whose vanilla entries
+ *       are anonymous subclasses. Manningham Mills {@code addEnumSubclass} mirrors that
+ *       bytecode shape for the five Twilight Forest values.</li>
+ *   <li>The struct classes under {@code twilightforest.asm.grass} implement
+ *       {@code modifyColor(double, double, int)}; MM copies those methods onto the
+ *       generated enum subclasses before Minecraft initializes the enum.</li>
+ *   <li>Color formulas live in {@code BiomeGrassColors} and match upstream Twilight
+ *       Forest grass color algorithms 1:1.</li>
  * </ul>
  */
 public class CodexGrassColorEarlyRiser implements Runnable {
 
     @Override
     public void run() {
-        // Phase 1 deferred: real enum extension blocked because ColorModifier (the SAM inner
-        // interface required for the (String, ColorModifier) constructor of GrassColorModifier
-        // in 1.21.1) cannot be Class.forName'd during MM preApply — its enclosing class is
-        // currently being transformed, which triggers recursive class-init.
-        //
-        // Phase 1 visual parity is currently provided by {@link
-        // twilightforest.codec.TFGrassColorModifierCodec} which translates the five
-        // {@code twilightforest:*} grass-color-modifier strings to their nearest vanilla
-        // equivalents at codec decode time, so the server boots and vanilla clients render
-        // a near-vanilla approximation. Phase 2 will recover full 1:1 via Block
-        // static-colour ground patches + ItemDisplay ambience.
-        //
-        // Keep this entrypoint registered so Phase 2 can iterate on it once we wire a
-        // bytecode-only ColorModifier reference path.
-        return;
-    }
+        ClassTinkerers.enumBuilder(mapClass("class_8107"), String.class, net.minecraft.sounds.SoundEvent.class)
+                .addEnum("TWILIGHTFOREST_PINCH", () -> new Object[]{"twilightforest:pinch", TFSounds.PINCH_BEETLE_ATTACK})
+                .build();
 
-    /**
-     * Build a runtime instance of the package-private {@code ColorModifier} SAM interface
-     * via JDK {@link Proxy}, so we don't need an accesswidener entry exposing it.
-     */
-    private static Object makeModifier(String colorModifierClassName, Modifier modifier) {
-        try {
-            Class<?> iface = Class.forName(colorModifierClassName, false, CodexGrassColorEarlyRiser.class.getClassLoader());
-            return Proxy.newProxyInstance(iface.getClassLoader(), new Class<?>[]{iface}, (proxy, method, args) -> {
-                if (args != null && args.length == 3
-                        && args[0] instanceof Double dx
-                        && args[1] instanceof Double dz
-                        && args[2] instanceof Integer ic) {
-                    return modifier.modify(dx, dz, ic);
-                }
-                if ("toString".equals(method.getName())) {
-                    return "twilightforest$ColorModifierProxy";
-                }
-                if ("hashCode".equals(method.getName())) {
-                    return System.identityHashCode(proxy);
-                }
-                if ("equals".equals(method.getName())) {
-                    return proxy == args[0];
-                }
-                return null;
-            });
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Failed to locate BiomeSpecialEffects$GrassColorModifier$ColorModifier at " + colorModifierClassName, e);
-        }
+        ClassTinkerers.enumBuilder(mapClass("class_1814"), int.class, String.class, ChatFormatting.class)
+                .addEnum("TWILIGHTFOREST_TWILIGHT", () -> new Object[]{4, "twilightforest:twilight", ChatFormatting.DARK_GREEN})
+                .build();
+
+        ClassTinkerers.enumBuilder(mapClass("class_811"), int.class, String.class)
+                .addEnum("TWILIGHTFOREST_JARRED", () -> new Object[]{9, "twilightforest:jarred"})
+                .build();
+
+        ClassTinkerers.enumBuilder(mapClass("class_1690$class_1692"), net.minecraft.world.level.block.Block.class, String.class)
+                .addEnum("TWILIGHTFOREST_TWILIGHT_OAK", () -> new Object[]{Blocks.OAK_PLANKS, "twilightforest:twilight_oak"})
+                .addEnum("TWILIGHTFOREST_CANOPY", () -> new Object[]{Blocks.DARK_OAK_PLANKS, "twilightforest:canopy"})
+                .addEnum("TWILIGHTFOREST_MANGROVE", () -> new Object[]{Blocks.MANGROVE_PLANKS, "twilightforest:mangrove"})
+                .addEnum("TWILIGHTFOREST_DARK", () -> new Object[]{Blocks.DARK_OAK_PLANKS, "twilightforest:dark"})
+                .addEnum("TWILIGHTFOREST_TIME", () -> new Object[]{Blocks.SPRUCE_PLANKS, "twilightforest:time"})
+                .addEnum("TWILIGHTFOREST_TRANSFORMATION", () -> new Object[]{Blocks.JUNGLE_PLANKS, "twilightforest:transformation"})
+                .addEnum("TWILIGHTFOREST_MINING", () -> new Object[]{Blocks.BIRCH_PLANKS, "twilightforest:mining"})
+                .addEnum("TWILIGHTFOREST_SORTING", () -> new Object[]{Blocks.CHERRY_PLANKS, "twilightforest:sorting"})
+                .build();
+
+        ClassTinkerers.enumBuilder(mapClass("class_4763$class_5486"), String.class)
+                .addEnumSubclass("TWILIGHTFOREST_ENCHANTED_FOREST", "twilightforest.asm.grass.EnchantedForestGrassColorModifier", "twilightforest:enchanted_forest")
+                .addEnumSubclass("TWILIGHTFOREST_SWAMP", "twilightforest.asm.grass.SwampGrassColorModifier", "twilightforest:swamp")
+                .addEnumSubclass("TWILIGHTFOREST_DARK_FOREST", "twilightforest.asm.grass.DarkForestGrassColorModifier", "twilightforest:dark_forest")
+                .addEnumSubclass("TWILIGHTFOREST_DARK_FOREST_CENTER", "twilightforest.asm.grass.DarkForestCenterGrassColorModifier", "twilightforest:dark_forest_center")
+                .addEnumSubclass("TWILIGHTFOREST_SPOOKY_FOREST", "twilightforest.asm.grass.SpookyForestGrassColorModifier", "twilightforest:spooky_forest")
+                .build();
     }
 
     private static String mapClass(String intermediaryName) {
         return FabricLoader.getInstance().getMappingResolver()
                 .mapClassName("intermediary", "net.minecraft." + intermediaryName);
-    }
-
-    @FunctionalInterface
-    private interface Modifier {
-        int modify(double x, double z, int color);
     }
 }

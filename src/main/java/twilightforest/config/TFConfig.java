@@ -43,21 +43,72 @@ public final class TFConfig {
 
     public static boolean disableSkullCandles = false;
     public static int commonCloudBlockPrecipitationDistance = 32;
+    public static boolean disableTimeCore = false;
+    public static int timeCoreRange = 16;
+    public static boolean disableTransformationCore = false;
+    public static int transformationCoreRange = 16;
+    public static boolean disableMiningCore = false;
+    public static int miningCoreRange = 16;
+    public static boolean disableSortingCore = false;
+    public static int sortingCoreRange = 16;
 
-    /** Default «adjusts loot rolls when multiple players fight a boss». */
-    public static final MultiplayerFightAdjuster multiplayerFightAdjuster = new MultiplayerFightAdjuster();
+    /** Default matches upstream: no multiplayer scaling unless config enables it. */
+    public static MultiplayerFightAdjuster multiplayerFightAdjuster = MultiplayerFightAdjuster.NONE;
+
+    /**
+     * Mirror of upstream {@code TFConfig.Common} so that log-core and other blocks that call
+     * {@code TFConfig.COMMON_CONFIG.MAGIC_TREES.disableX} compile unchanged.
+     */
+    public static final CommonConfig COMMON_CONFIG = new CommonConfig();
+
+    public static final class CommonConfig {
+        public final MagicTrees MAGIC_TREES = new MagicTrees();
+
+        public static final class MagicTrees {
+            // Feature toggles — false = feature is ON (upstream default)
+            public boolean disableTime = false;
+            public boolean disableMining = false;
+            public boolean disableSorting = false;
+            public boolean disableTransformation = false;
+
+            // Effect ranges (in blocks)
+            public int timeRange = 16;
+            public int miningRange = 16;
+            public int sortingRange = 16;
+            public int transformationRange = 16;
+        }
+    }
+
+    /**
+     * Codex stub: upstream NeoForge {@code TFConfig.bossDropChests} controls whether
+     * defeated TF bosses drop their loot via a celebratory chest at the boss-room
+     * spawn pad (true) or as raw drops (false). Default true matches upstream.
+     */
+    public static boolean bossDropChests = true;
 
     private TFConfig() {
     }
 
-    /** Stub mirror of upstream multiplayer-fight adjuster — keeps default behaviour ON. */
-    public static final class MultiplayerFightAdjuster {
-        public boolean adjustsLootRolls() {
-            return false;
+    public enum MultiplayerFightAdjuster {
+        NONE(false, false),
+        MORE_LOOT(true, false),
+        MORE_HEALTH(false, true),
+        MORE_LOOT_AND_HEALTH(true, true);
+
+        private final boolean moreLoot;
+        private final boolean moreHealth;
+
+        MultiplayerFightAdjuster(boolean loot, boolean health) {
+            this.moreLoot = loot;
+            this.moreHealth = health;
         }
 
-        public boolean adjustsLootMultipliers() {
-            return false;
+        public boolean adjustsLootRolls() {
+            return this.moreLoot;
+        }
+
+        public boolean adjustsHealth() {
+            return this.moreHealth;
         }
     }
 }

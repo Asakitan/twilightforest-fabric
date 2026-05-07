@@ -22,7 +22,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import twilightforest.block.DryingRackBlock;
 import twilightforest.init.TFBlockEntities;
 import twilightforest.init.TFRecipes;
@@ -111,7 +110,7 @@ public class DryingRackBlockEntity extends BlockEntity {
 	}
 
 	public boolean fillFromLootTable(ResourceKey<LootTable> lootTableKey, long seed, ServerLevel level) {
-		MinecraftServer currentServer = ServerLifecycleHooks.getCurrentServer();
+		MinecraftServer currentServer = level.getServer();
 		return this.fillFromLootTable(lootTableKey, seed, level, currentServer.reloadableRegistries());
 	}
 

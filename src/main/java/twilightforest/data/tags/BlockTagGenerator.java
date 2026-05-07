@@ -7,6 +7,8 @@ import net.minecraft.world.level.block.Block;
 import twilightforest.TwilightForestMod;
 
 public final class BlockTagGenerator {
+    /** Boss-explosion grief blacklist — blocks tagged here resist Hydra mortar megaBlast etc. */
+    public static final TagKey<Block> COMMON_PROTECTIONS = create("common_protections");
     public static final TagKey<Block> CASTLE_BLOCKS = create("castle_blocks");
     public static final TagKey<Block> CLOUDS = create("clouds");
     public static final TagKey<Block> CANNOT_TROLL_CAVE_HOLLOW = create("cannot_troll_cave_hollow");
@@ -17,6 +19,9 @@ public final class BlockTagGenerator {
     public static final TagKey<Block> SUPPORTS_STALAGMITES = create("supports_stalagmites");
     public static final TagKey<Block> WORLDGEN_REPLACEABLES = create("worldgen_replaceables");
     public static final TagKey<Block> TF_BERRY_BUSHES_REPLACE = create("tf_berry_bushes_replace");
+    public static final TagKey<Block> TF_BERRY_BUSHES_SURVIVE = create("tf_berry_bushes_survive");
+    public static final TagKey<Block> DARK_TOWER_BERRY_BUSHES_SURVIVE = create("dark_tower_berry_bushes_survive");
+    public static final TagKey<Block> DARK_TOWER_BERRY_BUSHES_DIE = create("dark_tower_berry_bushes_die");
     public static final TagKey<Block> SMALL_LAKES_DONT_REPLACE = create("small_lakes_dont_replace");
     public static final TagKey<Block> ICE_BOMB_REPLACEABLES = create("ice_bomb_replaceables");
     public static final TagKey<Block> PENGUINS_SPAWNABLE_ON = create("penguins_spawnable_on");
@@ -26,11 +31,17 @@ public final class BlockTagGenerator {
     public static final TagKey<Block> HOLLOW_LOGS = create("hollow_logs");
     public static final TagKey<Block> TOWERWOOD = create("towerwood");
     public static final TagKey<Block> OREBERRY_BUSHES_SURVIVE = create("oreberry_bushes_survive");
+    public static final TagKey<Block> ORE_MAGNET_SAFE_REPLACE_BLOCK = create("ore_magnet/ore_safe_replace_block");
+    public static final TagKey<Block> TIME_CORE_EXCLUDED = create("time_core_excluded");
     public static final TagKey<Block> TROPHY_PEDESTAL_ACTIVATION_BLOCKS = create("trophy_pedestal_activation_blocks");
     public static final TagKey<Block> FIRE_JET_FUEL = create("fire_jet_fuel");
     public static final TagKey<Block> MAZESTONE = create("mazestone");
+    public static final TagKey<Block> ANTIBUILDER_IGNORES = create("antibuilder_ignores");
     public static final TagKey<Block> CARMINITE_REACTOR_IMMUNE = create("carminite_reactor_immune");
     public static final TagKey<Block> CARMINITE_REACTOR_ORES = create("carminite_reactor_ores");
+    public static final TagKey<Block> BLOCK_AND_CHAIN_NEVER_BREAKS = create("block_and_chain_never_breaks");
+    public static final TagKey<Block> MINEABLE_WITH_BLOCK_AND_CHAIN = create("mineable_with_block_and_chain");
+    public static final TagKey<Block> ORE_METER_TARGETABLE = create("ore_meter_targetable");
 
     private BlockTagGenerator() {
     }

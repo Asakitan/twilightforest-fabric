@@ -15,6 +15,9 @@
     "client": [
       "com.codex.twilight.client.CodexTwilightClient"
     ],
+    "fabric-datagen": [
+      "twilightforest.data.CodexTwilightDataGenerators"
+    ],
     "mm_shedaniel:early_risers": [
       "twilightforest.asm.CodexGrassColorEarlyRiser"
     ],

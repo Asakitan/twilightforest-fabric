@@ -49,7 +49,6 @@ public abstract class TFPlantBlock extends BushBlock implements BonemealableBloc
 		return 60;
 	}
 
-	@Override
 	public PlantType getPlantType(BlockGetter getter, BlockPos pos) {
 		return PlantType.PLAINS;
 	}

@@ -10,6 +10,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.resources.ResourceLocation;
+import twilightforest.client.model.block.BrazierModel;
 import twilightforest.client.model.entity.AlphaYetiModel;
 import twilightforest.client.model.entity.BighornModel;
 import twilightforest.client.model.entity.BoarModel;
@@ -63,7 +64,7 @@ import twilightforest.client.model.entity.YetiModel;
 
 /**
  * F2.1b — central registry of {@link ModelLayerLocation}s used by codex-twilight
- * client-side renderers. Mirrors upstream Twilight Forest's TFModelLayers but
+ * client-side renderers. Mirrors upstream Twilight Forest's model layer table but
  * registered through Fabric's {@link EntityModelLayerRegistry} instead of the
  * NeoForge event bus.
  *
@@ -327,6 +328,10 @@ public final class CodexModelLayers {
             ResourceLocation.fromNamespaceAndPath("twilightforest", "tiny_bird"),
             "main");
 
+    public static final ModelLayerLocation BRAZIER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "brazier"),
+            "main");
+
     private CodexModelLayers() {
     }
 
@@ -402,5 +407,6 @@ public final class CodexModelLayers {
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(QUEST_RAM, QuestRamModel::checkForPack);
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(RAVEN, RavenModel::checkForPack);
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(TINY_BIRD, TinyBirdModel::checkForPack);
+                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(BRAZIER, BrazierModel::create);
     }
 }

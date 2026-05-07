@@ -17,6 +17,25 @@ import twilightforest.TwilightForestMod;
 public final class TFLootTables {
     public static final int DEFAULT_PLACE_FLAG = Block.UPDATE_CLIENTS;
 
+    /**
+     * P5.e: builder helper for upstream-style boss-loot post-mortem rolls.
+     * Returns a {@link net.minecraft.world.level.storage.loot.LootParams.Builder} pre-populated
+     * with the boss as both ATTACKER + ORIGIN + (optionally) DAMAGE_SOURCE so
+     * {@code IBossLootBuffer.saveDropsIntoBoss} can roll the loot table identically to upstream.
+     */
+    public static net.minecraft.world.level.storage.loot.LootParams.Builder createLootParams(
+            net.minecraft.world.entity.LivingEntity boss,
+            boolean wasKilled,
+            net.minecraft.world.damagesource.DamageSource damageSource) {
+        net.minecraft.world.level.storage.loot.LootParams.Builder builder = new net.minecraft.world.level.storage.loot.LootParams.Builder((net.minecraft.server.level.ServerLevel) boss.level())
+                .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY, boss)
+                .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, boss.position())
+                .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DAMAGE_SOURCE, damageSource);
+        if (damageSource.getEntity() != null) builder.withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ATTACKING_ENTITY, damageSource.getEntity());
+        if (damageSource.getDirectEntity() != null) builder.withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DIRECT_ATTACKING_ENTITY, damageSource.getDirectEntity());
+        return builder;
+    }
+
     public static final ResourceKey<LootTable> AURORA_CACHE = register("aurora_cache");
     public static final ResourceKey<LootTable> AURORA_ROOM = register("aurora_room");
     public static final ResourceKey<LootTable> BASEMENT = register("chests/basement");
@@ -63,6 +82,17 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> TROLL_VAULT = register("troll_vault");
     public static final ResourceKey<LootTable> TROLL_VAULT_WITH_LAMP = register("troll_vault_with_lamp");
     public static final ResourceKey<LootTable> WELL = register("well");
+    public static final ResourceKey<LootTable> CICADA_SQUISH_DROPS = register("blocks/cicada_squish");
+    public static final ResourceKey<LootTable> FIREFLY_SQUISH_DROPS = register("blocks/firefly_squish");
+    public static final ResourceKey<LootTable> MOONWORM_SQUISH_DROPS = register("blocks/moonworm_squish");
+    public static final ResourceKey<LootTable> BLACKBERRY_BUSH_BERRIES = register("blocks/blackberry_bush_berries");
+    public static final ResourceKey<LootTable> BLUEBERRY_BUSH_BERRIES = register("blocks/blueberry_bush_berries");
+    public static final ResourceKey<LootTable> RASPBERRY_BUSH_BERRIES = register("blocks/raspberry_bush_berries");
+    public static final ResourceKey<LootTable> MALOBERRY_BUSH_BERRIES = register("blocks/maloberry_bush_berries");
+    public static final ResourceKey<LootTable> BLIGHTBERRY_BUSH_BERRIES = register("blocks/blightberry_bush_berries");
+    public static final ResourceKey<LootTable> DUSKBERRY_BUSH_BERRIES = register("blocks/duskberry_bush_berries");
+    public static final ResourceKey<LootTable> SKYBERRY_BUSH_BERRIES = register("blocks/skyberry_bush_berries");
+    public static final ResourceKey<LootTable> STINGBERRY_BUSH_BERRIES = register("blocks/stingberry_bush_berries");
 
     private TFLootTables() {
     }

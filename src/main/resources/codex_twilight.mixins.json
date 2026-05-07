@@ -8,6 +8,7 @@
     "LivingEntityMixin",
     "AbstractArrowMixin",
     "FireBlockMixin",
+    "LootTableMixin",
     "GrassColorModifierCodecMixin"
   ],
   "client": [

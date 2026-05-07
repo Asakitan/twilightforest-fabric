@@ -53,6 +53,7 @@ public class UrGhast extends BaseTFBoss {
     private int tripleFireballCooldown;
     private int prevTripleFireballCooldown;
     private int inTrapCounter;
+    private boolean charging;
     private final List<BlockPos> trapLocations = new ArrayList<>();
     public UrGhast(EntityType<? extends UrGhast> type, Level level) {
         super(type, level);
@@ -134,8 +135,12 @@ public class UrGhast extends BaseTFBoss {
         this.updateFlightTarget(target);
         if (target.distanceToSqr(this) < 4096.0D && this.getSensing().hasLineOfSight(target) && this.tripleFireballCooldown <= 0) {
             this.getLookControl().setLookAt(target, 10.0F, this.getMaxHeadXRot());
+            this.playSound(TFSounds.UR_GHAST_WARN, this.getSoundVolume(), this.getVoicePitch());
+            this.setCharging(true);
             this.spitFireball(target);
             this.tripleFireballCooldown = 90 + this.getRandom().nextInt(60);
+        } else {
+            this.setCharging(this.tripleFireballCooldown > 70);
         }
     }
 
@@ -242,6 +247,33 @@ public class UrGhast extends BaseTFBoss {
 
     public void setInTrap() {
         this.inTrapCounter = 20;
+        this.setCharging(false);
+    }
+
+    public boolean isCharging() {
+        return this.charging;
+    }
+
+    public void setCharging(boolean charging) {
+        this.charging = charging;
+    }
+
+    public boolean checkGhastsAtTraps() {
+        this.updateTrapLocations();
+        if (this.trapLocations.isEmpty()) {
+            return false;
+        }
+        for (BlockPos trap : this.trapLocations) {
+            AABB box = new AABB(trap).inflate(8.0D, 16.0D, 8.0D);
+            if (!this.level().getEntitiesOfClass(CarminiteGhastling.class, box, CarminiteGhastling::isAlive).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void resetDamageUntilNextPhase() {
+        this.damageUntilNextPhase = 18.0F;
     }
 
     public List<BlockPos> getTrapLocations() {
@@ -403,6 +435,7 @@ public class UrGhast extends BaseTFBoss {
         tag.putBoolean("inTantrum", this.isInTantrum());
         tag.putFloat("damageUntilNextPhase", this.damageUntilNextPhase);
         tag.putInt("tripleFireballCooldown", this.tripleFireballCooldown);
+        tag.putBoolean("Charging", this.isCharging());
     }
 
     @Override
@@ -411,5 +444,6 @@ public class UrGhast extends BaseTFBoss {
         this.setInTantrum(tag.getBoolean("inTantrum"));
         this.damageUntilNextPhase = tag.getFloat("damageUntilNextPhase");
         this.tripleFireballCooldown = tag.getInt("tripleFireballCooldown");
+        this.setCharging(tag.getBoolean("Charging"));
     }
 }

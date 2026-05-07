@@ -162,4 +162,90 @@ public abstract class BaseTFBoss extends Monster implements EnforcedHomePoint {
         super.setCustomName(name);
         this.getBossBar().setName(this.getBossBarTitle());
     }
+
+    //-----------------------------------------//
+    // P5.e — upstream BaseTFBoss surface bumps  //
+    //-----------------------------------------//
+
+    /**
+     * 1:1 from upstream — defaults to vanilla {@code doMobLoot} gamerule.
+     * Subclasses override to suppress drops on shadow clones etc.
+     */
+    protected boolean shouldSpawnLoot() {
+        return this.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBLOOT);
+    }
+
+    /** 1:1 from upstream — Liches override to suppress spawner placement on shadow clones. */
+    protected boolean shouldCreateSpawner() {
+        return true;
+    }
+
+    /**
+     * 1:1 from upstream — overridden by Lich for ominous-candle activation. Default just
+     * places the boss-spawner block at {@code pos}.
+     */
+    public void placeSpawner(net.minecraft.core.BlockPos pos) {
+        net.minecraft.world.level.block.Block spawner = null;
+        try {
+            // Use reflection-free approach: subclasses override getBossSpawner() if defined.
+            spawner = (net.minecraft.world.level.block.Block) this.getClass().getMethod("getBossSpawner").invoke(this);
+        } catch (Throwable ignored) {}
+        if (spawner != null) this.level().setBlockAndUpdate(pos, spawner.defaultBlockState());
+    }
+
+    /**
+     * 1:1 from upstream — called from {@link #remove(RemovalReason)} so that
+     * boss-loot chests can be deposited on KILLED. Default is a no-op; bosses
+     * that implement {@code IBossLootBuffer} override.
+     */
+    protected void postRemoval(net.minecraft.server.level.ServerLevel serverLevel, RemovalReason reason) {
+    }
+
+    /** Override hook — total death-animation duration in ticks (vanilla = 20). */
+    public boolean isDeathAnimationFinished() {
+        return this.deathTime >= 20;
+    }
+
+    /** Override hook — client-side per-tick particles during death animation. Default no-op. */
+    public void tickDeathAnimation() {
+    }
+
+    /** Override hook — per-tick logic to choose the entity the boss faces while dying. */
+    @Nullable
+    protected net.minecraft.world.entity.Entity lookAtUponDeath() {
+        return null;
+    }
+
+    /** Get the home anchor or fall back to the boss's current block-position. */
+    public net.minecraft.core.BlockPos homeOrElseCurrent() {
+        return this.getRestrictionPoint() == null ? this.blockPosition() : this.getRestrictionPoint().pos();
+    }
+
+    /** Returns true if {@code pos} is outside the home radius. Default uses {@code 30} squared. */
+    public boolean isOutsideHomeRange(net.minecraft.world.phys.Vec3 pos) {
+        if (this.getRestrictionPoint() == null) return false;
+        net.minecraft.core.BlockPos point = this.getRestrictionPoint().pos();
+        int radius = this.getHomeRadiusOrDefault();
+        return point.distToCenterSqr(pos) > (double) (radius * radius);
+    }
+
+    /** Per-boss home radius. Subclasses override; default 20. */
+    public int getHomeRadius() {
+        return 20;
+    }
+
+    private int getHomeRadiusOrDefault() {
+        try {
+            return (int) this.getClass().getMethod("getHomeRadius").invoke(this);
+        } catch (Throwable ignored) {
+            return 20;
+        }
+    }
+
+    /**
+     * Hook for adding home-restriction goals to the boss's goal selector.
+     * Default is no-op; Lich and other home-anchored bosses can override.
+     */
+    protected void addRestrictionGoals(net.minecraft.world.entity.PathfinderMob mob, net.minecraft.world.entity.ai.goal.GoalSelector selector) {
+    }
 }

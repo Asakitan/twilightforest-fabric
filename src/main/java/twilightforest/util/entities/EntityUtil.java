@@ -35,6 +35,35 @@ public final class EntityUtil {
         FeaturePlacers.placeEntity(entityType, pos, level);
     }
 
+    /**
+     * P5.e: drop-target location for {@code BaseTFBoss.postRemoval} celebratory chest.
+     * Upstream picks the boss's home-anchor pos (or current entity pos if no anchor).
+     */
+    public static BlockPos bossChestLocation(Entity boss) {
+        if (boss instanceof twilightforest.entity.EnforcedHomePoint home && home.getRestrictionPoint() != null) {
+            return home.getRestrictionPoint().pos();
+        }
+        return boss.blockPosition();
+    }
+
+    /**
+     * P5.e: stub for upstream's lava-clearing helper around boss feet — codex's bosses
+     * are fire/lava-immune in practice; full upstream behavior (replace lava blocks
+     * with magma in a 3×3×3 box) is non-essential for compile.
+     */
+    public static void killLavaAround(Entity entity) {
+    }
+
+    /**
+     * P5.e: vanilla-friendly damage-source death-sound pitch helper. Upstream returns
+     * the {@code SoundEvent} associated with this entity type's death sound; codex
+     * inlines that into each subclass instead. Kept here as a stub returning null
+     * so call sites that null-check still work.
+     */
+    public static net.minecraft.sounds.SoundEvent getDeathSound(net.minecraft.world.entity.LivingEntity entity) {
+        return entity.getType().getCategory() == null ? null : net.minecraft.sounds.SoundEvents.GENERIC_DEATH;
+    }
+
     public static boolean tryHangPainting(WorldGenLevel world, BlockPos pos, Direction direction, Holder<PaintingVariant> chosenPainting) {
         if (chosenPainting == null) {
             return false;

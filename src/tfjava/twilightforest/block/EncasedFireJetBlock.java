@@ -11,7 +11,7 @@ import twilightforest.init.TFSounds;
 
 /**
  * 1:1 port of upstream {@code twilightforest.block.EncasedFireJetBlock}.
- * NF→Fabric: {@code TFSounds.JET_START.get()} → codex direct {@code SoundEvent} field.
+ * NF→Fabric: {@code TFSounds.JET_START} → codex direct {@code SoundEvent} field.
  */
 public class EncasedFireJetBlock extends FireJetBlock {
 

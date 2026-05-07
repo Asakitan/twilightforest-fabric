@@ -2,7 +2,10 @@ package twilightforest.item;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,20 +13,10 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.stats.Stats;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.init.TFSounds;
 
 import java.util.List;
 
-/**
- * Q31 simplified port of TF {@code TripleBowItem}: each shot fires three arrows
- * in a horizontal fan (~10° spread). Drops the NeoForge {@code EventHooks.onArrowLoose}
- * call from the original — Fabric does not have that hook and the bow still
- * hurts/durabilitiy-decrements normally.
- */
 public class TripleBowItem extends CodexBowItem {
 
     public TripleBowItem(Properties properties, Item fallback) {
@@ -46,10 +39,10 @@ public class TripleBowItem extends CodexBowItem {
 
         List<ItemStack> drawn = draw(stack, arrowStack, player);
         if (level instanceof ServerLevel sl && !drawn.isEmpty()) {
-            this.shoot(sl, player, player.getUsedItemHand(), stack, drawn, power * 3.0F, 1.0F, power == 1.0F, null);
+            this.shoot(sl, player, player.getUsedItemHand(), stack, drawn, power * 2.5F, 1.0F, power == 1.0F, null);
         }
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                TFSounds.TRIPLE_BOW_FIRED, SoundSource.PLAYERS, 1.0F,
+                SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F,
                 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
         player.awardStat(Stats.ITEM_USED.get(this));
     }

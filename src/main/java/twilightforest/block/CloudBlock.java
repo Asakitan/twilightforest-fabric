@@ -48,9 +48,9 @@ public class CloudBlock extends Block {
         Vec3 delta = entity.getDeltaMovement();
         BlockPos entityPos = entity.blockPosition();
         double jumpMultiplier = jumping ? 2.0D : 1.0D;
-        double x = entity.getX() + (level.getRandom().nextDouble() - 0.5D) * entity.dimensions.width() * jumpMultiplier;
+        double x = entity.getX() + (level.getRandom().nextDouble() - 0.5D) * entity.getBbWidth() * jumpMultiplier;
         double y = entity.getY() + 0.1D;
-        double z = entity.getZ() + (level.getRandom().nextDouble() - 0.5D) * entity.dimensions.width() * jumpMultiplier;
+        double z = entity.getZ() + (level.getRandom().nextDouble() - 0.5D) * entity.getBbWidth() * jumpMultiplier;
         if (entityPos.getX() != pos.getX()) {
             x = Mth.clamp(x, pos.getX(), pos.getX() + 1.0D);
         }
@@ -127,7 +127,6 @@ public class CloudBlock extends Block {
         rainOnState.getBlock().handlePrecipitation(rainOnState, level, rainOnPos, pair.getLeft());
     }
 
-    @Override
     public boolean addLandingEffects(BlockState state1, ServerLevel level, BlockPos pos, BlockState state2, LivingEntity living, int numberOfParticles) {
         int maxParticles = Mth.clamp((int) living.fallDistance * 2, 8, 40);
         double width = living.getBbWidth();

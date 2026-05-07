@@ -1,115 +1,148 @@
 package twilightforest.item;
 
-import net.minecraft.server.level.ServerPlayer;
-
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
+import twilightforest.components.item.OreScannerComponent;
+import twilightforest.components.item.OreScannerData;
+import twilightforest.data.tags.BlockTagGenerator;
+import twilightforest.init.TFDataComponents;
 import twilightforest.init.TFSounds;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-/**
- * Q37 simplified port of TF {@code OreMeterItem}.
- *
- * <p>TF original is a stateful 50-tick scan that stores chunked results in a
- * custom {@code OreScannerComponent} data component, supports range toggle, and
- * renders a tooltip readout. The Fabric port collapses this into an *instant
- * synchronous scan* of the current chunk + 8 neighbouring chunks (3×3 around the
- * player), counting blocks per ore tag and printing a multi-line chat readout.
- * No DataComponents, no progress bar, no per-stack persistence.</p>
- *
- * <p>Cost: 1 durability per use, 100-tick cooldown.</p>
- */
 public class OreMeterItem extends CodexItem {
+	public static final int MAX_CHUNK_SEARCH_RANGE = 2;
+	public static final int LOAD_TIME = 50;
 
-    public OreMeterItem(Properties properties, Item fallback) {
-        super(properties, fallback, -1);
-    }
+	public OreMeterItem(Properties properties, Item fallback) {
+		super(properties, fallback, -1);
+	}
 
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (stack.getDamageValue() >= stack.getMaxDamage() && !player.getAbilities().instabuild) {
-            return InteractionResultHolder.fail(stack);
-        }
-        if (level.isClientSide()) return InteractionResultHolder.success(stack);
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean held) {
+		if (level.isClientSide() || !stack.has(TFDataComponents.ORE_SCANNING)) {
+			return;
+		}
 
-        ServerLevel serverLevel = (ServerLevel) level;
-        int chunkX = player.chunkPosition().x;
-        int chunkZ = player.chunkPosition().z;
+		OreScannerComponent newScan = stack.get(TFDataComponents.ORE_SCANNING).tickScan(level);
+		if (newScan.isEmpty()) {
+			stack.remove(TFDataComponents.ORE_SCANNING);
+			return;
+		}
 
-        Map<String, Integer> counts = new HashMap<>();
-        int blocksScanned = 0;
+		if (!newScan.isFinished()) {
+			stack.set(TFDataComponents.ORE_LOADING, newScan.getTickProgress());
+			stack.set(TFDataComponents.ORE_SCANNING, newScan);
+			return;
+		}
 
-        for (int cx = chunkX - 1; cx <= chunkX + 1; cx++) {
-            for (int cz = chunkZ - 1; cz <= chunkZ + 1; cz++) {
-                LevelChunk chunk = serverLevel.getChunk(cx, cz);
-                int minY = serverLevel.getMinBuildHeight();
-                int maxY = serverLevel.getMaxBuildHeight();
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        for (int y = minY; y < maxY; y++) {
-                            BlockState state = chunk.getBlockState(new BlockPos(cx * 16 + x, y, cz * 16 + z));
-                            if (state.isAir()) continue;
-                            blocksScanned++;
-                            categorise(state, counts);
-                        }
-                    }
-                }
-            }
-        }
+		OreScannerData data = OreScannerData.create(
+			newScan.getResults(stack.get(TFDataComponents.ORE_FILTER)),
+			newScan.centerChunkPos(),
+			newScan.getVolume(level),
+			getRange(stack)
+		);
+		stack.set(TFDataComponents.ORE_DATA, data);
+		stack.set(TFDataComponents.ORE_SCANNER_DATA, data);
+		stack.remove(TFDataComponents.ORE_LOADING);
+		stack.remove(TFDataComponents.ORE_SCANNING);
+	}
 
-        player.displayClientMessage(
-            Component.translatable("message.codex_twilight.ore_meter.header", blocksScanned).withStyle(ChatFormatting.GOLD), false);
-        if (counts.isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.codex_twilight.ore_meter.no_ores").withStyle(ChatFormatting.GRAY), false);
-        } else {
-            counts.entrySet().stream()
-                    .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
-                    .forEach(entry -> player.displayClientMessage(
-                    Component.translatable("message.codex_twilight.ore_meter.entry",
-                            Component.translatable("message.codex_twilight.ore_meter.category." + entry.getKey()),
-                            entry.getValue())
-                                    .withStyle(ChatFormatting.AQUA), false));
-        }
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+		if (!(player instanceof ServerPlayer) && !level.isClientSide()) {
+			return InteractionResultHolder.fail(stack);
+		}
+		if (isLoading(stack)) {
+			return InteractionResultHolder.pass(stack);
+		}
+		return player.isSecondaryUseActive() ? toggleRange(level, player, stack) : beginScanning(level, player, stack);
+	}
 
-        serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
-                TFSounds.ORE_METER_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
+	@NotNull
+	private static InteractionResultHolder<ItemStack> beginScanning(Level level, Player player, ItemStack stack) {
+		if (!level.isClientSide()) {
+			int range = getRange(stack);
+			int scanTime = LOAD_TIME + range * 25;
+			stack.set(TFDataComponents.ORE_SCANNING, OreScannerComponent.scanFromCenter(player.blockPosition(), range, scanTime));
+			stack.remove(TFDataComponents.ORE_DATA);
+			stack.remove(TFDataComponents.ORE_SCANNER_DATA);
+		}
+		level.playSound(player, player.blockPosition(), TFSounds.ORE_METER_CRACKLE, SoundSource.PLAYERS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
+		return InteractionResultHolder.pass(stack);
+	}
 
-        if (player instanceof net.minecraft.server.level.ServerPlayer sp && !player.getAbilities().instabuild) {
-            stack.hurtAndBreak(1, serverLevel, sp, removed -> {});
-        }
-        player.getCooldowns().addCooldown(this, 100);
-        return InteractionResultHolder.success(stack);
-    }
+	@NotNull
+	private static InteractionResultHolder<ItemStack> toggleRange(Level level, Player player, ItemStack stack) {
+		HitResult result = getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
+		if (result.getType() == HitResult.Type.MISS) {
+			if (!level.isClientSide()) {
+				int newRange = Mth.positiveModulo(getRange(stack) + 1, MAX_CHUNK_SEARCH_RANGE + 1);
+				stack.set(TFDataComponents.ORE_RANGE, newRange);
+				player.displayClientMessage(Component.translatable("misc.twilightforest.ore_meter_new_range", newRange), true);
+				level.playSound(null, player.blockPosition(), SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.25F, 0.75F + newRange * 0.1F);
+			}
+			return InteractionResultHolder.success(stack);
+		}
+		return InteractionResultHolder.pass(stack);
+	}
 
-    private static void categorise(BlockState state, Map<String, Integer> counts) {
-        addIfMatches(state, BlockTags.COAL_ORES, "coal_ores", counts);
-        addIfMatches(state, BlockTags.IRON_ORES, "iron_ores", counts);
-        addIfMatches(state, BlockTags.GOLD_ORES, "gold_ores", counts);
-        addIfMatches(state, BlockTags.DIAMOND_ORES, "diamond_ores", counts);
-        addIfMatches(state, BlockTags.EMERALD_ORES, "emerald_ores", counts);
-        addIfMatches(state, BlockTags.LAPIS_ORES, "lapis_ores", counts);
-        addIfMatches(state, BlockTags.REDSTONE_ORES, "redstone_ores", counts);
-        addIfMatches(state, BlockTags.COPPER_ORES, "copper_ores", counts);
-    }
+	@Override
+	public InteractionResult useOn(UseOnContext context) {
+		ItemStack stack = context.getItemInHand();
+		if (context.isSecondaryUseActive()) {
+			BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+			if (state.is(BlockTagGenerator.ORE_METER_TARGETABLE)) {
+				stack.set(TFDataComponents.ORE_FILTER, state.getBlock());
+				Player player = context.getPlayer();
+				if (player != null) {
+					player.displayClientMessage(Component.translatable("misc.twilightforest.ore_meter_set_block", Component.translatable(state.getBlock().getDescriptionId())), true);
+					context.getLevel().playSound(player, player.blockPosition(), TFSounds.ORE_METER_TARGET_BLOCK, SoundSource.PLAYERS, 0.5F, context.getLevel().getRandom().nextFloat() * 0.1F + 0.9F);
+				}
+				return InteractionResult.SUCCESS;
+			}
+		}
+		return super.useOn(context);
+	}
 
-    private static void addIfMatches(BlockState state, TagKey<Block> tag, String key, Map<String, Integer> counts) {
-        if (state.is(tag)) counts.merge(key, 1, Integer::sum);
-    }
+	@Override
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		Block block = stack.get(TFDataComponents.ORE_FILTER);
+		if (block != null) {
+			tooltip.add(Component.translatable("misc.twilightforest.ore_meter_targeted_block", block.getDescriptionId()).withStyle(ChatFormatting.GRAY));
+		}
+		super.appendHoverText(stack, context, tooltip, flag);
+	}
+
+	public static boolean isLoading(ItemStack stack) {
+		return stack.has(TFDataComponents.ORE_LOADING);
+	}
+
+	public static int getLoadProgress(ItemStack stack) {
+		return stack.getOrDefault(TFDataComponents.ORE_LOADING, 0);
+	}
+
+	public static @NotNull Integer getRange(ItemStack stack) {
+		return stack.getOrDefault(TFDataComponents.ORE_RANGE, 1);
+	}
 }

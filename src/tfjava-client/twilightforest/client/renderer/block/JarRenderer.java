@@ -34,7 +34,7 @@ public class JarRenderer<T extends BlockEntity> implements BlockEntityRenderer<T
 	}
 
 	protected void renderContents(MasonJarBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-		ItemStack stack = blockEntity.getStored();
+		ItemStack stack = blockEntity.getItemHandler().getItem();
 		if (stack.isEmpty()) {
 			return;
 		}

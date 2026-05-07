@@ -10,12 +10,10 @@ public class MazeSlimeBlock extends SlimeBlock {
         super(properties);
     }
 
-    @Override
     public boolean canStickTo(BlockState state, BlockState other) {
         return other.is(TFBlocks.MAZE_SLIME_BLOCK.get()) || other.is(BlockTagGenerator.MAZESTONE);
     }
 
-    @Override
     public boolean isStickyBlock(BlockState state) {
         return true;
     }

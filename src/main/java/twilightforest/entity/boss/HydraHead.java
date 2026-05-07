@@ -13,62 +13,80 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import twilightforest.TwilightForestMod;
 
+/**
+ * 1:1 port of upstream {@code twilightforest.entity.boss.HydraHead} — single
+ * Hydra head sub-entity with synced mouth-open lerp + state byte for the
+ * {@link HydraHeadContainer.State} enum. The state syncher lets the client
+ * particle/animation pipeline see what the head is doing without needing the
+ * full HeadContainer state machine on client.
+ */
 public class HydraHead extends HydraPart {
-    public static final ResourceLocation RENDERER = TwilightForestMod.prefix("hydra_head");
 
-    private static final EntityDataAccessor<Float> DATA_MOUTH_POSITION = SynchedEntityData.defineId(HydraHead.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DATA_MOUTH_POSITION_LAST = SynchedEntityData.defineId(HydraHead.class, EntityDataSerializers.FLOAT);
+	public static final ResourceLocation RENDERER = TwilightForestMod.prefix("hydra_head");
 
-    private final int index;
+	private static final EntityDataAccessor<Float> DATA_MOUTH_POSITION = SynchedEntityData.defineId(HydraHead.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> DATA_MOUTH_POSITION_LAST = SynchedEntityData.defineId(HydraHead.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Byte> DATA_STATE = SynchedEntityData.defineId(HydraHead.class, EntityDataSerializers.BYTE);
 
-    public HydraHead(Hydra hydra, int index) {
-        super(hydra, 4.0F, 4.0F);
-        this.index = index;
-    }
+	public HydraHead(Hydra hydra) {
+		super(hydra, 4F, 4F);
+	}
 
-    @Override
-    public ResourceLocation renderer() {
-        return RENDERER;
-    }
+	public ResourceLocation renderer() {
+		return RENDERER;
+	}
 
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_MOUTH_POSITION, 0.0F);
-        builder.define(DATA_MOUTH_POSITION_LAST, 0.0F);
-    }
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_MOUTH_POSITION, 0F);
+		builder.define(DATA_MOUTH_POSITION_LAST, 0F);
+		builder.define(DATA_STATE, (byte) 0);
+	}
 
-    public int getIndex() {
-        return this.index;
-    }
+	public float getMouthOpen() {
+		return this.getEntityData().get(DATA_MOUTH_POSITION);
+	}
 
-    public float getMouthOpen() {
-        return this.getEntityData().get(DATA_MOUTH_POSITION);
-    }
+	public float getMouthOpenLast() {
+		return this.getEntityData().get(DATA_MOUTH_POSITION_LAST);
+	}
 
-    public float getMouthOpenLast() {
-        return this.getEntityData().get(DATA_MOUTH_POSITION_LAST);
-    }
+	public HydraHeadContainer.State getState() {
+		return HydraHeadContainer.State.values()[this.getEntityData().get(DATA_STATE)];
+	}
 
-    public void setMouthOpen(float openness) {
-        this.getEntityData().set(DATA_MOUTH_POSITION_LAST, this.getMouthOpen());
-        this.getEntityData().set(DATA_MOUTH_POSITION, openness);
-    }
+	public void setMouthOpen(float openness) {
+		this.getEntityData().set(DATA_MOUTH_POSITION_LAST, getMouthOpen());
+		this.getEntityData().set(DATA_MOUTH_POSITION, openness);
+	}
 
-    @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        Component tagName = stack.get(DataComponents.CUSTOM_NAME);
-        if (stack.is(Items.NAME_TAG) && tagName != null) {
-            if (!this.level().isClientSide() && this.isAlive()) {
-                this.setCustomName(tagName);
-                this.getParent().setHeadNameFor(this.index, tagName.getString());
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-            }
-            return InteractionResult.sidedSuccess(this.level().isClientSide());
-        }
-        return super.interact(player, hand);
-    }
+	public void setState(HydraHeadContainer.State state) {
+		this.getEntityData().set(DATA_STATE, (byte) state.ordinal());
+	}
+
+	@Override
+	public InteractionResult interact(Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+		Component tagName = stack.get(DataComponents.CUSTOM_NAME);
+		if (stack.is(Items.NAME_TAG) && tagName != null) {
+			if (!this.level().isClientSide() && this.isAlive()) {
+				this.setCustomName(tagName);
+				stack.shrink(1);
+
+				// Save name to main hydra.
+				Hydra hydra = this.getParent();
+				if (hydra != null && hydra.hc != null) {
+					for (int i = 0; i < Hydra.MAX_HEADS; i++) {
+						if (hydra.hc[i] != null && hydra.hc[i].headEntity == this) {
+							hydra.setHeadNameFor(i, tagName.getString());
+						}
+					}
+				}
+			}
+
+			return InteractionResult.sidedSuccess(this.level().isClientSide());
+		}
+		return super.interact(player, hand);
+	}
 }

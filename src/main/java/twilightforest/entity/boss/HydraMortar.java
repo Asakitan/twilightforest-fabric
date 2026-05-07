@@ -1,150 +1,196 @@
 package twilightforest.entity.boss;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import twilightforest.data.tags.BlockTagGenerator;
 import twilightforest.init.TFDamageTypes;
-import twilightforest.init.TFEntities;
-import twilightforest.init.TFItemVisuals;
 
-import java.util.List;
+/**
+ * 1:1 port of upstream {@code twilightforest.entity.boss.HydraMortar} — Hydra-head
+ * mortar projectile that lobs a slow gravity-affected explosive ball; a "mega
+ * blast" variant ({@link #setToBlasting()}) detonates with much higher power and
+ * ignores blocks tagged {@link BlockTagGenerator#COMMON_PROTECTIONS}.
+ *
+ * <p>Codex Fabric port note: NeoForge {@code EventHooks.canEntityGrief} → vanilla
+ * {@code GameRules.RULE_MOBGRIEFING} check; upstream's 5-arg
+ * {@code TFDamageTypes.getIndirectEntityDamageSource(level, type, direct, cause,
+ * entityType)} is reduced to codex's 4-arg {@code TFDamageTypes.indirectSource(
+ * level, type, direct, cause)} — entity-type credit attribution is dropped, but
+ * direct/cause attribution still flows correctly so death messages still show the
+ * Hydra as the attacker.</p>
+ */
+public class HydraMortar extends ThrowableProjectile {
 
-public class HydraMortar extends ThrowableProjectile implements ItemSupplier {
-    private static final int BURN_FACTOR = 5;
-    private static final int DIRECT_DAMAGE = 18;
+	private static final int BURN_FACTOR = 5;
+	private static final int DIRECT_DAMAGE = 18;
 
-    public int fuse = 80;
-    private boolean megaBlast;
+	public int fuse = 80;
+	private boolean megaBlast = false;
 
-    public HydraMortar(EntityType<? extends HydraMortar> type, Level level) {
-        super(type, level);
-    }
+	public HydraMortar(EntityType<? extends HydraMortar> type, Level world) {
+		super(type, world);
+	}
 
-    public HydraMortar(Level level, LivingEntity owner) {
-        super(TFEntities.HYDRA_MORTAR.get(), owner, level);
-    }
+	@SuppressWarnings("this-escape")
+	public HydraMortar(EntityType<? extends HydraMortar> type, Level world, HydraHead head) {
+		super(type, head.getParent(), world);
 
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-    }
+		Vec3 vector = head.getLookAngle();
 
-    @Override
-    public void tick() {
-        super.tick();
-        this.makeTrail();
-        if (this.onGround() && !this.level().isClientSide() && this.fuse-- <= 0) {
-            this.detonate();
-        }
-    }
+		double dist = 3.5;
+		double px = head.getX() + vector.x() * dist;
+		double py = head.getY() + 1 + vector.y() * dist;
+		double pz = head.getZ() + vector.z() * dist;
 
-    private void makeTrail() {
-        this.level().addParticle(ParticleTypes.FLAME, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
-    }
+		this.moveTo(px, py, pz, 0, 0);
+		head.setDeltaMovement(Vec3.ZERO);
+		this.shootFromRotation(head, head.getXRot(), head.getYRot(), -20.0F, 0.5F, 1F);
+	}
 
-    public void setToBlasting() {
-        this.megaBlast = true;
-    }
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 
-    @Override
-    protected void onHitBlock(BlockHitResult result) {
-        super.onHitBlock(result);
-        if (this.megaBlast || result.getDirection() != Direction.UP) {
-            this.detonate();
-        } else {
-            this.setDeltaMovement(this.getDeltaMovement().x(), 0.0D, this.getDeltaMovement().z());
-            this.setOnGround(true);
-        }
-    }
+	}
 
-    @Override
-    protected void onHit(HitResult result) {
-        if (result.getType() == HitResult.Type.ENTITY) {
-            this.onHitEntity((EntityHitResult) result);
-        } else if (result.getType() == HitResult.Type.BLOCK) {
-            this.onHitBlock((BlockHitResult) result);
-        }
-    }
+	@Override
+	public void tick() {
+		super.tick();
 
-    @Override
-    protected void onHitEntity(EntityHitResult result) {
-        Entity entity = result.getEntity();
-        if (!this.level().isClientSide() && this.getOwner() != null && !entity.is(this.getOwner()) && !this.isSameOwnerMortar(entity)) {
-            this.detonate();
-        }
-    }
+		if (this.onGround()) {
+			this.getDeltaMovement().multiply(0.9D, 0.9D, 0.9D);
 
-    private boolean isSameOwnerMortar(Entity entity) {
-        return entity instanceof HydraMortar mortar && mortar.getOwner() != null && mortar.getOwner().is(this.getOwner());
-    }
+			if (!this.level().isClientSide() && this.fuse-- <= 0) {
+				this.detonate();
+			}
+		}
+	}
 
-    private void detonate() {
-        if (this.level().isClientSide()) {
-            return;
-        }
-        float power = this.megaBlast ? 4.0F : 0.1F;
-        boolean griefing = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-        this.level().explode(this, this.getX(), this.getY(), this.getZ(), power, griefing, Level.ExplosionInteraction.MOB);
-        for (Entity nearby : this.level().getEntities(this, this.getBoundingBox().inflate(1.0D))) {
-            if (!nearby.is(this.getOwner()) && !this.isSameOwnerMortar(nearby) && nearby.hurt(TFDamageTypes.indirectSource(this.level(), TFDamageTypes.HYDRA_MORTAR, this, this.getOwner()), DIRECT_DAMAGE)) {
-                nearby.igniteForSeconds(BURN_FACTOR);
-            }
-        }
-        this.discard();
-    }
+	public void setToBlasting() {
+		this.megaBlast = true;
+	}
 
-    @Override
-    public boolean hurt(DamageSource source, float amount) {
-        super.hurt(source, amount);
-        if (!this.level().isClientSide() && source.getEntity() != null && !source.is(DamageTypeTags.IS_EXPLOSION)) {
-            Vec3 look = source.getEntity().getLookAngle();
-            this.shoot(look.x(), look.y(), look.z(), 1.5F, 0.1F);
-            this.setOnGround(false);
-            this.fuse += 20;
-            if (source.getEntity() instanceof LivingEntity) {
-                this.setOwner(source.getEntity());
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	protected void onHitBlock(BlockHitResult result) {
+		super.onHitBlock(result);
+		if (!this.megaBlast) {
+			// If we hit a wall, explode.
+			if (result.getDirection() != Direction.UP) this.detonate();
+			// We hit the ground.
+			this.setDeltaMovement(this.getDeltaMovement().x(), 0.0D, this.getDeltaMovement().z());
+			this.setOnGround(true);
+		} else {
+			this.detonate();
+		}
+	}
 
-    @Override
-    public boolean isOnFire() {
-        return true;
-    }
+	@Override
+	protected void onHit(HitResult result) {
+		HitResult.Type hitresult$type = result.getType();
+		if (hitresult$type == HitResult.Type.ENTITY) {
+			this.onHitEntity((EntityHitResult) result);
+		} else if (hitresult$type == HitResult.Type.BLOCK) {
+			this.onHitBlock((BlockHitResult) result);
+		}
+	}
 
-    @Override
-    public boolean isPickable() {
-        return true;
-    }
+	@Override
+	protected void onHitEntity(EntityHitResult result) {
+		Entity entity = result.getEntity();
+		if (!this.level().isClientSide() && this.getOwner() != null) {
+			if ((!(entity instanceof HydraMortar mortar) || mortar.getOwner().is(this.getOwner())) && !entity.is(this.getOwner()) && !this.isPartOfHydra(entity)) {
+				this.detonate();
+			}
+		}
+	}
 
-    @Override
-    public float getPickRadius() {
-        return 1.5F;
-    }
+	private boolean isPartOfHydra(Entity entity) {
+		return this.getOwner() instanceof Hydra && entity instanceof HydraPart part && part.getParent().is(this.getOwner());
+	}
 
-    @Override
-    protected double getDefaultGravity() {
-        return 0.05D;
-    }
+	@Override
+	public float getBlockExplosionResistance(Explosion explosion, BlockGetter getter, BlockPos pos, BlockState state, FluidState fluid, float idk) {
+		float resistance = super.getBlockExplosionResistance(explosion, getter, pos, state, fluid, idk);
 
-    @Override
-    public ItemStack getItem() {
-        return new ItemStack(Items.FIRE_CHARGE);
-    }
+		if (this.megaBlast && !state.is(BlockTagGenerator.COMMON_PROTECTIONS)) {
+			resistance = Math.min(0.8F, resistance);
+		}
+
+		return resistance;
+	}
+
+	private void detonate() {
+		float explosionPower = megaBlast ? 4.0F : 0.1F;
+		// Codex Fabric: NF {@code EventHooks.canEntityGrief(level, this)} → vanilla mobgriefing rule.
+		boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+		this.level().explode(this, this.getX(), this.getY(), this.getZ(), explosionPower, flag, Level.ExplosionInteraction.MOB);
+
+		for (Entity nearby : this.level().getEntities(this, this.getBoundingBox().inflate(1.0D, 1.0D, 1.0D))) {
+			if ((!nearby.fireImmune() || nearby instanceof Hydra || nearby instanceof HydraPart) && nearby.hurt(TFDamageTypes.indirectSource(this.level(), TFDamageTypes.HYDRA_MORTAR, this, this.getOwner()), DIRECT_DAMAGE)) {
+				nearby.igniteForSeconds(BURN_FACTOR);
+			}
+		}
+
+		this.discard();
+	}
+
+	@Override
+	public boolean hurt(DamageSource source, float amount) {
+		super.hurt(source, amount);
+
+		if (source.getEntity() != null && !this.level().isClientSide()) {
+			Vec3 vec3d = source.getEntity().getLookAngle();
+			if (vec3d != null) {
+				// Reflect faster and more accurately.
+				this.shoot(vec3d.x(), vec3d.y(), vec3d.z(), 1.5F, 0.1F);
+				this.setOnGround(false);
+				this.fuse += 20;
+			}
+
+			if (source.getEntity() instanceof LivingEntity) {
+				this.setOwner(source.getEntity());
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isOnFire() {
+		return true;
+	}
+
+	@Override
+	public boolean isPickable() {
+		return true;
+	}
+
+	/**
+	 * We need to set this so that the player can attack and reflect the bolt.
+	 */
+	@Override
+	public float getPickRadius() {
+		return 1.5F;
+	}
+
+	@Override
+	protected double getDefaultGravity() {
+		return 0.05D;
+	}
 }

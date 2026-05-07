@@ -121,9 +121,8 @@ public class MasonJarBlock extends JarBlock implements SimpleWaterloggedBlock {
         return true;
     }
 
-    @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        return level.getBlockEntity(pos) instanceof MasonJarBlockEntity jarBlockEntity ? jarBlockEntity.getStoredLightEmission() : super.getLightEmission(state, level, pos);
+        return level.getBlockEntity(pos) instanceof MasonJarBlockEntity jarBlockEntity ? jarBlockEntity.getStoredLightEmission() : 0;
     }
 
     @Override

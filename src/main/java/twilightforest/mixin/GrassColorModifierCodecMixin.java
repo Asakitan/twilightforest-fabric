@@ -12,14 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import twilightforest.codec.TFGrassColorModifierCodec;
 
 /**
- * Replaces {@link BiomeSpecialEffects.GrassColorModifier#CODEC} with a wrapper that
- * encodes the five Twilight Forest custom enum values (added by
- * {@link twilightforest.asm.CodexGrassColorEarlyRiser}) as their nearest vanilla
- * equivalent, while delegating decode unchanged.
+ * Keeps {@link BiomeSpecialEffects.GrassColorModifier#CODEC} routed through a tiny
+ * Codex hook. The hook now delegates unchanged because the five Twilight Forest
+ * values are real Manningham Mills enum subclasses, not vanilla fallback aliases.
  *
  * <p>This runs after the vanilla {@code <clinit>} so the wrap captures the original
  * codec — which has already enumerated the extended {@code values()} array, including
- * our 5 TF entries — and just adds an encode-side translation layer.</p>
+ * our 5 TF entries.</p>
  *
  * <p>Pair this with the {@code mutable field ... CODEC} entry in
  * {@code codex_twilight.accesswidener}.</p>

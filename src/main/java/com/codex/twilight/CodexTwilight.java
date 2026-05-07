@@ -13,6 +13,7 @@ import twilightforest.init.TFDensityFunctions;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFCaveCarvers;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFAttributes;
 import twilightforest.init.TFFeatureModifiers;
 import twilightforest.init.TFMapDecorations;
 import twilightforest.init.TFParticleTypes;
@@ -62,14 +63,17 @@ public final class CodexTwilight implements ModInitializer {
         TFDataSerializers.bootstrap();
         // F2.8 — register S2C payload type early so it's available before any TF mob hits arrive.
         com.codex.twilight.network.CodexNetworking.bootstrapServer();
+        TFAttributes.bootstrap();
         TFEntities.ARMORED_GIANT.get();
         TFEntities.addEntityAttributes();
         twilightforest.init.TFRecipes.bootstrap();
+        twilightforest.init.custom.TravellersModifierTypes.bootstrap();
         twilightforest.init.TFMenuTypes.bootstrap();
         twilightforest.init.TFAdvancements.bootstrap();
         twilightforest.init.TFStats.bootstrap();
         twilightforest.init.TFItemSubPredicates.bootstrap();
         twilightforest.init.TFLoot.bootstrap();
+        twilightforest.init.TFLootModifiers.bootstrap();
         twilightforest.init.TFMobEffects.bootstrap();
         twilightforest.init.TFEnchantmentEffects.bootstrap();
         twilightforest.events.SkullCandleEvents.bootstrap();
@@ -128,6 +132,9 @@ public final class CodexTwilight implements ModInitializer {
         // avoid one-effect-per-piece collision with the Q32 base buffs.
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (net.minecraft.server.level.ServerPlayer player : server.getPlayerList().getPlayers()) {
+                twilightforest.item.travellers_gear.TravellersGearLogic.travellersWingsSidestepCooldownSound(player);
+                twilightforest.item.travellers_gear.TravellersGearLogic.determineWingState(player);
+
                 // Per-tick: stealth (invisibility-lite), gradual glide clamp.
                 if (twilightforest.init.custom.TravellersModifiersManager.isStealthActive(player)
                         && player.isCrouching()) {

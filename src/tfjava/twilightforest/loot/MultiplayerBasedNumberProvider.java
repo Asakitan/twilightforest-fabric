@@ -3,23 +3,20 @@ package twilightforest.loot;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
+import twilightforest.config.TFConfig;
+import twilightforest.components.entity.MultiplayerInclusivityAttachment;
+import twilightforest.init.TFDataAttachments;
 import twilightforest.init.TFLoot;
 
 import java.util.Set;
 
-/**
- * Fabric port — DI-free, no TFConfig / TFDataAttachments dependency.
- *
- * <p>Codec is identical to upstream so loot-table JSON parses byte-equivalent.
- * The {@link #getFloat} hook is simplified to «always return defaultRolls»;
- * paired-fight multiplayer adjustment is not wired in this server-only port,
- * but parsing succeeds and chests still drop the default loot count.</p>
- */
 public record MultiplayerBasedNumberProvider(NumberProvider rollsPerPlayer, NumberProvider defaultRolls) implements NumberProvider {
     public static final MapCodec<MultiplayerBasedNumberProvider> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             NumberProviders.CODEC.fieldOf("per_player_rolls").forGetter(MultiplayerBasedNumberProvider::rollsPerPlayer),
@@ -32,8 +29,22 @@ public record MultiplayerBasedNumberProvider(NumberProvider rollsPerPlayer, Numb
         return TFLoot.MULTIPLAYER_ROLLS.get();
     }
 
+    public static MultiplayerBasedNumberProvider rollsForPlayers(NumberProvider rollsPerPlayer, NumberProvider defaultRolls) {
+        return new MultiplayerBasedNumberProvider(rollsPerPlayer, defaultRolls);
+    }
+
     @Override
     public float getFloat(LootContext context) {
+        if (TFConfig.multiplayerFightAdjuster.adjustsLootRolls() && context.hasParam(LootContextParams.THIS_ENTITY)) {
+            Entity entity = context.getParam(LootContextParams.THIS_ENTITY);
+            MultiplayerInclusivityAttachment fight = TFDataAttachments.get(entity, TFDataAttachments.MULTIPLAYER_FIGHT);
+            int qualifiedPlayers = fight.getQualifiedPlayers().size();
+            float total = this.defaultRolls.getFloat(context);
+            for (int i = 0; i < qualifiedPlayers - 1; i++) {
+                total += Math.max(0.0F, this.rollsPerPlayer.getFloat(context));
+            }
+            return total;
+        }
         return this.defaultRolls.getFloat(context);
     }
 

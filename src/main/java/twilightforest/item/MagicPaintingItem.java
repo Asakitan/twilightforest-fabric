@@ -45,8 +45,8 @@ public class MagicPaintingItem extends CodexItem {
         ItemStack stack = player.getItemInHand(hand);
         int currentCmd = stack.has(DataComponents.CUSTOM_MODEL_DATA)
                 ? stack.get(DataComponents.CUSTOM_MODEL_DATA).value()
-                : MagicPaintingVariants.DEFAULT.cmd();
-        MagicPaintingVariants.Variant next = MagicPaintingVariants.nextAfter(currentCmd);
+                : MagicPaintingVariants.Legacy.DEFAULT.cmd();
+        MagicPaintingVariants.Legacy.Variant next = MagicPaintingVariants.Legacy.nextAfter(currentCmd);
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(next.cmd()));
         if (!level.isClientSide()) {
             player.displayClientMessage(

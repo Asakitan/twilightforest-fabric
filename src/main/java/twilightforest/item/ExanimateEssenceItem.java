@@ -1,37 +1,20 @@
 package twilightforest.item;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CandleBlock;
-import net.minecraft.world.level.block.SoulFireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import twilightforest.block.OminousCandleBlock;
+import twilightforest.init.TFBlocks;
+import twilightforest.init.TFSounds;
 
-/**
- * Q38 simplified port of TF {@code ExanimateEssenceItem}.
- *
- * <p>TF original morphs vanilla lit candles into custom {@code OminousCandleBlock}
- * variants and places {@code OminousFireBlock} on replaceable surfaces. Porting
- * those needs new block types + a candle→ominous-candle map per dye colour
- * (16+1 vanilla candle subclasses) — heavyweight.</p>
- *
- * <p>This Fabric port keeps the *gameplay shape* with vanilla blocks: clicking
- * a lit vanilla candle surrounds it with a purple SOUL_FIRE_FLAME particle
- * burst (audible-only ominous mark). Clicking a replaceable surface places
- * a vanilla {@link SoulFireBlock} (purple flame block, identical visual to
- * what the TF original called "ominous fire"). Either path consumes 1 essence
- * + plays the ominous-fire sound.</p>
- */
 public class ExanimateEssenceItem extends CodexItem {
 
     public ExanimateEssenceItem(Properties properties, Item fallback) {
@@ -41,45 +24,37 @@ public class ExanimateEssenceItem extends CodexItem {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        BlockState state = level.getBlockState(pos);
-
-        boolean acted = false;
-
-        if (state.getBlock() instanceof CandleBlock && state.getValue(CandleBlock.LIT)) {
-            if (level instanceof ServerLevel sl) {
-                for (int i = 0; i < 18; i++) {
-                    sl.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
-                            pos.getX() + 0.5D + (sl.getRandom().nextFloat() - 0.5F) * 0.6D,
-                            pos.getY() + 0.7D + sl.getRandom().nextFloat() * 0.5D,
-                            pos.getZ() + 0.5D + (sl.getRandom().nextFloat() - 0.5F) * 0.6D,
-                            1, 0, 0.02, 0, 0.0);
-                }
-            }
-            playSound(level, pos);
-            acted = true;
+        BlockPos blockPos = context.getClickedPos();
+        boolean flag = false;
+        BlockState state = level.getBlockState(blockPos);
+        if (state.getBlock() instanceof CandleBlock candleBlock && OminousCandleBlock.CANDLE_MAP.containsKey(candleBlock) && state.getValue(CandleBlock.LIT)) {
+            this.playSound(level, blockPos);
+            level.setBlockAndUpdate(blockPos, OminousCandleBlock.CANDLE_MAP.get(candleBlock).get().defaultBlockState().setValue(OminousCandleBlock.CANDLES, state.getValue(CandleBlock.CANDLES)));
+            level.gameEvent(context.getPlayer(), GameEvent.BLOCK_PLACE, blockPos);
+            OminousCandleBlock.eruptFlameParticles(level, blockPos, level.getBlockState(blockPos));
+            flag = true;
         } else {
-            BlockPos placePos = pos.relative(context.getClickedFace());
-            BlockState here = level.getBlockState(placePos);
-            BlockState soulFire = Blocks.SOUL_FIRE.defaultBlockState();
-            if (here.canBeReplaced() && soulFire.canSurvive(level, placePos)) {
-                level.setBlock(placePos, soulFire, Block.UPDATE_ALL);
-                level.gameEvent(context.getPlayer(), GameEvent.BLOCK_PLACE, placePos);
-                playSound(level, placePos);
-                acted = true;
+            blockPos = blockPos.relative(context.getClickedFace());
+            state = level.getBlockState(blockPos);
+            BlockState fireState = TFBlocks.OMINOUS_FIRE.get().defaultBlockState();
+
+            if (state.canBeReplaced() && fireState.canSurvive(level, blockPos)) {
+                this.playSound(level, blockPos);
+                level.setBlock(blockPos, fireState, Block.UPDATE_ALL);
+                level.gameEvent(context.getPlayer(), GameEvent.BLOCK_PLACE, blockPos);
+                flag = true;
             }
         }
 
-        if (!acted) return InteractionResult.PASS;
-        ItemStack stack = context.getItemInHand();
-        if (context.getPlayer() == null || !context.getPlayer().getAbilities().instabuild) {
-            stack.shrink(1);
+        if (flag) {
+            context.getItemInHand().shrink(1);
+            return InteractionResult.sidedSuccess(level.isClientSide());
         }
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.FAIL;
     }
 
-    private static void playSound(Level level, BlockPos pos) {
-        level.playSound(null, pos, SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS,
-                1.5F, (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F + 0.75F);
+    private void playSound(Level level, BlockPos pos) {
+        RandomSource random = level.getRandom();
+        level.playSound(null, pos, TFSounds.OMINOUS_FIRE, SoundSource.BLOCKS, 1.5F, (random.nextFloat() - random.nextFloat()) * 0.2F + 0.75F);
     }
 }

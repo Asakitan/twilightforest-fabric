@@ -3,7 +3,6 @@ package twilightforest.entity.passive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,14 +20,11 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -36,7 +32,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -44,12 +39,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import twilightforest.loot.TFLootTables;
+import twilightforest.entity.ai.goal.QuestRamEatWoolGoal;
 import twilightforest.init.TFSounds;
-
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
+import twilightforest.loot.TFLootTables;
 
 public class QuestRam extends Animal {
     private static final EntityDataAccessor<Integer> DATA_COLOR_FLAGS =
@@ -107,6 +99,14 @@ public class QuestRam extends Animal {
     @Override
     public boolean isFood(ItemStack stack) {
         return false;
+    }
+
+    public boolean isItemTempting(ItemStack stack) {
+        if (!stack.is(ItemTags.WOOL)) {
+            return false;
+        }
+        DyeColor color = this.guessColor(stack);
+        return color != null && !this.isColorPresent(color);
     }
 
     @Nullable
@@ -273,63 +273,6 @@ public class QuestRam extends Animal {
         this.setRewarded(tag.getBoolean("Rewarded"));
         if (tag.contains("HomeX")) {
             this.setRestrictionPoint(GlobalPos.of(this.level().dimension(), new BlockPos(tag.getInt("HomeX"), tag.getInt("HomeY"), tag.getInt("HomeZ"))));
-        }
-    }
-
-    static class QuestRamEatWoolGoal extends Goal {
-        private final QuestRam ram;
-        private final PathNavigation navigation;
-        @Nullable
-        private ItemEntity targetItem;
-
-        QuestRamEatWoolGoal(QuestRam ram) {
-            this.ram = ram;
-            this.navigation = ram.getNavigation();
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            List<ItemEntity> items = this.ram.level().getEntitiesOfClass(ItemEntity.class, this.ram.getBoundingBox().inflate(16.0D), item -> (item.onGround() || item.isInWater()) && item.isAlive() && !item.getItem().isEmpty() && this.ram.hasLineOfSight(item) && this.isTempting(item.getItem()));
-            items.sort(Comparator.comparingDouble(this.ram::distanceToSqr));
-            if (!items.isEmpty()) {
-                this.targetItem = items.get(0);
-                return true;
-            }
-            return false;
-        }
-
-        private boolean isTempting(ItemStack stack) {
-            if (stack.is(ItemTags.WOOL)) {
-                DyeColor color = this.ram.guessColor(stack);
-                return color != null && !this.ram.isColorPresent(color);
-            }
-            return false;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return this.ram.isAlive() && !this.navigation.isStuck() && !this.navigation.isDone() && this.targetItem != null && this.targetItem.isAlive() && this.isTempting(this.targetItem.getItem());
-        }
-
-        @Override
-        public void start() {
-            if (this.targetItem != null) {
-                this.navigation.stop();
-                this.ram.getLookControl().setLookAt(this.targetItem, this.ram.getMaxHeadYRot() + 20, this.ram.getMaxHeadXRot());
-                this.navigation.moveTo(this.targetItem, 1.0D);
-            }
-        }
-
-        @Override
-        public void tick() {
-            if (!this.ram.level().isClientSide() && this.targetItem != null && this.isTempting(this.targetItem.getItem())) {
-                this.ram.getLookControl().setLookAt(this.targetItem, this.ram.getMaxHeadYRot() + 20, this.ram.getMaxHeadXRot());
-                if (this.ram.distanceToSqr(this.targetItem.position()) < 6.25D && this.ram.tryAccept(this.targetItem.getItem())) {
-                    this.targetItem.discard();
-                    this.ram.gameEvent(GameEvent.EAT);
-                }
-            }
         }
     }
 }

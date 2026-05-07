@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -84,6 +85,15 @@ public class LifedrainScepterItem extends CodexItem {
             }
         }
         return best;
+    }
+
+    public static void animateTargetShatter(ServerLevel level, Entity target) {
+        level.sendParticles(ParticleTypes.SOUL,
+                target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                24, target.getBbWidth() * 0.35D, target.getBbHeight() * 0.35D, target.getBbWidth() * 0.35D, 0.02D);
+        level.sendParticles(ParticleTypes.POOF,
+                target.getX(), target.getY() + target.getBbHeight() * 0.5D, target.getZ(),
+                16, target.getBbWidth() * 0.25D, target.getBbHeight() * 0.25D, target.getBbWidth() * 0.25D, 0.01D);
     }
 
     @SuppressWarnings("unused")

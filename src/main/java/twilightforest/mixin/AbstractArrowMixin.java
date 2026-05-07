@@ -1,14 +1,23 @@
 package twilightforest.mixin;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import twilightforest.init.custom.TravellersModifiersManager;
+import twilightforest.item.EnderBowItem;
 
 import java.util.List;
 
@@ -20,6 +29,7 @@ import java.util.List;
  */
 @Mixin(AbstractArrow.class)
 public abstract class AbstractArrowMixin {
+    private static final TagKey<EntityType<?>> CODEX_TWILIGHT_COMMON_BOSSES = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "bosses"));
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void codex_twilight$arrowMagnetism(CallbackInfo ci) {
@@ -69,5 +79,49 @@ public abstract class AbstractArrowMixin {
         Vec3 currentDir = currentMotion.normalize();
         Vec3 blended = currentDir.scale(0.95D).add(toTarget.scale(0.05D)).normalize().scale(speed);
         self.setDeltaMovement(blended);
+    }
+
+    @Inject(method = "onHitEntity", at = @At("TAIL"))
+    private void codex_twilight$enderBowSwap(EntityHitResult result, CallbackInfo ci) {
+        AbstractArrow self = (AbstractArrow) (Object) this;
+        if (self.level().isClientSide()) {
+            return;
+        }
+        if (!self.getTags().contains(EnderBowItem.KEY)) {
+            return;
+        }
+        if (!(self.getOwner() instanceof Player player) || !(result.getEntity() instanceof LivingEntity living)) {
+            return;
+        }
+        if (player == living || living.getType().is(CODEX_TWILIGHT_COMMON_BOSSES)) {
+            return;
+        }
+
+        double sourceX = player.getX();
+        double sourceY = player.getY();
+        double sourceZ = player.getZ();
+        float sourceYaw = player.getYRot();
+        float sourcePitch = player.getXRot();
+        Entity playerVehicle = player.getVehicle();
+
+        player.setYRot(living.getYRot());
+        player.teleportTo(living.getX(), living.getY(), living.getZ());
+        player.invulnerableTime = 40;
+        player.level().broadcastEntityEvent(player, (byte) 46);
+        if (living.isPassenger() && living.getVehicle() != null) {
+            player.startRiding(living.getVehicle(), true);
+            living.stopRiding();
+        }
+        player.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
+
+        living.setYRot(sourceYaw);
+        living.setXRot(sourcePitch);
+        living.teleportTo(sourceX, sourceY, sourceZ);
+        living.level().broadcastEntityEvent(living, (byte) 46);
+        if (playerVehicle != null) {
+            living.startRiding(playerVehicle, true);
+            player.stopRiding();
+        }
+        living.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
     }
 }

@@ -1,6 +1,7 @@
 package twilightforest.entity.monster;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -27,13 +28,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import twilightforest.entity.SpikeBlock;
+import twilightforest.entity.TFPart;
+import twilightforest.entity.ai.goal.ThrowSpikeBlockGoal;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFSounds;
 
 import java.util.EnumSet;
 import java.util.List;
 
-public class BlockChainGoblin extends Monster {
+public class BlockChainGoblin extends Monster implements TFPart.Owner {
     private static final float CHAIN_SPEED = 16.0F;
     private static final double SPIKE_SIZE = 0.75D;
 
@@ -42,16 +46,25 @@ public class BlockChainGoblin extends Monster {
     private static final EntityDataAccessor<Boolean> IS_THROWING = SynchedEntityData.defineId(BlockChainGoblin.class, EntityDataSerializers.BOOLEAN);
 
     private int recoilCounter;
-    private int throwCooldown = 60;
     private float chainAngle;
     private float chainMoveLength;
     private Vec3 spikePosition = Vec3.ZERO;
     private Vec3 chainPart1 = Vec3.ZERO;
     private Vec3 chainPart2 = Vec3.ZERO;
     private Vec3 chainPart3 = Vec3.ZERO;
+    public final SpikeBlock block;
+    private final MultipartGenericsAreDumb[] partsArray;
 
     public BlockChainGoblin(EntityType<? extends BlockChainGoblin> type, Level level) {
         super(type, level);
+        this.block = new SpikeBlock(this);
+        this.partsArray = new MultipartGenericsAreDumb[]{this.block};
+    }
+
+    public static abstract class MultipartGenericsAreDumb extends TFPart<Entity> {
+        public MultipartGenericsAreDumb(Entity parent) {
+            super(parent);
+        }
     }
 
     public static AttributeSupplier.Builder registerAttributes() {
@@ -74,6 +87,7 @@ public class BlockChainGoblin extends Monster {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new AvoidTntGoal(this));
+        this.goalSelector.addGoal(4, new ThrowSpikeBlockGoal(this, this.block));
         this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -85,36 +99,22 @@ public class BlockChainGoblin extends Monster {
     @Override
     public void tick() {
         super.tick();
+        this.block.tick();
         if (this.recoilCounter > 0) {
             --this.recoilCounter;
         }
         this.chainAngle = this.level().isClientSide() ? this.getSyncedChainAngle() : (this.chainAngle + CHAIN_SPEED) % 360.0F;
         this.updateChainPositions();
+        this.block.setPos(this.spikePosition.x(), this.spikePosition.y(), this.spikePosition.z());
+        this.block.setYRot(this.level().isClientSide() ? this.getSyncedChainAngle() : this.chainAngle);
         this.chainMove();
 
         if (!this.level().isClientSide()) {
             this.getEntityData().set(DATA_CHAIN_LENGTH, (byte) Math.floor(this.getChainLength() * 127.0F));
             this.getEntityData().set(DATA_CHAIN_POS, (byte) Math.floor(this.chainAngle / 360.0F * 255.0F));
-            this.tickChainAttack();
             if (this.isAlive() && (this.isThrowing() || this.isSwingingChain())) {
                 this.applyBlockCollisions();
             }
-        }
-    }
-
-    private void tickChainAttack() {
-        LivingEntity target = this.getTarget();
-        if (target == null || !target.isAlive()) {
-            return;
-        }
-        if (this.throwCooldown > 0) {
-            --this.throwCooldown;
-            return;
-        }
-        if (!this.isThrowing() && this.distanceToSqr(target) <= 42.0D && this.hasLineOfSight(target) && this.getRandom().nextInt(56) == 0) {
-            this.setThrowing(true);
-            this.throwCooldown = 100 + this.getRandom().nextInt(100);
-            this.gameEvent(GameEvent.PROJECTILE_SHOOT);
         }
     }
 
@@ -280,7 +280,6 @@ public class BlockChainGoblin extends Monster {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("IsThrowing", this.isThrowing());
-        tag.putInt("ThrowCooldown", this.throwCooldown);
         tag.putInt("Recoil", this.recoilCounter);
     }
 
@@ -288,7 +287,6 @@ public class BlockChainGoblin extends Monster {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.setThrowing(tag.getBoolean("IsThrowing"));
-        this.throwCooldown = tag.getInt("ThrowCooldown");
         this.recoilCounter = tag.getInt("Recoil");
     }
 
@@ -325,5 +323,16 @@ public class BlockChainGoblin extends Monster {
                 this.goblin.getNavigation().moveTo(this.goblin.getX() + away.x(), this.goblin.getY(), this.goblin.getZ() + away.z(), this.goblin.distanceToSqr(this.nearestTnt) < 4.0D ? 2.0D : 1.0D);
             }
         }
+    }
+
+    @Override
+    public MultipartGenericsAreDumb[] getParts() {
+        return this.partsArray;
+    }
+
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        TFPart.assignPartIDs(this);
     }
 }

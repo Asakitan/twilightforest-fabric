@@ -74,8 +74,8 @@ import java.util.Optional;
  *   <li>{@code canConnectRedstone(... Direction ...)} → method retained without @Override.
  *       Upstream NF method; Fabric BlockBehaviour doesn't provide it. Kept 1:1 in source so a
  *       future Fabric mixin/RedstoneConnectabilityRegistry-style integration can re-attach.</li>
- *   <li>{@code TFSounds.CANDELABRA_LIGHT.get()} → codex direct field.</li>
- *   <li>{@code TFParticleType.X.get()} → codex direct field.</li>
+ *   <li>{@code TFSounds.CANDELABRA_LIGHT} → codex direct field.</li>
+ *   <li>{@code TFParticleType.X} → codex direct field.</li>
  * </ul>
  */
 @SuppressWarnings("deprecation")

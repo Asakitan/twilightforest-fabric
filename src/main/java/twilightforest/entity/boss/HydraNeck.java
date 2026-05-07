@@ -6,35 +6,28 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import twilightforest.TwilightForestMod;
 
+/**
+ * 1:1 port of upstream {@code twilightforest.entity.boss.HydraNeck} — neck
+ * segment hitbox between the body and a {@link HydraHead}. Forwards
+ * right-click interaction to the head so name-tagging works on any segment.
+ */
 public class HydraNeck extends HydraPart {
-    public static final ResourceLocation RENDERER = TwilightForestMod.prefix("hydra_neck");
 
-    public final HydraHead head;
-    private final int headIndex;
-    private final int segmentIndex;
+	public static final ResourceLocation RENDERER = TwilightForestMod.prefix("hydra_neck");
 
-    public HydraNeck(HydraHead head, int headIndex, int segmentIndex) {
-        super(head.getParent(), 2.0F, 2.0F);
-        this.head = head;
-        this.headIndex = headIndex;
-        this.segmentIndex = segmentIndex;
-    }
+	public final HydraHead head;
 
-    @Override
-    public ResourceLocation renderer() {
-        return RENDERER;
-    }
+	public HydraNeck(HydraHead head) {
+		super(head.getParent(), 2F, 2F);
+		this.head = head;
+	}
 
-    public int getHeadIndex() {
-        return this.headIndex;
-    }
+	@Override
+	public InteractionResult interact(Player player, InteractionHand hand) {
+		return this.head.interact(player, hand);
+	}
 
-    public int getSegmentIndex() {
-        return this.segmentIndex;
-    }
-
-    @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
-        return this.head.interact(player, hand);
-    }
+	public ResourceLocation renderer() {
+		return RENDERER;
+	}
 }

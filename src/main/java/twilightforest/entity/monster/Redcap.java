@@ -31,7 +31,13 @@ import twilightforest.init.TFSounds;
 import java.util.List;
 
 public class Redcap extends Monster {
-    protected ItemStack heldPick = TFItemVisuals.withModel(new ItemStack(Items.IRON_PICKAXE), TFItemVisuals.STEELEAF_PICKAXE);
+    public ItemStack heldPick = TFItemVisuals.withModel(new ItemStack(Items.IRON_PICKAXE), TFItemVisuals.STEELEAF_PICKAXE);
+    /** Stack of TNT the redcap can plant near hostile targets. Initially holds 1 TNT;
+     * decremented to empty when consumed by {@link twilightforest.entity.ai.goal.RedcapPlantTNTGoal}. */
+    public ItemStack heldTNT = new ItemStack(Items.TNT);
+    /** Flint & steel the redcap swaps in when it lights pre-existing TNT (used by
+     * {@link twilightforest.entity.ai.goal.RedcapLightTNTGoal}). */
+    public ItemStack heldFlint = new ItemStack(Items.FLINT_AND_STEEL);
     protected int tntLeft = 1;
 
     public Redcap(EntityType<? extends Redcap> type, Level level) {
