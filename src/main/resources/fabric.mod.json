@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "codex_twilight",
+  "version": "0.1.0",
+  "name": "Codex Twilight",
+  "description": "Twilight Forest content for Arclight: dimension/biome/structure backports plus paired Fabric client renderers, block-entity renderers, particles, sounds, and assets. The server and client both load this jar so Twilight registry ids sync directly without server-side paired-client disguises.",
+  "authors": [
+    "Codex"
+  ],
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.codex.twilight.CodexTwilight"
+    ],
+    "client": [
+      "com.codex.twilight.client.CodexTwilightClient"
+    ],
+    "mm_shedaniel:early_risers": [
+      "twilightforest.asm.CodexGrassColorEarlyRiser"
+    ],
+    "_codex_phase_note": [
+      "Phase 1 currently lands GrassColor 1:1 visually via codec-side decode swap (TFGrassColorModifierCodec) instead of MM enum extension, because the runtime `BiomeSpecialEffects$GrassColorModifier` constructor takes (String, ColorModifier) and the ColorModifier inner interface cannot be Class.forName'd during MM preApply transformation. The CodexGrassColorEarlyRiser entrypoint stays declared so Phase 2 can iterate on it once the timing/Proxy approach is fixed; for now the entrypoint runs and silently no-ops the addEnum calls if the class lookup fails."
+    ]
+  },
+  "accessWidener": "codex_twilight.accesswidener",
+  "mixins": [
+    "codex_twilight.mixins.json"
+  ],
+  "depends": {
+    "fabric-api-base": "*",
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.21.1"
+  },
+  "suggests": {
+    "mythicmobs": "*",
+    "mm_shedaniel": "*"
+  }
+}

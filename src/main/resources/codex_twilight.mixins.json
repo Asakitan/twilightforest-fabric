@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "twilightforest.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlayerMixin",
+    "LivingEntityMixin",
+    "AbstractArrowMixin",
+    "GrassColorModifierCodecMixin"
+  ],
+  "client": [
+    "client.LevelRendererMultipartMixin",
+    "client.EntityRenderDispatcherMultipartMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

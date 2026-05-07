@@ -1,0 +1,743 @@
+package twilightforest.init;
+
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.block.Block;
+import twilightforest.TwilightForestMod;
+import twilightforest.item.CodexArmorItem;
+import twilightforest.item.CodexDiggerItem;
+import twilightforest.item.CodexItem;
+import twilightforest.item.CodexSwordItem;
+import twilightforest.item.CharmOfKeepingItem;
+import twilightforest.item.CharmOfLifeItem;
+import twilightforest.item.CrumbleHornItem;
+import twilightforest.item.CubeOfAnnihilationItem;
+import twilightforest.item.FortificationWandItem;
+import twilightforest.item.IceBombItem;
+import twilightforest.item.LifedrainScepterItem;
+import twilightforest.item.MagicBeansItem;
+import twilightforest.item.MoonwormQueenItem;
+import twilightforest.item.TransformPowderItem;
+import twilightforest.item.BlockAndChainItem;
+import twilightforest.item.BrittleFlaskItem;
+import twilightforest.item.EssenceBerryItem;
+import twilightforest.item.ExanimateEssenceItem;
+import twilightforest.item.GlassSwordItem;
+import twilightforest.item.MazebreakerPickItem;
+import twilightforest.item.MinotaurAxeItem;
+import twilightforest.item.TravellersGogglesItem;
+import twilightforest.item.OreMagnetItem;
+import twilightforest.item.OreMeterItem;
+import twilightforest.item.PeacockFanItem;
+import twilightforest.item.MagicPaintingItem;
+import twilightforest.item.TravellersArmorPieceItem;
+import twilightforest.item.EnderBowItem;
+import twilightforest.item.IceBowItem;
+import twilightforest.item.LampOfCindersItem;
+import twilightforest.item.MagicMapItem;
+import twilightforest.item.SeekerBowItem;
+import twilightforest.item.TripleBowItem;
+import twilightforest.item.TwilightWandItem;
+import twilightforest.item.ZombieScepterItem;
+
+/**
+ * Real paired-client item registrations. For paired-client clients the
+ * raw {@code twilightforest:*} item id syncs over and the paired client mod
+ * supplies the official model. For vanilla clients each item falls back to a sensible
+ * vanilla equivalent stamped with the matching CMD from {@link TFItemVisuals}.
+ *
+ * <p>Items registered here back the boss-drop loot tables, MythicMobs gear refs,
+ * structure chest loot, and structure-decor item-frame contents that previously
+ * dropped nothing. Adding a new item: pick its {@link TFItemVisuals} CMD, choose
+ * a vanilla fallback (sword→iron_sword, helmet→iron_helmet, food→bread, etc.),
+ * and use the shortest applicable helper below.</p>
+ */
+public final class TFItems {
+    // ====== Resources (essences, ingots, materials) ======
+    public static final TFRegistryObject<Item> BORER_ESSENCE = tfItem("borer_essence", new Item.Properties(), Items.BLAZE_POWDER);
+    public static final TFRegistryObject<Item> CARMINITE = tfItem("carminite", new Item.Properties(), Items.REDSTONE);
+    public static final TFRegistryObject<Item> LIVEROOT = tfItem("liveroot", new Item.Properties(), Items.STICK);
+    public static final TFRegistryObject<Item> RAW_IRONWOOD = tfItem("raw_ironwood", new Item.Properties(), Items.RAW_IRON);
+    public static final TFRegistryObject<Item> IRONWOOD_INGOT = tfItem("ironwood_ingot", new Item.Properties(), Items.IRON_INGOT);
+    public static final TFRegistryObject<Item> STEELEAF_INGOT = tfItem("steeleaf_ingot", new Item.Properties(), Items.IRON_INGOT);
+    public static final TFRegistryObject<Item> FIERY_INGOT = tfItem("fiery_ingot", rarity(Rarity.UNCOMMON).fireResistant(), Items.NETHERITE_INGOT);
+    public static final TFRegistryObject<Item> FIERY_BLOOD = tfItem("fiery_blood", rarity(Rarity.UNCOMMON), Items.MAGMA_CREAM);
+    public static final TFRegistryObject<Item> FIERY_TEARS = tfItem("fiery_tears", rarity(Rarity.UNCOMMON), Items.GHAST_TEAR);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_INGOT = tfItem("knightmetal_ingot", new Item.Properties(), Items.IRON_INGOT);
+    public static final TFRegistryObject<Item> ARMOR_SHARD = tfItem("armor_shard", new Item.Properties(), Items.IRON_NUGGET);
+    public static final TFRegistryObject<Item> ARMOR_SHARD_CLUSTER = tfItem("armor_shard_cluster", new Item.Properties(), Items.IRON_INGOT);
+    public static final TFRegistryObject<Item> WROUGHT_IRON_BAR = tfItem("wrought_iron_bar", new Item.Properties(), Items.IRON_INGOT);
+    public static final TFRegistryObject<Item> RAVEN_FEATHER = tfItem("raven_feather", new Item.Properties(), Items.FEATHER);
+    public static final TFRegistryObject<Item> MAZE_SLIME_BALL = tfItem("maze_slime_ball", new Item.Properties(), Items.SLIME_BALL);
+    public static final TFRegistryObject<Item> EXANIMATE_ESSENCE = exanimateEssenceItem("exanimate_essence", rarity(Rarity.UNCOMMON).stacksTo(16), Items.GLOW_INK_SAC);
+    public static final TFRegistryObject<Item> TANNIN = tfItem("tannin", new Item.Properties().craftRemainder(Items.GLASS_BOTTLE), Items.GLASS_BOTTLE);
+    public static final TFRegistryObject<Item> COPPER_NUGGET = tfItem("copper_nugget", new Item.Properties(), Items.COPPER_INGOT);
+    public static final TFRegistryObject<Item> NAGA_SCALE = tfItem("naga_scale", rarity(Rarity.UNCOMMON), Items.PRISMARINE_SHARD);
+
+    // ====== Foods ======
+    public static final TFRegistryObject<Item> RAW_VENISON = tfItem("raw_venison",
+            food(2, 0.3F, false), Items.MUTTON);
+    public static final TFRegistryObject<Item> COOKED_VENISON = tfItem("cooked_venison",
+            food(6, 0.6F, false), Items.COOKED_MUTTON);
+    public static final TFRegistryObject<Item> RAW_MEEF = tfItem("raw_meef",
+            food(2, 0.2F, false), Items.BEEF);
+    public static final TFRegistryObject<Item> COOKED_MEEF = tfItem("cooked_meef",
+            food(7, 0.6F, false), Items.COOKED_BEEF);
+    public static final TFRegistryObject<Item> MEEF_STROGANOFF = tfItem("meef_stroganoff",
+            food(14, 1.2F, true).stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant(), Items.MUSHROOM_STEW);
+    public static final TFRegistryObject<Item> HYDRA_CHOP = tfItem("hydra_chop",
+            food(18, 2.0F, true).rarity(Rarity.UNCOMMON).fireResistant(), Items.COOKED_BEEF);
+    public static final TFRegistryObject<Item> MAZE_WAFER = tfItem("maze_wafer",
+            food(4, 0.6F, false), Items.BREAD);
+    public static final TFRegistryObject<Item> TORCHBERRIES = tfItem("torchberries",
+            food(2, 0.3F, true), Items.GLOW_BERRIES);
+    public static final TFRegistryObject<Item> IRON_BERRY = tfItem("iron_berry", new Item.Properties(), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> GOLD_BERRY = tfItem("gold_berry", new Item.Properties(), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> COPPER_BERRY = tfItem("copper_berry", new Item.Properties(), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> ESSENCE_BERRY = essenceBerryItem("essence_berry", new Item.Properties(), Items.SWEET_BERRIES);
+
+    // ====== Charms ======
+    public static final TFRegistryObject<Item> CHARM_OF_LIFE_1 = charmOfLife("charm_of_life_1", rarity(Rarity.UNCOMMON), Items.GOLDEN_APPLE, 1);
+    public static final TFRegistryObject<Item> CHARM_OF_LIFE_2 = charmOfLife("charm_of_life_2", rarity(Rarity.UNCOMMON), Items.ENCHANTED_GOLDEN_APPLE, 2);
+    public static final TFRegistryObject<Item> CHARM_OF_KEEPING_1 = charmOfKeeping("charm_of_keeping_1", rarity(Rarity.UNCOMMON), Items.LEAD, 1);
+    public static final TFRegistryObject<Item> CHARM_OF_KEEPING_2 = charmOfKeeping("charm_of_keeping_2", rarity(Rarity.UNCOMMON), Items.LEAD, 2);
+    public static final TFRegistryObject<Item> CHARM_OF_KEEPING_3 = charmOfKeeping("charm_of_keeping_3", rarity(Rarity.UNCOMMON), Items.LEAD, 3);
+
+    // ====== Scepters & magical tools ======
+    public static final TFRegistryObject<Item> TWILIGHT_SCEPTER = twilightWandItem("twilight_scepter",
+            new Item.Properties().durability(99).rarity(Rarity.UNCOMMON), Items.BLAZE_ROD, TFItemVisuals.SCEPTER_OF_TWILIGHT);
+    public static final TFRegistryObject<Item> LIFEDRAIN_SCEPTER = lifedrainScepterItem("lifedrain_scepter",
+            new Item.Properties().durability(99).rarity(Rarity.UNCOMMON), Items.BLAZE_ROD, TFItemVisuals.SCEPTER_OF_LIFE_DRAIN);
+    public static final TFRegistryObject<Item> ZOMBIE_SCEPTER = zombieScepterItem("zombie_scepter",
+            new Item.Properties().durability(9).rarity(Rarity.UNCOMMON), Items.BLAZE_ROD);
+    public static final TFRegistryObject<Item> FORTIFICATION_SCEPTER = fortificationWandItem("fortification_scepter",
+            new Item.Properties().durability(9).rarity(Rarity.UNCOMMON), Items.BLAZE_ROD);
+
+    // ====== Maps & focuses ======
+    public static final TFRegistryObject<Item> MAGIC_MAP = magicMapItem("magic_map", new Item.Properties(), Items.MAP);
+    public static final TFRegistryObject<Item> MAZE_MAP = magicMapItem("maze_map", new Item.Properties(), Items.MAP);
+    public static final TFRegistryObject<Item> ORE_MAP = magicMapItem("ore_map", new Item.Properties(), Items.MAP);
+    public static final TFRegistryObject<Item> MAGIC_MAP_FOCUS = tfItem("magic_map_focus", new Item.Properties(), Items.COMPASS);
+    public static final TFRegistryObject<Item> MAZE_MAP_FOCUS = tfItem("maze_map_focus", new Item.Properties(), Items.COMPASS);
+
+    // ====== Misc tools ======
+    public static final TFRegistryObject<Item> ORE_METER = oreMeterItem("ore_meter",
+            new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), Items.RECOVERY_COMPASS);
+    public static final TFRegistryObject<Item> ORE_MAGNET = oreMagnetItem("ore_magnet",
+            new Item.Properties().durability(64), Items.IRON_BLOCK);
+    public static final TFRegistryObject<Item> CRUMBLE_HORN = crumbleHornItem("crumble_horn",
+            new Item.Properties().durability(1024).rarity(Rarity.RARE), Items.GOAT_HORN);
+    public static final TFRegistryObject<Item> PEACOCK_FEATHER_FAN = peacockFanItem("peacock_feather_fan",
+            new Item.Properties().durability(1024).rarity(Rarity.RARE), Items.FEATHER);
+    public static final TFRegistryObject<Item> MOONWORM_QUEEN = tfItem("moonworm_queen",
+            new Item.Properties().durability(256).rarity(Rarity.RARE), Items.GLOW_INK_SAC);
+    public static final TFRegistryObject<Item> TRANSFORMATION_POWDER = transformPowderItem("transformation_powder",
+            new Item.Properties(), Items.GUNPOWDER);
+    public static final TFRegistryObject<Item> TOWER_KEY = tfItem("tower_key",
+            new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON), Items.TRIPWIRE_HOOK);
+    public static final TFRegistryObject<Item> BRITTLE_FLASK = brittleFlaskItem("brittle_potion_flask",
+            new Item.Properties().durability(4), Items.GLASS_BOTTLE, false);
+    public static final TFRegistryObject<Item> GREATER_FLASK = brittleFlaskItem("greater_potion_flask",
+            new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant().durability(8), Items.GLASS_BOTTLE, true);
+
+    // ====== Naga armor (no helmet/boots in TF original — only chest+legs) ======
+    public static final TFRegistryObject<Item> NAGA_CHESTPLATE = armor("naga_chestplate",
+            ArmorMaterials.IRON, ArmorItem.Type.CHESTPLATE, 21, Rarity.UNCOMMON,
+            Items.IRON_CHESTPLATE, TFItemVisuals.NAGA_SCALE_CHESTPLATE);
+    public static final TFRegistryObject<Item> NAGA_LEGGINGS = armor("naga_leggings",
+            ArmorMaterials.IRON, ArmorItem.Type.LEGGINGS, 21, Rarity.UNCOMMON,
+            Items.IRON_LEGGINGS, TFItemVisuals.NAGA_SCALE_LEGGINGS);
+
+    // ====== Ironwood tier ≈ Iron ======
+    public static final TFRegistryObject<Item> IRONWOOD_HELMET = armor("ironwood_helmet",
+            ArmorMaterials.IRON, ArmorItem.Type.HELMET, 20, Rarity.COMMON,
+            Items.IRON_HELMET, TFItemVisuals.IRONWOOD_HELMET);
+    public static final TFRegistryObject<Item> IRONWOOD_CHESTPLATE = armor("ironwood_chestplate",
+            ArmorMaterials.IRON, ArmorItem.Type.CHESTPLATE, 20, Rarity.COMMON,
+            Items.IRON_CHESTPLATE, TFItemVisuals.IRONWOOD_CHESTPLATE);
+    public static final TFRegistryObject<Item> IRONWOOD_LEGGINGS = armor("ironwood_leggings",
+            ArmorMaterials.IRON, ArmorItem.Type.LEGGINGS, 20, Rarity.COMMON,
+            Items.IRON_LEGGINGS, TFItemVisuals.IRONWOOD_LEGGINGS);
+    public static final TFRegistryObject<Item> IRONWOOD_BOOTS = armor("ironwood_boots",
+            ArmorMaterials.IRON, ArmorItem.Type.BOOTS, 20, Rarity.COMMON,
+            Items.IRON_BOOTS, TFItemVisuals.IRONWOOD_BOOTS);
+    public static final TFRegistryObject<Item> IRONWOOD_SWORD = sword("ironwood_sword", Tiers.IRON, 3, -2.4F,
+            Items.IRON_SWORD, -1);
+    public static final TFRegistryObject<Item> IRONWOOD_PICKAXE = pickaxe("ironwood_pickaxe", Tiers.IRON, 1.0F, -2.8F,
+            Items.IRON_PICKAXE, TFItemVisuals.IRONWOOD_PICKAXE);
+    public static final TFRegistryObject<Item> IRONWOOD_AXE = axe("ironwood_axe", Tiers.IRON, 6.0F, -3.1F,
+            Items.IRON_AXE, -1);
+    public static final TFRegistryObject<Item> IRONWOOD_SHOVEL = shovel("ironwood_shovel", Tiers.IRON, 1.5F, -3.0F,
+            Items.IRON_SHOVEL, -1);
+    public static final TFRegistryObject<Item> IRONWOOD_HOE = hoe("ironwood_hoe", Tiers.IRON, -2, -1.0F,
+            Items.IRON_HOE, -1);
+
+    // ====== Steeleaf tier ≈ Diamond stat-wise ======
+    public static final TFRegistryObject<Item> STEELEAF_HELMET = armor("steeleaf_helmet",
+            ArmorMaterials.DIAMOND, ArmorItem.Type.HELMET, 10, Rarity.UNCOMMON,
+            Items.DIAMOND_HELMET, -1);
+    public static final TFRegistryObject<Item> STEELEAF_CHESTPLATE = armor("steeleaf_chestplate",
+            ArmorMaterials.DIAMOND, ArmorItem.Type.CHESTPLATE, 10, Rarity.UNCOMMON,
+            Items.DIAMOND_CHESTPLATE, -1);
+    public static final TFRegistryObject<Item> STEELEAF_LEGGINGS = armor("steeleaf_leggings",
+            ArmorMaterials.DIAMOND, ArmorItem.Type.LEGGINGS, 10, Rarity.UNCOMMON,
+            Items.DIAMOND_LEGGINGS, -1);
+    public static final TFRegistryObject<Item> STEELEAF_BOOTS = armor("steeleaf_boots",
+            ArmorMaterials.DIAMOND, ArmorItem.Type.BOOTS, 10, Rarity.UNCOMMON,
+            Items.DIAMOND_BOOTS, -1);
+    public static final TFRegistryObject<Item> STEELEAF_SWORD = sword("steeleaf_sword", Tiers.DIAMOND, 3, -2.4F,
+            Items.DIAMOND_SWORD, TFItemVisuals.STEELEAF_SWORD);
+    public static final TFRegistryObject<Item> STEELEAF_PICKAXE = pickaxe("steeleaf_pickaxe", Tiers.DIAMOND, 1.0F, -2.8F,
+            Items.DIAMOND_PICKAXE, TFItemVisuals.STEELEAF_PICKAXE);
+    public static final TFRegistryObject<Item> STEELEAF_AXE = axe("steeleaf_axe", Tiers.DIAMOND, 6.0F, -3.0F,
+            Items.DIAMOND_AXE, -1);
+    public static final TFRegistryObject<Item> STEELEAF_SHOVEL = shovel("steeleaf_shovel", Tiers.DIAMOND, 1.5F, -3.0F,
+            Items.DIAMOND_SHOVEL, -1);
+    public static final TFRegistryObject<Item> STEELEAF_HOE = hoe("steeleaf_hoe", Tiers.DIAMOND, -3.0F, -0.5F,
+            Items.DIAMOND_HOE, TFItemVisuals.STEELEAF_HOE);
+
+    // ====== Fiery tier ≈ Diamond+fire-resistant ======
+    public static final TFRegistryObject<Item> FIERY_HELMET = armor("fiery_helmet",
+            ArmorMaterials.NETHERITE, ArmorItem.Type.HELMET, 25, Rarity.UNCOMMON,
+            Items.NETHERITE_HELMET, -1);
+    public static final TFRegistryObject<Item> FIERY_CHESTPLATE = armor("fiery_chestplate",
+            ArmorMaterials.NETHERITE, ArmorItem.Type.CHESTPLATE, 25, Rarity.UNCOMMON,
+            Items.NETHERITE_CHESTPLATE, -1);
+    public static final TFRegistryObject<Item> FIERY_LEGGINGS = armor("fiery_leggings",
+            ArmorMaterials.NETHERITE, ArmorItem.Type.LEGGINGS, 25, Rarity.UNCOMMON,
+            Items.NETHERITE_LEGGINGS, -1);
+    public static final TFRegistryObject<Item> FIERY_BOOTS = armor("fiery_boots",
+            ArmorMaterials.NETHERITE, ArmorItem.Type.BOOTS, 25, Rarity.UNCOMMON,
+            Items.NETHERITE_BOOTS, -1);
+    public static final TFRegistryObject<Item> FIERY_SWORD = sword("fiery_sword", Tiers.DIAMOND, 3, -2.4F,
+            Items.DIAMOND_SWORD, TFItemVisuals.FIERY_SWORD);
+    public static final TFRegistryObject<Item> FIERY_PICKAXE = pickaxe("fiery_pickaxe", Tiers.DIAMOND, 1.0F, -2.8F,
+            Items.DIAMOND_PICKAXE, -1);
+
+    // ====== Knightmetal tier ≈ Iron with shield/spike interaction ======
+    public static final TFRegistryObject<Item> KNIGHTMETAL_HELMET = armor("knightmetal_helmet",
+            ArmorMaterials.IRON, ArmorItem.Type.HELMET, 20, Rarity.UNCOMMON,
+            Items.IRON_HELMET, -1);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_CHESTPLATE = armor("knightmetal_chestplate",
+            ArmorMaterials.IRON, ArmorItem.Type.CHESTPLATE, 20, Rarity.UNCOMMON,
+            Items.IRON_CHESTPLATE, -1);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_LEGGINGS = armor("knightmetal_leggings",
+            ArmorMaterials.IRON, ArmorItem.Type.LEGGINGS, 20, Rarity.UNCOMMON,
+            Items.IRON_LEGGINGS, -1);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_BOOTS = armor("knightmetal_boots",
+            ArmorMaterials.IRON, ArmorItem.Type.BOOTS, 20, Rarity.UNCOMMON,
+            Items.IRON_BOOTS, -1);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_SWORD = sword("knightmetal_sword", Tiers.IRON, 3, -2.4F,
+            Items.IRON_SWORD, TFItemVisuals.KNIGHTMETAL_SWORD);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_AXE = axe("knightmetal_axe", Tiers.IRON, 6.0F, -3.1F,
+            Items.IRON_AXE, -1);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_PICKAXE = pickaxe("knightmetal_pickaxe", Tiers.IRON, 1.0F, -2.8F,
+            Items.IRON_PICKAXE, -1);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_RING = tfItem("knightmetal_ring",
+            new Item.Properties().rarity(Rarity.UNCOMMON), Items.GOLDEN_APPLE);
+
+    // ====== Special boss-tier weapons ======
+    public static final TFRegistryObject<Item> GOLDEN_MINOTAUR_AXE = minotaurAxeItem("gold_minotaur_axe", Tiers.GOLD, 6.0F, -3.2F,
+            Items.GOLDEN_AXE, -1);
+    public static final TFRegistryObject<Item> DIAMOND_MINOTAUR_AXE = minotaurAxeItem("diamond_minotaur_axe", Tiers.DIAMOND, 6.0F, -3.2F,
+            Items.DIAMOND_AXE, TFItemVisuals.DIAMOND_MINOTAUR_AXE);
+    public static final TFRegistryObject<Item> MAZEBREAKER_PICKAXE = mazebreakerPickItem("mazebreaker_pickaxe", Tiers.DIAMOND, 1.0F, -2.8F,
+            Items.DIAMOND_PICKAXE, -1);
+
+    // ====== Q9 batch: boss-tier sentinel items (no behaviour ports yet) ======
+    // Snow/Ice queen drops
+    public static final TFRegistryObject<Item> ICE_BOMB = iceBombItem("ice_bomb",
+            new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16), Items.SNOWBALL);
+    public static final TFRegistryObject<Item> TRIPLE_BOW = tripleBowItem("triple_bow",
+            new Item.Properties().durability(384).rarity(Rarity.RARE), Items.BOW);
+    public static final TFRegistryObject<Item> SEEKER_BOW = seekerBowItem("seeker_bow",
+            new Item.Properties().durability(384).rarity(Rarity.RARE), Items.BOW);
+    public static final TFRegistryObject<Item> ENDER_BOW = enderBowItem("ender_bow",
+            new Item.Properties().durability(384).rarity(Rarity.RARE), Items.BOW);
+    public static final TFRegistryObject<Item> ICE_BOW = iceBowItem("ice_bow",
+            new Item.Properties().durability(384).rarity(Rarity.RARE), Items.BOW);
+    public static final TFRegistryObject<Item> ICE_SWORD = sword("ice_sword", Tiers.DIAMOND, 3, -2.4F,
+            Items.DIAMOND_SWORD, -1);
+    public static final TFRegistryObject<Item> GLASS_SWORD = glassSwordItem("glass_sword", Tiers.DIAMOND, 3, -2.4F,
+            Items.DIAMOND_SWORD, -1);
+    // Alpha Yeti / Yeti
+    public static final TFRegistryObject<Item> ALPHA_YETI_FUR = tfItem("alpha_yeti_fur",
+            rarity(Rarity.UNCOMMON), Items.WHITE_WOOL);
+    public static final TFRegistryObject<Item> YETI_FUR = tfItem("yeti_fur", new Item.Properties(), Items.WHITE_WOOL);
+    public static final TFRegistryObject<Item> ARCTIC_FUR = tfItem("arctic_fur", new Item.Properties(), Items.WHITE_WOOL);
+    // Ur-Ghast trophy interaction
+    public static final TFRegistryObject<Item> LAMPOFCINDERS = lampOfCindersItem("lamp_of_cinders",
+            new Item.Properties().rarity(Rarity.RARE).durability(99).fireResistant(), Items.SHROOMLIGHT);
+    // Block-chain goblin throwable
+    public static final TFRegistryObject<Item> BLOCK_AND_CHAIN = blockAndChainItem("block_and_chain",
+            new Item.Properties().rarity(Rarity.UNCOMMON).durability(99), Items.IRON_BLOCK);
+    // Uberous soil interaction
+    public static final TFRegistryObject<Item> MAGIC_BEANS = magicBeansItem("magic_beans", new Item.Properties(), Items.WHEAT_SEEDS);
+    // Giant tools (used by GiantMiner; tier exotic-large, treat as diamond)
+    public static final TFRegistryObject<Item> GIANT_PICKAXE = pickaxe("giant_pickaxe", Tiers.IRON, 1.0F, -2.8F,
+            Items.IRON_PICKAXE, -1);
+    public static final TFRegistryObject<Item> GIANT_SWORD = sword("giant_sword", Tiers.IRON, 3, -2.4F,
+            Items.IRON_SWORD, -1);
+
+    // ====== Q9/Q32 batch: Travellers armor — passive worn-effect ports ======
+    public static final TFRegistryObject<Item> TRAVELLERS_GOGGLES = travellersGogglesItem("travellers_goggles",
+            ArmorItem.Type.HELMET, Items.LEATHER_HELMET,
+            net.minecraft.world.effect.MobEffects.NIGHT_VISION, 0,
+            net.minecraft.world.entity.EquipmentSlot.HEAD, false, TFItemVisuals.TRAVELLERS_GOGGLES);
+    public static final TFRegistryObject<Item> TRAVELLERS_VEST = travellersArmor("travellers_vest",
+            ArmorItem.Type.CHESTPLATE, Items.LEATHER_CHESTPLATE,
+            net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 0,
+            net.minecraft.world.entity.EquipmentSlot.CHEST, false);
+    public static final TFRegistryObject<Item> TRAVELLERS_GLOVES = travellersArmor("travellers_gloves",
+            ArmorItem.Type.CHESTPLATE, Items.LEATHER_CHESTPLATE,
+            net.minecraft.world.effect.MobEffects.DIG_SPEED, 0,
+            net.minecraft.world.entity.EquipmentSlot.CHEST, false);
+    public static final TFRegistryObject<Item> TRAVELLERS_WINGS = travellersArmor("travellers_wings",
+            ArmorItem.Type.LEGGINGS, Items.LEATHER_LEGGINGS,
+            net.minecraft.world.effect.MobEffects.SLOW_FALLING, 0,
+            net.minecraft.world.entity.EquipmentSlot.LEGS, true);
+    public static final TFRegistryObject<Item> TRAVELLERS_BELT = travellersArmor("travellers_belt",
+            ArmorItem.Type.LEGGINGS, Items.LEATHER_LEGGINGS,
+            net.minecraft.world.effect.MobEffects.SATURATION, 0,
+            net.minecraft.world.entity.EquipmentSlot.LEGS, false);
+    public static final TFRegistryObject<Item> TRAVELLERS_BOOTS = travellersArmor("travellers_boots",
+            ArmorItem.Type.BOOTS, Items.LEATHER_BOOTS,
+            net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 0,
+            net.minecraft.world.entity.EquipmentSlot.FEET, false);
+
+    // ====== Q9/Q32 batch: Magic painting + misc ======
+    public static final TFRegistryObject<Item> MAGIC_PAINTING = magicPaintingItem("magic_painting",
+            new Item.Properties(), Items.PAINTING);
+    public static final TFRegistryObject<Item> RAW_FORTIFICATION_FRUIT = tfItem("raw_fortification_fruit",
+            new Item.Properties(), Items.SWEET_BERRIES);
+
+    // ====== Q10 batch: boss banner pattern items (sentinels) ======
+    // Each banner pattern signals a defeated-boss flag; full BannerPattern tag
+    // wiring deferred. Vanilla MOJANG_BANNER_PATTERN gives an "unknown banner" art.
+    public static final TFRegistryObject<Item> NAGA_BANNER_PATTERN = tfItem("naga_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> LICH_BANNER_PATTERN = tfItem("lich_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> HYDRA_BANNER_PATTERN = tfItem("hydra_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> UR_GHAST_BANNER_PATTERN = tfItem("ur_ghast_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> KNIGHT_PHANTOM_BANNER_PATTERN = tfItem("knight_phantom_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> SNOW_QUEEN_BANNER_PATTERN = tfItem("snow_queen_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> MINOSHROOM_BANNER_PATTERN = tfItem("minoshroom_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> ALPHA_YETI_BANNER_PATTERN = tfItem("alpha_yeti_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+    public static final TFRegistryObject<Item> QUEST_RAM_BANNER_PATTERN = tfItem("quest_ram_banner_pattern",
+            rarity(Rarity.UNCOMMON).stacksTo(1), Items.MOJANG_BANNER_PATTERN);
+
+    // ====== Q10 batch: filled map variants (sentinels — drawing logic deferred) ======
+    public static final TFRegistryObject<Item> FILLED_MAGIC_MAP = tfItem("filled_magic_map",
+            new Item.Properties(), Items.FILLED_MAP);
+    public static final TFRegistryObject<Item> FILLED_MAZE_MAP = tfItem("filled_maze_map",
+            new Item.Properties(), Items.FILLED_MAP);
+    public static final TFRegistryObject<Item> FILLED_ORE_MAP = tfItem("filled_ore_map",
+            new Item.Properties(), Items.FILLED_MAP);
+
+    // ====== Q14 batch: TF wood boats + chest_boats ======
+    public static final TFRegistryObject<Item> TWILIGHT_OAK_BOAT = tfItem("twilight_oak_boat", new Item.Properties().stacksTo(1), Items.OAK_BOAT);
+    public static final TFRegistryObject<Item> TWILIGHT_OAK_CHEST_BOAT = tfItem("twilight_oak_chest_boat", new Item.Properties().stacksTo(1), Items.OAK_CHEST_BOAT);
+    public static final TFRegistryObject<Item> CANOPY_BOAT = tfItem("canopy_boat", new Item.Properties().stacksTo(1), Items.DARK_OAK_BOAT);
+    public static final TFRegistryObject<Item> CANOPY_CHEST_BOAT = tfItem("canopy_chest_boat", new Item.Properties().stacksTo(1), Items.DARK_OAK_CHEST_BOAT);
+    public static final TFRegistryObject<Item> MANGROVE_BOAT = tfItem("mangrove_boat", new Item.Properties().stacksTo(1), Items.MANGROVE_BOAT);
+    public static final TFRegistryObject<Item> MANGROVE_CHEST_BOAT = tfItem("mangrove_chest_boat", new Item.Properties().stacksTo(1), Items.MANGROVE_CHEST_BOAT);
+    public static final TFRegistryObject<Item> DARK_BOAT = tfItem("dark_boat", new Item.Properties().stacksTo(1), Items.DARK_OAK_BOAT);
+    public static final TFRegistryObject<Item> DARK_CHEST_BOAT = tfItem("dark_chest_boat", new Item.Properties().stacksTo(1), Items.DARK_OAK_CHEST_BOAT);
+    public static final TFRegistryObject<Item> MINING_BOAT = tfItem("mining_boat", new Item.Properties().stacksTo(1), Items.BIRCH_BOAT);
+    public static final TFRegistryObject<Item> MINING_CHEST_BOAT = tfItem("mining_chest_boat", new Item.Properties().stacksTo(1), Items.BIRCH_CHEST_BOAT);
+    public static final TFRegistryObject<Item> TIME_BOAT = tfItem("time_boat", new Item.Properties().stacksTo(1), Items.SPRUCE_BOAT);
+    public static final TFRegistryObject<Item> TIME_CHEST_BOAT = tfItem("time_chest_boat", new Item.Properties().stacksTo(1), Items.SPRUCE_CHEST_BOAT);
+    public static final TFRegistryObject<Item> TRANSFORMATION_BOAT = tfItem("transformation_boat", new Item.Properties().stacksTo(1), Items.JUNGLE_BOAT);
+    public static final TFRegistryObject<Item> TRANSFORMATION_CHEST_BOAT = tfItem("transformation_chest_boat", new Item.Properties().stacksTo(1), Items.JUNGLE_CHEST_BOAT);
+    public static final TFRegistryObject<Item> SORTING_BOAT = tfItem("sorting_boat", new Item.Properties().stacksTo(1), Items.CHERRY_BOAT);
+    public static final TFRegistryObject<Item> SORTING_CHEST_BOAT = tfItem("sorting_chest_boat", new Item.Properties().stacksTo(1), Items.CHERRY_CHEST_BOAT);
+
+    // ====== Q14 batch: berries (food) ======
+    public static final TFRegistryObject<Item> BLACKBERRY = tfItem("blackberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> BLUEBERRY = tfItem("blueberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> RASPBERRY = tfItem("raspberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> MALOBERRY = tfItem("maloberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> BLIGHTBERRY = tfItem("blightberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> DUSKBERRY = tfItem("duskberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> SKYBERRY = tfItem("skyberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> STINGBERRY = tfItem("stingberry", food(2, 0.4F, false), Items.SWEET_BERRIES);
+    public static final TFRegistryObject<Item> BERRY_MEDLEY = tfItem("berry_medley", food(6, 0.5F, false).stacksTo(16), Items.BREAD);
+
+    // ====== Q14 batch: jerky variants ======
+    public static final TFRegistryObject<Item> BEEF_JERKY = tfItem("beef_jerky", food(6, 0.6F, false), Items.COOKED_BEEF);
+    public static final TFRegistryObject<Item> PORK_JERKY = tfItem("pork_jerky", food(6, 0.6F, false), Items.COOKED_PORKCHOP);
+    public static final TFRegistryObject<Item> CHICKEN_JERKY = tfItem("chicken_jerky", food(4, 0.5F, false), Items.COOKED_CHICKEN);
+    public static final TFRegistryObject<Item> MUTTON_JERKY = tfItem("mutton_jerky", food(6, 0.6F, false), Items.COOKED_MUTTON);
+    public static final TFRegistryObject<Item> RABBIT_JERKY = tfItem("rabbit_jerky", food(4, 0.5F, false), Items.COOKED_RABBIT);
+    public static final TFRegistryObject<Item> COD_JERKY = tfItem("cod_jerky", food(4, 0.5F, false), Items.COOKED_COD);
+    public static final TFRegistryObject<Item> SALMON_JERKY = tfItem("salmon_jerky", food(6, 0.6F, false), Items.COOKED_SALMON);
+    public static final TFRegistryObject<Item> TROPICAL_FISH_JERKY = tfItem("tropical_fish_jerky", food(4, 0.5F, false), Items.TROPICAL_FISH);
+    public static final TFRegistryObject<Item> FUGU_JERKY = tfItem("fugu_jerky", food(4, 0.5F, false), Items.PUFFERFISH);
+    public static final TFRegistryObject<Item> VENISON_JERKY = tfItem("venison_jerky", food(6, 0.6F, false), Items.COOKED_MUTTON);
+    public static final TFRegistryObject<Item> MEEF_JERKY = tfItem("meef_jerky", food(7, 0.7F, false), Items.COOKED_BEEF);
+    public static final TFRegistryObject<Item> MONSTER_JERKY = tfItem("monster_jerky", food(4, 0.4F, false), Items.ROTTEN_FLESH);
+    public static final TFRegistryObject<Item> SHIKA_SENBEI = tfItem("shika_senbei", food(4, 0.5F, false), Items.BREAD);
+    public static final TFRegistryObject<Item> STALE_BREAD = tfItem("stale_bread", food(2, 0.3F, false), Items.BREAD);
+    public static final TFRegistryObject<Item> MOSS_SOUP = tfItem("moss_soup", food(8, 0.6F, false).stacksTo(1), Items.MUSHROOM_STEW);
+
+    // ====== Q14 batch: Arctic armor (yeti fur set) ======
+    public static final TFRegistryObject<Item> ARCTIC_HELMET = armor("arctic_helmet",
+            ArmorMaterials.LEATHER, ArmorItem.Type.HELMET, 12, Rarity.UNCOMMON, Items.LEATHER_HELMET, -1);
+    public static final TFRegistryObject<Item> ARCTIC_CHESTPLATE = armor("arctic_chestplate",
+            ArmorMaterials.LEATHER, ArmorItem.Type.CHESTPLATE, 12, Rarity.UNCOMMON, Items.LEATHER_CHESTPLATE, -1);
+    public static final TFRegistryObject<Item> ARCTIC_LEGGINGS = armor("arctic_leggings",
+            ArmorMaterials.LEATHER, ArmorItem.Type.LEGGINGS, 12, Rarity.UNCOMMON, Items.LEATHER_LEGGINGS, -1);
+    public static final TFRegistryObject<Item> ARCTIC_BOOTS = armor("arctic_boots",
+            ArmorMaterials.LEATHER, ArmorItem.Type.BOOTS, 12, Rarity.UNCOMMON, Items.LEATHER_BOOTS, -1);
+
+    // ====== Q14 batch: Yeti armor (alpha yeti fur set) ======
+    public static final TFRegistryObject<Item> YETI_HELMET = armor("yeti_helmet",
+            ArmorMaterials.IRON, ArmorItem.Type.HELMET, 25, Rarity.RARE, Items.IRON_HELMET, -1);
+    public static final TFRegistryObject<Item> YETI_CHESTPLATE = armor("yeti_chestplate",
+            ArmorMaterials.IRON, ArmorItem.Type.CHESTPLATE, 25, Rarity.RARE, Items.IRON_CHESTPLATE, -1);
+    public static final TFRegistryObject<Item> YETI_LEGGINGS = armor("yeti_leggings",
+            ArmorMaterials.IRON, ArmorItem.Type.LEGGINGS, 25, Rarity.RARE, Items.IRON_LEGGINGS, -1);
+    public static final TFRegistryObject<Item> YETI_BOOTS = armor("yeti_boots",
+            ArmorMaterials.IRON, ArmorItem.Type.BOOTS, 25, Rarity.RARE, Items.IRON_BOOTS, -1);
+
+    // ====== Q14 batch: Phantom armor (Knight Phantom drop) ======
+    public static final TFRegistryObject<Item> PHANTOM_HELMET = armor("phantom_helmet",
+            ArmorMaterials.IRON, ArmorItem.Type.HELMET, 30, Rarity.RARE, Items.IRON_HELMET, -1);
+    public static final TFRegistryObject<Item> PHANTOM_CHESTPLATE = armor("phantom_chestplate",
+            ArmorMaterials.IRON, ArmorItem.Type.CHESTPLATE, 30, Rarity.RARE, Items.IRON_CHESTPLATE, -1);
+
+    // ====== Q14 batch: Music discs ======
+    public static final TFRegistryObject<Item> MUSIC_DISC_FINDINGS = tfItem("music_disc_findings", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_13);
+    public static final TFRegistryObject<Item> MUSIC_DISC_HOME = tfItem("music_disc_home", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_CAT);
+    public static final TFRegistryObject<Item> MUSIC_DISC_MAKER = tfItem("music_disc_maker", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_BLOCKS);
+    public static final TFRegistryObject<Item> MUSIC_DISC_MOTION = tfItem("music_disc_motion", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_CHIRP);
+    public static final TFRegistryObject<Item> MUSIC_DISC_RADIANCE = tfItem("music_disc_radiance", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_FAR);
+    public static final TFRegistryObject<Item> MUSIC_DISC_STEPS = tfItem("music_disc_steps", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_MALL);
+    public static final TFRegistryObject<Item> MUSIC_DISC_SUPERSTITIOUS = tfItem("music_disc_superstitious", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_MELLOHI);
+    public static final TFRegistryObject<Item> MUSIC_DISC_THREAD = tfItem("music_disc_thread", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_STAL);
+    public static final TFRegistryObject<Item> MUSIC_DISC_WAYFARER = tfItem("music_disc_wayfarer", new Item.Properties().stacksTo(1).rarity(Rarity.RARE), Items.MUSIC_DISC_STRAD);
+
+    // ====== Q14 batch: misc TF items ======
+        public static final TFRegistryObject<Item> CUBE_OF_ANNIHILATION = cubeOfAnnihilationItem("cube_of_annihilation", new Item.Properties().rarity(Rarity.RARE).stacksTo(1).durability(99));
+    public static final TFRegistryObject<Item> CUBE_TALISMAN = tfItem("cube_talisman", new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1), Items.AMETHYST_SHARD);
+    public static final TFRegistryObject<Item> CROWN_SPLINTER = tfItem("crown_splinter", new Item.Properties().rarity(Rarity.UNCOMMON), Items.GOLD_NUGGET);
+    public static final TFRegistryObject<Item> MYSTIC_CROWN = tfItem("mystic_crown", new Item.Properties().rarity(Rarity.RARE).stacksTo(1), Items.GOLDEN_HELMET);
+    public static final TFRegistryObject<Item> KEEPSAKE_CASKET = existingBlockItem("keepsake_casket", TFBlocks.KEEPSAKE_CASKET);
+    public static final TFRegistryObject<Item> KNIGHTMETAL_SHIELD = tfItem("knightmetal_shield", new Item.Properties().durability(336).rarity(Rarity.UNCOMMON), Items.SHIELD);
+    public static final TFRegistryObject<Item> MOON_DIAL = tfItem("moon_dial", new Item.Properties().rarity(Rarity.UNCOMMON), Items.CLOCK);
+    public static final TFRegistryObject<Item> POCKET_WATCH = tfItem("pocket_watch", new Item.Properties().rarity(Rarity.UNCOMMON), Items.CLOCK);
+    public static final TFRegistryObject<Item> FOUR_LEAF_CLOVER = tfItem("four_leaf_clover", rarity(Rarity.UNCOMMON), Items.SUGAR_CANE);
+    public static final TFRegistryObject<Item> EMPERORS_CLOTH = tfItem("emperors_cloth", rarity(Rarity.UNCOMMON), Items.WHITE_WOOL);
+    public static final TFRegistryObject<Item> GELATINOUS_SLIME_DROP = tfItem("gelatinous_slime_drop", new Item.Properties(), Items.SLIME_BALL);
+    public static final TFRegistryObject<Item> GELATINOUS_MAZE_SLIME_DROP = tfItem("gelatinous_maze_slime_drop", new Item.Properties(), Items.MAGMA_CREAM);
+    public static final TFRegistryObject<Item> TANNED_LEATHER = tfItem("tanned_leather", new Item.Properties(), Items.LEATHER);
+    public static final TFRegistryObject<Item> TREATED_LEATHER = tfItem("treated_leather", rarity(Rarity.UNCOMMON), Items.LEATHER);
+
+    // ====== Q14.5 batch: hollow log items (one per wood; block has 3 orientations) ======
+    public static final TFRegistryObject<Item> HOLLOW_OAK_LOG_ITEM = tfItem("hollow_oak_log", new Item.Properties(), Items.OAK_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_SPRUCE_LOG_ITEM = tfItem("hollow_spruce_log", new Item.Properties(), Items.SPRUCE_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_BIRCH_LOG_ITEM = tfItem("hollow_birch_log", new Item.Properties(), Items.BIRCH_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_JUNGLE_LOG_ITEM = tfItem("hollow_jungle_log", new Item.Properties(), Items.JUNGLE_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_ACACIA_LOG_ITEM = tfItem("hollow_acacia_log", new Item.Properties(), Items.ACACIA_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_DARK_OAK_LOG_ITEM = tfItem("hollow_dark_oak_log", new Item.Properties(), Items.DARK_OAK_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_MANGROVE_LOG_ITEM = tfItem("hollow_mangrove_log", new Item.Properties(), Items.MANGROVE_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_CHERRY_LOG_ITEM = tfItem("hollow_cherry_log", new Item.Properties(), Items.CHERRY_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_CRIMSON_STEM_ITEM = tfItem("hollow_crimson_stem", new Item.Properties(), Items.CRIMSON_STEM);
+    public static final TFRegistryObject<Item> HOLLOW_WARPED_STEM_ITEM = tfItem("hollow_warped_stem", new Item.Properties(), Items.WARPED_STEM);
+    public static final TFRegistryObject<Item> HOLLOW_TWILIGHT_OAK_LOG_ITEM = tfItem("hollow_twilight_oak_log", new Item.Properties(), Items.OAK_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_CANOPY_LOG_ITEM = tfItem("hollow_canopy_log", new Item.Properties(), Items.DARK_OAK_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_DARK_LOG_ITEM = tfItem("hollow_dark_log", new Item.Properties(), Items.DARK_OAK_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_MINING_LOG_ITEM = tfItem("hollow_mining_log", new Item.Properties(), Items.BIRCH_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_TIME_LOG_ITEM = tfItem("hollow_time_log", new Item.Properties(), Items.SPRUCE_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_TRANSFORMATION_LOG_ITEM = tfItem("hollow_transformation_log", new Item.Properties(), Items.JUNGLE_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_SORTING_LOG_ITEM = tfItem("hollow_sorting_log", new Item.Properties(), Items.CHERRY_LOG);
+    public static final TFRegistryObject<Item> HOLLOW_VANGROVE_LOG_ITEM = tfItem("hollow_vangrove_log", new Item.Properties(), Items.MANGROVE_LOG);
+
+    // ====== Q14.5 batch: TF wood sign + hanging sign items (sentinels; block-entity port deferred) ======
+    public static final TFRegistryObject<Item> TWILIGHT_OAK_SIGN_ITEM = tfItem("twilight_oak_sign", new Item.Properties().stacksTo(16), Items.OAK_SIGN);
+    public static final TFRegistryObject<Item> TWILIGHT_OAK_HANGING_SIGN_ITEM = tfItem("twilight_oak_hanging_sign", new Item.Properties().stacksTo(16), Items.OAK_HANGING_SIGN);
+    public static final TFRegistryObject<Item> CANOPY_SIGN_ITEM = tfItem("canopy_sign", new Item.Properties().stacksTo(16), Items.DARK_OAK_SIGN);
+    public static final TFRegistryObject<Item> CANOPY_HANGING_SIGN_ITEM = tfItem("canopy_hanging_sign", new Item.Properties().stacksTo(16), Items.DARK_OAK_HANGING_SIGN);
+    public static final TFRegistryObject<Item> MANGROVE_SIGN_ITEM = tfItem("mangrove_sign", new Item.Properties().stacksTo(16), Items.MANGROVE_SIGN);
+    public static final TFRegistryObject<Item> MANGROVE_HANGING_SIGN_ITEM = tfItem("mangrove_hanging_sign", new Item.Properties().stacksTo(16), Items.MANGROVE_HANGING_SIGN);
+    public static final TFRegistryObject<Item> DARK_SIGN_ITEM = tfItem("dark_sign", new Item.Properties().stacksTo(16), Items.DARK_OAK_SIGN);
+    public static final TFRegistryObject<Item> DARK_HANGING_SIGN_ITEM = tfItem("dark_hanging_sign", new Item.Properties().stacksTo(16), Items.DARK_OAK_HANGING_SIGN);
+    public static final TFRegistryObject<Item> MINING_SIGN_ITEM = tfItem("mining_sign", new Item.Properties().stacksTo(16), Items.BIRCH_SIGN);
+    public static final TFRegistryObject<Item> MINING_HANGING_SIGN_ITEM = tfItem("mining_hanging_sign", new Item.Properties().stacksTo(16), Items.BIRCH_HANGING_SIGN);
+    public static final TFRegistryObject<Item> TIME_SIGN_ITEM = tfItem("time_sign", new Item.Properties().stacksTo(16), Items.SPRUCE_SIGN);
+    public static final TFRegistryObject<Item> TIME_HANGING_SIGN_ITEM = tfItem("time_hanging_sign", new Item.Properties().stacksTo(16), Items.SPRUCE_HANGING_SIGN);
+    public static final TFRegistryObject<Item> TRANSFORMATION_SIGN_ITEM = tfItem("transformation_sign", new Item.Properties().stacksTo(16), Items.JUNGLE_SIGN);
+    public static final TFRegistryObject<Item> TRANSFORMATION_HANGING_SIGN_ITEM = tfItem("transformation_hanging_sign", new Item.Properties().stacksTo(16), Items.JUNGLE_HANGING_SIGN);
+    public static final TFRegistryObject<Item> SORTING_SIGN_ITEM = tfItem("sorting_sign", new Item.Properties().stacksTo(16), Items.CHERRY_SIGN);
+    public static final TFRegistryObject<Item> SORTING_HANGING_SIGN_ITEM = tfItem("sorting_hanging_sign", new Item.Properties().stacksTo(16), Items.CHERRY_HANGING_SIGN);
+
+        public static void bootstrap() {
+        }
+
+    private TFItems() {
+    }
+
+    // -------- helpers --------
+    private static Item.Properties rarity(Rarity rarity) {
+        return new Item.Properties().rarity(rarity);
+    }
+
+    private static Item.Properties food(int nutrition, float saturationModifier, boolean alwaysEdible) {
+        FoodProperties.Builder b = new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturationModifier);
+        if (alwaysEdible) b.alwaysEdible();
+        return new Item.Properties().food(b.build());
+    }
+
+    private static TFRegistryObject<Item> tfItem(String path, Item.Properties properties, Item fallback) {
+        return tfItem(path, properties, fallback, -1);
+    }
+
+    private static TFRegistryObject<Item> tfItem(String path, Item.Properties properties, Item fallback, int cmd) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexItem(properties, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> existingBlockItem(String path, TFRegistryObject<? extends Block> block) {
+        block.get(); // Forces TFBlocks to register the BlockItem for this id.
+        Item item = BuiltInRegistries.ITEM.getOptional(TwilightForestMod.prefix(path))
+                .orElseThrow(() -> new IllegalStateException("Missing block item twilightforest:" + path));
+        return new TFRegistryObject<>(item);
+    }
+
+        private static TFRegistryObject<Item> cubeOfAnnihilationItem(String path, Item.Properties properties) {
+                Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CubeOfAnnihilationItem(properties));
+                return new TFRegistryObject<>(registered);
+        }
+
+    // -- Q17 behaviour-aware item helpers --
+    private static TFRegistryObject<Item> magicBeansItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new MagicBeansItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> transformPowderItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new TransformPowderItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> moonwormQueenItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new MoonwormQueenItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> charmOfLife(String path, Item.Properties properties, Item fallback, int tier) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CharmOfLifeItem(properties, fallback, tier));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> charmOfKeeping(String path, Item.Properties properties, Item fallback, int tier) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CharmOfKeepingItem(properties, fallback, tier));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> crumbleHornItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CrumbleHornItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> iceBombItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new IceBombItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> twilightWandItem(String path, Item.Properties properties, Item fallback, int cmd) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new TwilightWandItem(properties, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> lifedrainScepterItem(String path, Item.Properties properties, Item fallback, int cmd) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new LifedrainScepterItem(properties, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> fortificationWandItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new FortificationWandItem(properties, fallback, -1));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> zombieScepterItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new ZombieScepterItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> magicMapItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new MagicMapItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> brittleFlaskItem(String path, Item.Properties properties, Item fallback, boolean greater) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new BrittleFlaskItem(properties, fallback, greater));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> blockAndChainItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new BlockAndChainItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> peacockFanItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new PeacockFanItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> oreMagnetItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new OreMagnetItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> oreMeterItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new OreMeterItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> essenceBerryItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new EssenceBerryItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> exanimateEssenceItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new ExanimateEssenceItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> glassSwordItem(String path, Tier tier, int damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(SwordItem.createAttributes(tier, damage, speed)).durability(1);
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new GlassSwordItem(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> mazebreakerPickItem(String path, Tier tier, float damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(PickaxeItem.createAttributes(tier, damage, speed));
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new MazebreakerPickItem(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> minotaurAxeItem(String path, Tier tier, float damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(AxeItem.createAttributes(tier, damage, speed));
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new MinotaurAxeItem(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> magicPaintingItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new MagicPaintingItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> travellersArmor(String path,
+                                                          ArmorItem.Type type,
+                                                          Item fallback,
+                                                          net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> wornEffect,
+                                                          int amplifier,
+                                                          net.minecraft.world.entity.EquipmentSlot expectedSlot,
+                                                          boolean onlyInAir) {
+        Item.Properties props = new Item.Properties().durability(type.getDurability(12)).rarity(Rarity.COMMON);
+        TravellersArmorPieceItem item = new TravellersArmorPieceItem(
+                ArmorMaterials.LEATHER, type, props, fallback, -1,
+                wornEffect, amplifier, expectedSlot, onlyInAir);
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), item);
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> travellersGogglesItem(String path,
+                                                                ArmorItem.Type type,
+                                                                Item fallback,
+                                                                net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> wornEffect,
+                                                                int amplifier,
+                                                                net.minecraft.world.entity.EquipmentSlot expectedSlot,
+                                                                boolean onlyInAir,
+                                                                int cmd) {
+        Item.Properties props = new Item.Properties().durability(type.getDurability(12)).rarity(Rarity.COMMON);
+        TravellersGogglesItem item = new TravellersGogglesItem(
+                ArmorMaterials.LEATHER, type, props, fallback, cmd,
+                wornEffect, amplifier, expectedSlot, onlyInAir);
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), item);
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> lampOfCindersItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new LampOfCindersItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> tripleBowItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new TripleBowItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> seekerBowItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new SeekerBowItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> enderBowItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new EnderBowItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> iceBowItem(String path, Item.Properties properties, Item fallback) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new IceBowItem(properties, fallback));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> armor(String path, net.minecraft.core.Holder<ArmorMaterial> material, ArmorItem.Type type, int durabilityFactor, Rarity rarity, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().durability(type.getDurability(durabilityFactor)).rarity(rarity);
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexArmorItem(material, type, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> sword(String path, Tier tier, int damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(SwordItem.createAttributes(tier, damage, speed));
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexSwordItem(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> pickaxe(String path, Tier tier, float damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(PickaxeItem.createAttributes(tier, damage, speed));
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexDiggerItem.Pickaxe(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> axe(String path, Tier tier, float damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(AxeItem.createAttributes(tier, damage, speed));
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexDiggerItem.Axe(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> shovel(String path, Tier tier, float damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(ShovelItem.createAttributes(tier, damage, speed));
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexDiggerItem.Shovel(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    private static TFRegistryObject<Item> hoe(String path, Tier tier, float damage, float speed, Item fallback, int cmd) {
+        Item.Properties props = new Item.Properties().attributes(HoeItem.createAttributes(tier, damage, speed));
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexDiggerItem.Hoe(tier, props, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+}

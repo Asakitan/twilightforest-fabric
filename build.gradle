@@ -1,0 +1,148 @@
+plugins {
+    id 'fabric-loom' version '1.14.10'
+    id 'java'
+}
+
+group = 'com.codex'
+version = '0.1.0'
+
+base {
+    archivesName = 'codex-twilight'
+}
+
+def serverRoot = projectDir.parentFile.parentFile
+def minecraftVersion = '1.21.1'
+def fabricLoaderVersion = '0.18.1'
+def fabricApiVersion = '0.116.4+1.21.1'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraftVersion}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabricLoaderVersion}"
+    modImplementation fabricApi.module('fabric-lifecycle-events-v1', fabricApiVersion)
+    include fabricApi.module('fabric-lifecycle-events-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-entity-events-v1', fabricApiVersion)
+    include fabricApi.module('fabric-entity-events-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-registry-sync-v0', fabricApiVersion)
+    include fabricApi.module('fabric-registry-sync-v0', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-object-builder-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-object-builder-api-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-events-interaction-v0', fabricApiVersion)
+    include fabricApi.module('fabric-events-interaction-v0', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-command-api-v2', fabricApiVersion)
+    include fabricApi.module('fabric-command-api-v2', fabricApiVersion)
+    // F2 — client renderer registration lives in src/client/, scoped to the client sourceSet.
+    // Loom split-env routes modImplementation onto both main and client sourceSets;
+    // fabric-rendering-v1 itself is `environment: client` so it only loads on Fabric clients.
+    modImplementation fabricApi.module('fabric-rendering-v1', fabricApiVersion)
+    include fabricApi.module('fabric-rendering-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-resource-loader-v0', fabricApiVersion)
+    include fabricApi.module('fabric-resource-loader-v0', fabricApiVersion)
+    // F2.8 — custom S2C packet for TF mob hit-spark VFX. Server-side broadcasts on damage;
+    // client-side receives + spawns vanilla CRIT particles. Module is dual-env, so both
+    // server registration and client receiver compile against the same payload type.
+    modImplementation fabricApi.module('fabric-networking-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-networking-api-v1', fabricApiVersion)
+    // F2.6 — fabric-particles-v1 exposes ParticleFactoryRegistry for paired client
+    // particle providers; client-only env so it doesn't load on dedicated servers.
+    modImplementation fabricApi.module('fabric-particles-v1', fabricApiVersion)
+    include fabricApi.module('fabric-particles-v1', fabricApiVersion)
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    // Manningham Mills (shedaniel's fork) — bundled inside aether-1.21.1-1.5.11-fabric.jar at
+    // META-INF/jars/mm-2.4.1.jar. We use ClassTinkerers.enumBuilder to graft custom
+    // BiomeSpecialEffects$GrassColorModifier values for Twilight Forest before MC class init.
+    // compileOnly is enough because aether (a hard dep of the modpack) provides mm at runtime.
+    compileOnly files('local/mm-2.4.1.jar')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/tfjava'
+            exclude 'twilightforest/world/components/structures/util/CodecResourceReloadListener.java'
+            exclude 'twilightforest/world/components/structures/util/StructureTemplateDefinition.java'
+            exclude 'twilightforest/world/components/structures/util/StructureTemplateDefinitions.java'
+            exclude 'twilightforest/world/components/structures/util/TemplateMarkerHandlerList.java'
+            exclude 'twilightforest/world/components/structures/util/TemplatePoolInstance.java'
+        }
+    }
+}
+
+// F2.5 — owner-driven Fabric port of upstream Twilight Forest client renderers.
+//
+// Dual-license structure:
+//   * Codex Twilight original code: MIT (LICENSE at project root)
+//   * Files under src/tfjava-client/twilightforest/**: derivative work of upstream
+//     Twilight Forest, retain upstream LGPL 2.1+. Attribution in
+//     CREDITS-twilightforest-assets.txt; full upstream LICENSE in
+//     local/twilightforest-1.21.1-src/LICENSE.
+//
+// Workflow: drop NeoForge → Fabric translated files into
+//   src/tfjava-client/twilightforest/client/renderer/block/   (BER classes)
+//   src/tfjava-client/twilightforest/client/model/block/      (model classes)
+//   src/tfjava-client/twilightforest/client/...               (anything else)
+// then wire each BER's registration in
+//   src/client/java/com/codex/twilight/client/render/ClientBlockEntityRendererBootstrap
+//
+// The Loom-managed `client` sourceSet exists only after splitEnvironmentSourceSets()
+// runs in the loom block above, so the srcDir add-on must run in afterEvaluate.
+afterEvaluate {
+    def tfClient = file('src/tfjava-client')
+    if (tfClient.exists()) {
+        sourceSets.client.java.srcDir tfClient
+    }
+}
+
+loom {
+    splitEnvironmentSourceSets()
+    accessWidenerPath = file('src/main/resources/codex_twilight.accesswidener')
+
+    mods {
+        codex_twilight {
+            sourceSet sourceSets.main
+            // F2 — paired client renderers ride in the same jar via Loom split env;
+            // src/client/java only loads on Fabric clients, server-side classloader skips it.
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+tasks.named('jar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output
+    // F2 — client sourceSet output goes into the same jar; Loom marks it as client-only.
+    from sourceSets.client.output
+    manifest {
+        attributes(
+            'Implementation-Title': 'Codex Twilight',
+            'Implementation-Version': project.version
+        )
+    }
+}
+
+tasks.register('installServerMod', Copy) {
+    dependsOn tasks.named('remapJar')
+    from tasks.named('remapJar').flatMap { it.archiveFile }
+    into file("${serverRoot}/mods")
+}
+
+tasks.register('installGlobalDataPack', Copy) {
+    from file('src/main/resources/data')
+    into file("${serverRoot}/global_packs/required_data/codex_twilight/data")
+}
+
+tasks.register('buildAndInstall') {
+    dependsOn tasks.named('installServerMod'), tasks.named('installGlobalDataPack')
+}
