@@ -25,4 +25,15 @@ public final class LandmarkUtil {
     public static Optional<StructureStart> locateNearestLandmarkStart(LevelAccessor level, int chunkX, int chunkZ) {
         return Optional.empty();
     }
+
+    /**
+     * Codex Fabric port of upstream {@code LandmarkUtil.isProgressionEnforced(Level)}.
+     * Upstream reads {@code TFGameRules.ENFORCED_PROGRESSION_RULE} via the level's GameRules.
+     * Codex hasn't ported TFGameRules yet — instead we read the static
+     * {@code TFConfig.enforcedProgression} flag (defaults true to match upstream behaviour).
+     * Once TFGameRules ports, this method will switch to {@code level.getGameRules().getBoolean(...)}.
+     */
+    public static boolean isProgressionEnforced(net.minecraft.world.level.Level level) {
+        return twilightforest.config.TFConfig.enforcedProgression;
+    }
 }

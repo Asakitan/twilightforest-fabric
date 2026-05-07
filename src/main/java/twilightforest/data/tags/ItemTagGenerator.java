@@ -13,6 +13,11 @@ public final class ItemTagGenerator {
     public static final TagKey<Item> DWARF_RABBIT_TEMPT_ITEMS = create("dwarf_rabbit_tempt_items");
     public static final TagKey<Item> PENGUIN_TEMPT_ITEMS = create("penguin_tempt_items");
     public static final TagKey<Item> SQUIRREL_TEMPT_ITEMS = create("squirrel_tempt_items");
+    public static final TagKey<Item> BANNED_UNCRAFTING_INGREDIENTS = create("banned_uncrafting_ingredients");
+    public static final TagKey<Item> BANNED_UNCRAFTABLES = create("banned_uncraftables");
+    public static final TagKey<Item> UNCRAFTING_IGNORES_COST = create("uncrafting_ignores_cost");
+    public static final TagKey<Item> IMMUNE_TO_THORNS = create("immune_to_thorns");
+    public static final TagKey<Item> SCEPTERS = create("scepters");
 
     private ItemTagGenerator() {
     }

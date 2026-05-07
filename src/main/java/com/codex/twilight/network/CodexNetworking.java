@@ -14,6 +14,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import twilightforest.inventory.UncraftingMenu;
+import twilightforest.network.UncraftingGuiPacket;
 
 /**
  * F2.8 — central wiring for codex-twilight S2C packets.
@@ -39,6 +41,27 @@ public final class CodexNetworking {
         // Register payload type once — must run before any send / receive.
         PayloadTypeRegistry.playS2C().register(CodexHitFlashPayload.TYPE, CodexHitFlashPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(CodexGogglesSurveyPayload.TYPE, CodexGogglesSurveyPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(UncraftingGuiPacket.TYPE, UncraftingGuiPacket.STREAM_CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(UncraftingGuiPacket.TYPE, (payload, context) -> {
+            ServerPlayer player = context.player();
+            context.server().execute(() -> {
+                if (!(player.containerMenu instanceof UncraftingMenu menu)) {
+                    return;
+                }
+                switch (payload.operationType()) {
+                    case 0 -> menu.unrecipeInCycle++;
+                    case 1 -> menu.unrecipeInCycle--;
+                    case 2 -> menu.ingredientsInCycle++;
+                    case 3 -> menu.ingredientsInCycle--;
+                    case 4 -> menu.recipeInCycle++;
+                    case 5 -> menu.recipeInCycle--;
+                    default -> {
+                        return;
+                    }
+                }
+                menu.slotsChanged(payload.operationType() < 4 ? menu.tinkerInput : menu.assemblyMatrix);
+            });
+        });
 
         // Server-side hit hook: fabric-entity-events-v1 fires AFTER_DAMAGE per damage event.
         // We broadcast the hit-flash payload to every tracking player so paired clients can

@@ -24,6 +24,9 @@ public final class BlockTagGenerator {
     public static final TagKey<Block> DRYING_RACKS = create("drying_racks");
     public static final TagKey<Block> HOLLOW_LOGS = create("hollow_logs");
     public static final TagKey<Block> TOWERWOOD = create("towerwood");
+    public static final TagKey<Block> OREBERRY_BUSHES_SURVIVE = create("oreberry_bushes_survive");
+    public static final TagKey<Block> TROPHY_PEDESTAL_ACTIVATION_BLOCKS = create("trophy_pedestal_activation_blocks");
+    public static final TagKey<Block> FIRE_JET_FUEL = create("fire_jet_fuel");
 
     private BlockTagGenerator() {
     }

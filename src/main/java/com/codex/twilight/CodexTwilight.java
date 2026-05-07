@@ -64,6 +64,8 @@ public final class CodexTwilight implements ModInitializer {
         com.codex.twilight.network.CodexNetworking.bootstrapServer();
         TFEntities.ARMORED_GIANT.get();
         TFEntities.addEntityAttributes();
+        twilightforest.init.TFRecipes.bootstrap();
+        twilightforest.init.TFMenuTypes.bootstrap();
         twilightforest.init.TFAdvancements.bootstrap();
         twilightforest.init.TFStats.bootstrap();
         twilightforest.init.TFItemSubPredicates.bootstrap();

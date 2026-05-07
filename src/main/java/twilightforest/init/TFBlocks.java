@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.CodexActiveBlock;
 import twilightforest.block.CodexBerryBushBlock;
@@ -39,6 +41,7 @@ import twilightforest.block.MasonJarBlock;
 import twilightforest.block.CodexStairBlock;
 import twilightforest.block.CodexThornsBlock;
 import twilightforest.block.CodexTorchberryPlantBlock;
+import twilightforest.block.UncraftingTableBlock;
 
 /**
  * Alias table — each TFBlocks.X.get() returns the vanilla equivalent that
@@ -138,7 +141,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> THICK_CASTLE_BRICK = solidBlock("thick_castle_brick", Blocks.POLISHED_ANDESITE);
     public static final TFRegistryObject<Block> TOWERWOOD = solidBlock("towerwood", Blocks.DARK_OAK_PLANKS);
     public static final TFRegistryObject<Block> TROLLSTEINN = sixWayBlock("trollsteinn", Blocks.TUFF);
-    public static final TFRegistryObject<Block> TROPHY_PEDESTAL = solidBlock("trophy_pedestal", Blocks.CHISELED_STONE_BRICKS);
+    public static final TFRegistryObject<Block> TROPHY_PEDESTAL = trophyPedestalBlock("trophy_pedestal", Blocks.CHISELED_STONE_BRICKS);
     public static final TFRegistryObject<Block> TWILIGHT_OAK_CHEST = chestBlock("twilight_oak_chest", Blocks.CHEST);
     public static final TFRegistryObject<Block> TWILIGHT_OAK_LEAVES = leavesBlock("twilight_oak_leaves", Blocks.OAK_LEAVES);
     public static final TFRegistryObject<Block> TWILIGHT_OAK_LOG = pillarBlock("twilight_oak_log", Blocks.OAK_LOG);
@@ -201,24 +204,24 @@ public final class TFBlocks {
     // Standing trophies use SKELETON_SKULL fallback, walls use SKELETON_WALL_SKULL — these
     // are server sentinels; paired-client RP supplies the official trophy model via
     // assets/twilightforest/models/block/<id>.json.
-    public static final TFRegistryObject<Block> NAGA_TROPHY = directionalBlock("naga_trophy", Blocks.SKELETON_SKULL);
-    public static final TFRegistryObject<Block> NAGA_WALL_TROPHY = directionalBlock("naga_wall_trophy", Blocks.SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> LICH_TROPHY = directionalBlock("lich_trophy", Blocks.SKELETON_SKULL);
-    public static final TFRegistryObject<Block> LICH_WALL_TROPHY = directionalBlock("lich_wall_trophy", Blocks.SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> HYDRA_TROPHY = directionalBlock("hydra_trophy", Blocks.WITHER_SKELETON_SKULL);
-    public static final TFRegistryObject<Block> HYDRA_WALL_TROPHY = directionalBlock("hydra_wall_trophy", Blocks.WITHER_SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> UR_GHAST_TROPHY = directionalBlock("ur_ghast_trophy", Blocks.WITHER_SKELETON_SKULL);
-    public static final TFRegistryObject<Block> UR_GHAST_WALL_TROPHY = directionalBlock("ur_ghast_wall_trophy", Blocks.WITHER_SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> KNIGHT_PHANTOM_TROPHY = directionalBlock("knight_phantom_trophy", Blocks.SKELETON_SKULL);
-    public static final TFRegistryObject<Block> KNIGHT_PHANTOM_WALL_TROPHY = directionalBlock("knight_phantom_wall_trophy", Blocks.SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> SNOW_QUEEN_TROPHY = directionalBlock("snow_queen_trophy", Blocks.SKELETON_SKULL);
-    public static final TFRegistryObject<Block> SNOW_QUEEN_WALL_TROPHY = directionalBlock("snow_queen_wall_trophy", Blocks.SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> MINOSHROOM_TROPHY = directionalBlock("minoshroom_trophy", Blocks.SKELETON_SKULL);
-    public static final TFRegistryObject<Block> MINOSHROOM_WALL_TROPHY = directionalBlock("minoshroom_wall_trophy", Blocks.SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> ALPHA_YETI_TROPHY = directionalBlock("alpha_yeti_trophy", Blocks.SKELETON_SKULL);
-    public static final TFRegistryObject<Block> ALPHA_YETI_WALL_TROPHY = directionalBlock("alpha_yeti_wall_trophy", Blocks.SKELETON_WALL_SKULL);
-    public static final TFRegistryObject<Block> QUEST_RAM_TROPHY = directionalBlock("quest_ram_trophy", Blocks.SKELETON_SKULL);
-    public static final TFRegistryObject<Block> QUEST_RAM_WALL_TROPHY = directionalBlock("quest_ram_wall_trophy", Blocks.SKELETON_WALL_SKULL);
+    public static final TFRegistryObject<Block> NAGA_TROPHY = trophyBlock("naga_trophy", twilightforest.enums.BossVariant.NAGA, 5);
+    public static final TFRegistryObject<Block> NAGA_WALL_TROPHY = trophyWallBlock("naga_wall_trophy", twilightforest.enums.BossVariant.NAGA);
+    public static final TFRegistryObject<Block> LICH_TROPHY = trophyBlock("lich_trophy", twilightforest.enums.BossVariant.LICH, 6);
+    public static final TFRegistryObject<Block> LICH_WALL_TROPHY = trophyWallBlock("lich_wall_trophy", twilightforest.enums.BossVariant.LICH);
+    public static final TFRegistryObject<Block> HYDRA_TROPHY = trophyBlock("hydra_trophy", twilightforest.enums.BossVariant.HYDRA, 12);
+    public static final TFRegistryObject<Block> HYDRA_WALL_TROPHY = trophyWallBlock("hydra_wall_trophy", twilightforest.enums.BossVariant.HYDRA);
+    public static final TFRegistryObject<Block> UR_GHAST_TROPHY = trophyBlock("ur_ghast_trophy", twilightforest.enums.BossVariant.UR_GHAST, 13);
+    public static final TFRegistryObject<Block> UR_GHAST_WALL_TROPHY = trophyWallBlock("ur_ghast_wall_trophy", twilightforest.enums.BossVariant.UR_GHAST);
+    public static final TFRegistryObject<Block> KNIGHT_PHANTOM_TROPHY = trophyBlock("knight_phantom_trophy", twilightforest.enums.BossVariant.KNIGHT_PHANTOM, 8);
+    public static final TFRegistryObject<Block> KNIGHT_PHANTOM_WALL_TROPHY = trophyWallBlock("knight_phantom_wall_trophy", twilightforest.enums.BossVariant.KNIGHT_PHANTOM);
+    public static final TFRegistryObject<Block> SNOW_QUEEN_TROPHY = trophyBlock("snow_queen_trophy", twilightforest.enums.BossVariant.SNOW_QUEEN, 14);
+    public static final TFRegistryObject<Block> SNOW_QUEEN_WALL_TROPHY = trophyWallBlock("snow_queen_wall_trophy", twilightforest.enums.BossVariant.SNOW_QUEEN);
+    public static final TFRegistryObject<Block> MINOSHROOM_TROPHY = trophyBlock("minoshroom_trophy", twilightforest.enums.BossVariant.MINOSHROOM, 7);
+    public static final TFRegistryObject<Block> MINOSHROOM_WALL_TROPHY = trophyWallBlock("minoshroom_wall_trophy", twilightforest.enums.BossVariant.MINOSHROOM);
+    public static final TFRegistryObject<Block> ALPHA_YETI_TROPHY = trophyBlock("alpha_yeti_trophy", twilightforest.enums.BossVariant.ALPHA_YETI, 9);
+    public static final TFRegistryObject<Block> ALPHA_YETI_WALL_TROPHY = trophyWallBlock("alpha_yeti_wall_trophy", twilightforest.enums.BossVariant.ALPHA_YETI);
+    public static final TFRegistryObject<Block> QUEST_RAM_TROPHY = trophyBlock("quest_ram_trophy", twilightforest.enums.BossVariant.QUEST_RAM, 1);
+    public static final TFRegistryObject<Block> QUEST_RAM_WALL_TROPHY = trophyWallBlock("quest_ram_wall_trophy", twilightforest.enums.BossVariant.QUEST_RAM);
 
     // ====== Q11 batch: 8 TF wood families × 11 blocks each (sentinels) ======
     // Each family mirrors a vanilla wood family stat-wise; paired-client RP supplies
@@ -333,40 +336,40 @@ public final class TFBlocks {
     // ====== Q12 batch: banisters + drying racks + wood chests + decoration ======
 
     // -- Banisters (TF custom; vanilla fence-shaped fallback per wood type)
-    public static final TFRegistryObject<Block> OAK_BANISTER = fenceBlock("oak_banister", Blocks.OAK_FENCE);
-    public static final TFRegistryObject<Block> SPRUCE_BANISTER = fenceBlock("spruce_banister", Blocks.SPRUCE_FENCE);
-    public static final TFRegistryObject<Block> BIRCH_BANISTER = fenceBlock("birch_banister", Blocks.BIRCH_FENCE);
-    public static final TFRegistryObject<Block> JUNGLE_BANISTER = fenceBlock("jungle_banister", Blocks.JUNGLE_FENCE);
-    public static final TFRegistryObject<Block> ACACIA_BANISTER = fenceBlock("acacia_banister", Blocks.ACACIA_FENCE);
-    public static final TFRegistryObject<Block> DARK_OAK_BANISTER = fenceBlock("dark_oak_banister", Blocks.DARK_OAK_FENCE);
-    public static final TFRegistryObject<Block> MANGROVE_BANISTER = fenceBlock("mangrove_banister", Blocks.MANGROVE_FENCE);
-    public static final TFRegistryObject<Block> CHERRY_BANISTER = fenceBlock("cherry_banister", Blocks.CHERRY_FENCE);
-    public static final TFRegistryObject<Block> BAMBOO_BANISTER = fenceBlock("bamboo_banister", Blocks.BAMBOO_FENCE);
-    public static final TFRegistryObject<Block> CRIMSON_BANISTER = fenceBlock("crimson_banister", Blocks.CRIMSON_FENCE);
-    public static final TFRegistryObject<Block> WARPED_BANISTER = fenceBlock("warped_banister", Blocks.WARPED_FENCE);
-    public static final TFRegistryObject<Block> TWILIGHT_OAK_BANISTER = fenceBlock("twilight_oak_banister", Blocks.OAK_FENCE);
-    public static final TFRegistryObject<Block> CANOPY_BANISTER = fenceBlock("canopy_banister", Blocks.DARK_OAK_FENCE);
-    public static final TFRegistryObject<Block> DARK_BANISTER = fenceBlock("dark_banister", Blocks.DARK_OAK_FENCE);
-    public static final TFRegistryObject<Block> MINING_BANISTER = fenceBlock("mining_banister", Blocks.BIRCH_FENCE);
-    public static final TFRegistryObject<Block> TIME_BANISTER = fenceBlock("time_banister", Blocks.SPRUCE_FENCE);
-    public static final TFRegistryObject<Block> TRANSFORMATION_BANISTER = fenceBlock("transformation_banister", Blocks.JUNGLE_FENCE);
-    public static final TFRegistryObject<Block> SORTING_BANISTER = fenceBlock("sorting_banister", Blocks.CHERRY_FENCE);
+    public static final TFRegistryObject<Block> OAK_BANISTER = banisterBlock("oak_banister", Blocks.OAK_FENCE);
+    public static final TFRegistryObject<Block> SPRUCE_BANISTER = banisterBlock("spruce_banister", Blocks.SPRUCE_FENCE);
+    public static final TFRegistryObject<Block> BIRCH_BANISTER = banisterBlock("birch_banister", Blocks.BIRCH_FENCE);
+    public static final TFRegistryObject<Block> JUNGLE_BANISTER = banisterBlock("jungle_banister", Blocks.JUNGLE_FENCE);
+    public static final TFRegistryObject<Block> ACACIA_BANISTER = banisterBlock("acacia_banister", Blocks.ACACIA_FENCE);
+    public static final TFRegistryObject<Block> DARK_OAK_BANISTER = banisterBlock("dark_oak_banister", Blocks.DARK_OAK_FENCE);
+    public static final TFRegistryObject<Block> MANGROVE_BANISTER = banisterBlock("mangrove_banister", Blocks.MANGROVE_FENCE);
+    public static final TFRegistryObject<Block> CHERRY_BANISTER = banisterBlock("cherry_banister", Blocks.CHERRY_FENCE);
+    public static final TFRegistryObject<Block> BAMBOO_BANISTER = banisterBlock("bamboo_banister", Blocks.BAMBOO_FENCE);
+    public static final TFRegistryObject<Block> CRIMSON_BANISTER = banisterBlock("crimson_banister", Blocks.CRIMSON_FENCE);
+    public static final TFRegistryObject<Block> WARPED_BANISTER = banisterBlock("warped_banister", Blocks.WARPED_FENCE);
+    public static final TFRegistryObject<Block> TWILIGHT_OAK_BANISTER = banisterBlock("twilight_oak_banister", Blocks.OAK_FENCE);
+    public static final TFRegistryObject<Block> CANOPY_BANISTER = banisterBlock("canopy_banister", Blocks.DARK_OAK_FENCE);
+    public static final TFRegistryObject<Block> DARK_BANISTER = banisterBlock("dark_banister", Blocks.DARK_OAK_FENCE);
+    public static final TFRegistryObject<Block> MINING_BANISTER = banisterBlock("mining_banister", Blocks.BIRCH_FENCE);
+    public static final TFRegistryObject<Block> TIME_BANISTER = banisterBlock("time_banister", Blocks.SPRUCE_FENCE);
+    public static final TFRegistryObject<Block> TRANSFORMATION_BANISTER = banisterBlock("transformation_banister", Blocks.JUNGLE_FENCE);
+    public static final TFRegistryObject<Block> SORTING_BANISTER = banisterBlock("sorting_banister", Blocks.CHERRY_FENCE);
 
     // -- Drying racks (TF custom; vanilla fence-shape fallback)
-    public static final TFRegistryObject<Block> OAK_DRYING_RACK = directionalBlock("oak_drying_rack", Blocks.OAK_FENCE);
-    public static final TFRegistryObject<Block> SPRUCE_DRYING_RACK = directionalBlock("spruce_drying_rack", Blocks.SPRUCE_FENCE);
-    public static final TFRegistryObject<Block> BIRCH_DRYING_RACK = directionalBlock("birch_drying_rack", Blocks.BIRCH_FENCE);
-    public static final TFRegistryObject<Block> JUNGLE_DRYING_RACK = directionalBlock("jungle_drying_rack", Blocks.JUNGLE_FENCE);
-    public static final TFRegistryObject<Block> ACACIA_DRYING_RACK = directionalBlock("acacia_drying_rack", Blocks.ACACIA_FENCE);
-    public static final TFRegistryObject<Block> DARK_OAK_DRYING_RACK = directionalBlock("dark_oak_drying_rack", Blocks.DARK_OAK_FENCE);
-    public static final TFRegistryObject<Block> MANGROVE_DRYING_RACK = directionalBlock("mangrove_drying_rack", Blocks.MANGROVE_FENCE);
-    public static final TFRegistryObject<Block> CHERRY_DRYING_RACK = directionalBlock("cherry_drying_rack", Blocks.CHERRY_FENCE);
-    public static final TFRegistryObject<Block> BAMBOO_DRYING_RACK = directionalBlock("bamboo_drying_rack", Blocks.BAMBOO_FENCE);
-    public static final TFRegistryObject<Block> CRIMSON_DRYING_RACK = directionalBlock("crimson_drying_rack", Blocks.CRIMSON_FENCE);
-    public static final TFRegistryObject<Block> WARPED_DRYING_RACK = directionalBlock("warped_drying_rack", Blocks.WARPED_FENCE);
-    public static final TFRegistryObject<Block> TWILIGHT_OAK_DRYING_RACK = directionalBlock("twilight_oak_drying_rack", Blocks.OAK_FENCE);
-    public static final TFRegistryObject<Block> CANOPY_DRYING_RACK = directionalBlock("canopy_drying_rack", Blocks.DARK_OAK_FENCE);
-    public static final TFRegistryObject<Block> DARK_DRYING_RACK = directionalBlock("dark_drying_rack", Blocks.DARK_OAK_FENCE);
+    public static final TFRegistryObject<Block> OAK_DRYING_RACK = dryingRackBlock("oak_drying_rack", Blocks.OAK_FENCE);
+    public static final TFRegistryObject<Block> SPRUCE_DRYING_RACK = dryingRackBlock("spruce_drying_rack", Blocks.SPRUCE_FENCE);
+    public static final TFRegistryObject<Block> BIRCH_DRYING_RACK = dryingRackBlock("birch_drying_rack", Blocks.BIRCH_FENCE);
+    public static final TFRegistryObject<Block> JUNGLE_DRYING_RACK = dryingRackBlock("jungle_drying_rack", Blocks.JUNGLE_FENCE);
+    public static final TFRegistryObject<Block> ACACIA_DRYING_RACK = dryingRackBlock("acacia_drying_rack", Blocks.ACACIA_FENCE);
+    public static final TFRegistryObject<Block> DARK_OAK_DRYING_RACK = dryingRackBlock("dark_oak_drying_rack", Blocks.DARK_OAK_FENCE);
+    public static final TFRegistryObject<Block> MANGROVE_DRYING_RACK = dryingRackBlock("mangrove_drying_rack", Blocks.MANGROVE_FENCE);
+    public static final TFRegistryObject<Block> CHERRY_DRYING_RACK = dryingRackBlock("cherry_drying_rack", Blocks.CHERRY_FENCE);
+    public static final TFRegistryObject<Block> BAMBOO_DRYING_RACK = dryingRackBlock("bamboo_drying_rack", Blocks.BAMBOO_FENCE);
+    public static final TFRegistryObject<Block> CRIMSON_DRYING_RACK = dryingRackBlock("crimson_drying_rack", Blocks.CRIMSON_FENCE);
+    public static final TFRegistryObject<Block> WARPED_DRYING_RACK = dryingRackBlock("warped_drying_rack", Blocks.WARPED_FENCE);
+    public static final TFRegistryObject<Block> TWILIGHT_OAK_DRYING_RACK = dryingRackBlock("twilight_oak_drying_rack", Blocks.OAK_FENCE);
+    public static final TFRegistryObject<Block> CANOPY_DRYING_RACK = dryingRackBlock("canopy_drying_rack", Blocks.DARK_OAK_FENCE);
+    public static final TFRegistryObject<Block> DARK_DRYING_RACK = dryingRackBlock("dark_drying_rack", Blocks.DARK_OAK_FENCE);
     public static final TFRegistryObject<Block> MINING_DRYING_RACK = directionalBlock("mining_drying_rack", Blocks.BIRCH_FENCE);
     public static final TFRegistryObject<Block> TIME_DRYING_RACK = directionalBlock("time_drying_rack", Blocks.SPRUCE_FENCE);
     public static final TFRegistryObject<Block> TRANSFORMATION_DRYING_RACK = directionalBlock("transformation_drying_rack", Blocks.JUNGLE_FENCE);
@@ -390,7 +393,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> CINDER_WOOD = pillarBlock("cinder_wood", Blocks.NETHERRACK);
     public static final TFRegistryObject<Block> CINDER_FURNACE = solidBlock("cinder_furnace", Blocks.FURNACE);
     public static final TFRegistryObject<Block> BRAZIER = brazierBlock("brazier", Blocks.SOUL_CAMPFIRE);
-    public static final TFRegistryObject<Block> CANDELABRA = solidBlock("candelabra", Blocks.LANTERN);
+    public static final TFRegistryObject<Block> CANDELABRA = candelabraBlock("candelabra", Blocks.LANTERN);
     // Castle bricks (Final Castle)
     public static final TFRegistryObject<Block> BOLD_CASTLE_BRICK_STAIRS = stairBlock("bold_castle_brick_stairs", Blocks.STONE_BRICK_STAIRS);
     public static final TFRegistryObject<Block> BOLD_CASTLE_BRICK_TILE = solidBlock("bold_castle_brick_tile", Blocks.POLISHED_BLACKSTONE_BRICKS);
@@ -412,7 +415,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> RASPBERRY_BUSH = berryBushBlock("raspberry_bush", Blocks.SWEET_BERRY_BUSH);
     // Antibuild / built / carminite
     public static final TFRegistryObject<Block> ANTIBUILT_BLOCK = solidBlock("antibuilt_block", Blocks.BARRIER);
-    public static final TFRegistryObject<Block> BUILT_BLOCK = solidBlock("built_block", Blocks.GLOWSTONE);
+    public static final TFRegistryObject<Block> BUILT_BLOCK = activeBlock("built_block", Blocks.GLOWSTONE);
     public static final TFRegistryObject<Block> CARMINITE_BLOCK = solidBlock("carminite_block", Blocks.REDSTONE_BLOCK);
     // Fur / arctic
     public static final TFRegistryObject<Block> ARCTIC_FUR_BLOCK = solidBlock("arctic_fur_block", Blocks.WHITE_WOOL);
@@ -539,15 +542,15 @@ public final class TFBlocks {
 
     // -- Q13 misc decoration / structural blocks ======
     public static final TFRegistryObject<Block> CANOPY_WINDOW = solidBlock("canopy_window", Blocks.GLASS);
-    public static final TFRegistryObject<Block> CANOPY_WINDOW_PANE = solidBlock("canopy_window_pane", Blocks.GLASS_PANE);
-    public static final TFRegistryObject<Block> CHISELED_CANOPY_BOOKSHELF = solidBlock("chiseled_canopy_bookshelf", Blocks.CHISELED_BOOKSHELF);
+    public static final TFRegistryObject<Block> CANOPY_WINDOW_PANE = ironBarsBlock("canopy_window_pane", Blocks.GLASS_PANE);
+    public static final TFRegistryObject<Block> CHISELED_CANOPY_BOOKSHELF = chiseledCanopyShelfBlock("chiseled_canopy_bookshelf", Blocks.CHISELED_BOOKSHELF);
     public static final TFRegistryObject<Block> ENCASED_CASTLE_BRICK_PILLAR = pillarBlock("encased_castle_brick_pillar", Blocks.POLISHED_BASALT);
     public static final TFRegistryObject<Block> ENCASED_CASTLE_BRICK_TILE = solidBlock("encased_castle_brick_tile", Blocks.POLISHED_BLACKSTONE_BRICKS);
     public static final TFRegistryObject<Block> MOSSY_CASTLE_BRICK = solidBlock("mossy_castle_brick", Blocks.MOSSY_STONE_BRICKS);
     public static final TFRegistryObject<Block> MOSSY_CASTLE_BRICK_PILLAR = pillarBlock("mossy_castle_brick_pillar", Blocks.POLISHED_BASALT);
-    public static final TFRegistryObject<Block> SLIDER = directionalBlock("slider", Blocks.PISTON);
+    public static final TFRegistryObject<Block> SLIDER = sliderBlock("slider");
     public static final TFRegistryObject<Block> TWISTED_STONE = pillarBlock("twisted_stone", Blocks.POLISHED_DEEPSLATE);
-    public static final TFRegistryObject<Block> UNCRAFTING_TABLE = solidBlock("uncrafting_table", Blocks.CRAFTING_TABLE);
+    public static final TFRegistryObject<Block> UNCRAFTING_TABLE = uncraftingTableBlock("uncrafting_table");
     public static final TFRegistryObject<Block> UNDERBRICK_FLOOR = solidBlock("underbrick_floor", Blocks.DEEPSLATE_BRICKS);
     public static final TFRegistryObject<Block> SNOWY_CLOUD = solidBlock("snowy_cloud", Blocks.SNOW_BLOCK);
     public static final TFRegistryObject<Block> OMINOUS_FIRE = solidBlock("ominous_fire", Blocks.SOUL_FIRE);
@@ -714,30 +717,30 @@ public final class TFBlocks {
 
     // -- Mushglooms
     public static final TFRegistryObject<Block> HUGE_MUSHGLOOM_CAP = sixWayBlock("huge_mushgloom_cap", Blocks.RED_MUSHROOM_BLOCK);
-    public static final TFRegistryObject<Block> HUGE_MUSHGLOOM_STEM = pillarBlock("huge_mushgloom_stem", Blocks.MUSHROOM_STEM);
+    public static final TFRegistryObject<Block> HUGE_MUSHGLOOM_STEM = hugeMushroomBlock("huge_mushgloom_stem", Blocks.MUSHROOM_STEM);
     public static final TFRegistryObject<Block> HUGE_STALK = pillarBlock("huge_stalk", Blocks.MUSHROOM_STEM);
 
     // -- Fire jet / smoker
-    public static final TFRegistryObject<Block> FIRE_JET = activeBlock("fire_jet", Blocks.MAGMA_BLOCK);
+    public static final TFRegistryObject<Block> FIRE_JET = fireJetBlock("fire_jet", Blocks.MAGMA_BLOCK);
     public static final TFRegistryObject<Block> SMOKER = activeBlock("smoker", Blocks.SMOKER);
-    public static final TFRegistryObject<Block> ENCASED_FIRE_JET = activeBlock("encased_fire_jet", Blocks.MAGMA_BLOCK);
+    public static final TFRegistryObject<Block> ENCASED_FIRE_JET = encasedFireJetBlock("encased_fire_jet", Blocks.MAGMA_BLOCK);
     public static final TFRegistryObject<Block> ENCASED_SMOKER = activeBlock("encased_smoker", Blocks.SMOKER);
 
     // -- Spiral / twisted stone
-    public static final TFRegistryObject<Block> SPIRAL_BRICKS = pillarBlock("spiral_bricks", Blocks.STONE_BRICKS);
+    public static final TFRegistryObject<Block> SPIRAL_BRICKS = spiralBrickBlock("spiral_bricks", Blocks.STONE_BRICKS);
     public static final TFRegistryObject<Block> STONE_TWIST_THIN = pillarBlock("stone_twist_thin", Blocks.POLISHED_DEEPSLATE);
     public static final TFRegistryObject<Block> STONE_TWIST_THICK = pillarBlock("stone_twist_thick", Blocks.POLISHED_DEEPSLATE);
-    public static final TFRegistryObject<Block> TWISTED_STONE_PILLAR = pillarBlock("twisted_stone_pillar", Blocks.POLISHED_DEEPSLATE);
+    public static final TFRegistryObject<Block> TWISTED_STONE_PILLAR = wallPillarBlock("twisted_stone_pillar", Blocks.POLISHED_DEEPSLATE, 12.0D, 16.0D);
 
     // -- Terrorcotta variants (Lich Tower decoration)
-    public static final TFRegistryObject<Block> TERRORCOTTA_ARCS = solidBlock("terrorcotta_arcs", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA);
-    public static final TFRegistryObject<Block> TERRORCOTTA_CURVES = solidBlock("terrorcotta_curves", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA);
-    public static final TFRegistryObject<Block> TERRORCOTTA_LINES = solidBlock("terrorcotta_lines", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA);
+    public static final TFRegistryObject<Block> TERRORCOTTA_ARCS = pillarBlock("terrorcotta_arcs", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA);
+    public static final TFRegistryObject<Block> TERRORCOTTA_CURVES = glazedTerracottaBlock("terrorcotta_curves", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA);
+    public static final TFRegistryObject<Block> TERRORCOTTA_LINES = binaryRotatedBlock("terrorcotta_lines", Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA);
 
     // -- Misc
     public static final TFRegistryObject<Block> AURORAL_GLASS_PANE = solidBlock("auroral_glass_pane", Blocks.LIGHT_BLUE_STAINED_GLASS_PANE);
-    public static final TFRegistryObject<Block> WROUGHT_IRON_FENCE = fenceBlock("wrought_iron_fence", Blocks.IRON_BARS);
-    public static final TFRegistryObject<Block> IRON_LADDER = directionalBlock("iron_ladder", Blocks.LADDER);
+    public static final TFRegistryObject<Block> WROUGHT_IRON_FENCE = wroughtIronFenceBlock("wrought_iron_fence", Blocks.IRON_BARS);
+    public static final TFRegistryObject<Block> IRON_LADDER = ironLadderBlock("iron_ladder", Blocks.LADDER);
     public static final TFRegistryObject<Block> KEEPSAKE_CASKET = directionalBlock("keepsake_casket", Blocks.RESPAWN_ANCHOR);
     public static final TFRegistryObject<Block> MOONWORM = directionalBlock("moonworm", Blocks.GLOW_LICHEN);
     public static final TFRegistryObject<Block> TRELLIS_ROOTS = pillarBlock("tree_roots", Blocks.HANGING_ROOTS);
@@ -799,6 +802,17 @@ public final class TFBlocks {
         return tfBlock(path, genericProperties(fallback), fallback.defaultBlockState());
     }
 
+    private static TFRegistryObject<Block> uncraftingTableBlock(String path) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new UncraftingTableBlock(BlockBehaviour.Properties.of()
+                        .ignitedByLava()
+                        .mapColor(MapColor.FIRE)
+                        .sound(SoundType.WOOD)
+                        .strength(2.5F)));
+        registerBlockItem(path, block, Blocks.CRAFTING_TABLE);
+        return new TFRegistryObject<>(block);
+    }
+
     private static TFRegistryObject<Block> plantBlock(String path, Block fallback) {
         return tfBlock(path, genericProperties(fallback).noCollission(), fallback.defaultBlockState());
     }
@@ -857,6 +871,75 @@ public final class TFBlocks {
         return new TFRegistryObject<>(block);
     }
 
+    /** 1:1 upstream {@link twilightforest.block.BanisterBlock} (FACING/SHAPE/EXTENDED/WATERLOGGED). */
+    private static TFRegistryObject<Block> banisterBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.BanisterBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.IronLadderBlock} (LadderBlock + LEFT/RIGHT). */
+    private static TFRegistryObject<Block> ironLadderBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.IronLadderBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.WroughtIronFenceBlock} (POST + 4-side enums). */
+    private static TFRegistryObject<Block> wroughtIronFenceBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.WroughtIronFenceBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.WallPillarBlock} (axis + 6-direction connect). */
+    private static TFRegistryObject<Block> wallPillarBlock(String path, Block fallback, double width, double height) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.WallPillarBlock(BlockBehaviour.Properties.ofFullCopy(fallback), width, height));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** Vanilla {@link net.minecraft.world.level.block.HugeMushroomBlock} — upstream uses it directly for huge_mushgloom_stem. */
+    private static TFRegistryObject<Block> hugeMushroomBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new net.minecraft.world.level.block.HugeMushroomBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** Vanilla {@link net.minecraft.world.level.block.IronBarsBlock} — upstream uses it directly for canopy_window_pane. */
+    private static TFRegistryObject<Block> ironBarsBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new net.minecraft.world.level.block.IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.DryingRackBlock} (FACING + WATERLOGGED + BlockEntity ticking). */
+    private static TFRegistryObject<Block> dryingRackBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.DryingRackBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.ChiseledCanopyShelfBlock} with SPAWNER + death-tome BlockEntity logic. */
+    private static TFRegistryObject<Block> chiseledCanopyShelfBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.ChiseledCanopyShelfBlock(BlockBehaviour.Properties.of()
+                        .ignitedByLava()
+                        .instrument(NoteBlockInstrument.BASS)
+                        .mapColor(MapColor.COLOR_BROWN)
+                        .sound(SoundType.CHISELED_BOOKSHELF)
+                        .strength(2.5F)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
     private static TFRegistryObject<Block> snowLayerBlock(String path, Block fallback) {
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new CodexSnowLayerBlock(BlockBehaviour.Properties.ofFullCopy(fallback), fallback.defaultBlockState()));
         registerBlockItem(path, block, fallback);
@@ -870,7 +953,85 @@ public final class TFBlocks {
     }
 
     private static TFRegistryObject<Block> thornsBlock(String path, Block fallback) {
-        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new CodexThornsBlock(BlockBehaviour.Properties.ofFullCopy(fallback), fallback.defaultBlockState()));
+        // 1:1 upstream ThornsBlock — axis + 6-way connect + waterlogged + thorn-burst-on-break +
+        // entity damage. Replaces the older CodexThornsBlock stub.
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.ThornsBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.SpiralBrickBlock} (axis + diagonal + waterlogged). */
+    private static TFRegistryObject<Block> spiralBrickBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.SpiralBrickBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.BinaryRotatedBlock} (rotated boolean per horizontal axis). */
+    private static TFRegistryObject<Block> binaryRotatedBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.BinaryRotatedBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** Vanilla {@link net.minecraft.world.level.block.GlazedTerracottaBlock} (facing horizontal). Upstream uses it directly for terrorcotta_curves. */
+    private static TFRegistryObject<Block> glazedTerracottaBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new net.minecraft.world.level.block.GlazedTerracottaBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.TrophyPedestalBlock} (active + waterlogged, neighbour-trigger activation). */
+    private static TFRegistryObject<Block> trophyPedestalBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.TrophyPedestalBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.TrophyBlock} — floor-mounted boss trophy with
+     * per-variant comparator output, ROTATION_16 + POWERED state, and TrophyBlockEntity ticker
+     * (drives UR_GHAST_TROPHY animation). Properties{@code .of().instabreak()} matches upstream. */
+    private static TFRegistryObject<Block> trophyBlock(String path, twilightforest.enums.BossVariant variant, int comparatorValue) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.TrophyBlock(variant, comparatorValue, BlockBehaviour.Properties.of().instabreak()));
+        registerBlockItem(path, block, Blocks.SKELETON_SKULL);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.TrophyWallBlock} — wall-mounted boss trophy with
+     * HORIZONTAL_FACING + POWERED state. Comparator slot is unused (wall trophies pass 0).
+     * Properties{@code .of().instabreak()} matches upstream. */
+    private static TFRegistryObject<Block> trophyWallBlock(String path, twilightforest.enums.BossVariant variant) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.TrophyWallBlock(variant, BlockBehaviour.Properties.of().instabreak()));
+        registerBlockItem(path, block, Blocks.SKELETON_WALL_SKULL);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.FireJetBlock} (4-state STATE EnumProperty + lava-fed jet ticker). */
+    private static TFRegistryObject<Block> fireJetBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.FireJetBlock(BlockBehaviour.Properties.ofFullCopy(fallback).randomTicks()));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.EncasedFireJetBlock} (redstone-triggered FireJetBlock subclass). */
+    private static TFRegistryObject<Block> encasedFireJetBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.EncasedFireJetBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.CandelabraBlock} (facing + on_wall + lighting + 3 has_candle slots + waterlogged). */
+    private static TFRegistryObject<Block> candelabraBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.CandelabraBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }
@@ -938,6 +1099,19 @@ public final class TFBlocks {
         return new TFRegistryObject<>(block);
     }
 
+    /** Real {@link twilightforest.block.SliderBlock} with timed SlideBlock entity spawning. */
+    private static TFRegistryObject<Block> sliderBlock(String path) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.SliderBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.STONE)
+                        .noLootTable()
+                        .noOcclusion()
+                        .randomTicks()
+                        .strength(2.0F, 10.0F)));
+        registerBlockItem(path, block, Blocks.PISTON);
+        return new TFRegistryObject<>(block);
+    }
+
     /** Real {@link twilightforest.block.BrazierBlock} with HALF state property. */
     private static TFRegistryObject<Block> brazierBlock(String path, Block fallback) {
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
@@ -964,8 +1138,20 @@ public final class TFBlocks {
 
     /** Real {@link twilightforest.block.OreBerryBlock} with AGE state property. */
     private static TFRegistryObject<Block> oreBerryBlock(String path, Block fallback) {
+        net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable> berryTable =
+                net.minecraft.resources.ResourceKey.create(
+                        net.minecraft.core.registries.Registries.LOOT_TABLE,
+                        TwilightForestMod.prefix(path.equals("essence_oreberry")
+                                ? "blocks/essence_berry_bush_berries"
+                                : "blocks/" + path + "_bush_berries"));
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
-                new twilightforest.block.OreBerryBlock(BlockBehaviour.Properties.of().strength(0.5F).sound(net.minecraft.world.level.block.SoundType.GRASS).randomTicks().noCollission()));
+                new twilightforest.block.OreBerryBlock(path.equals("essence_oreberry"), berryTable,
+                        BlockBehaviour.Properties.of()
+                                .sound(SoundType.METAL)
+                                .destroyTime(0.4F)
+                                .randomTicks()
+                                .dynamicShape()
+                                .noOcclusion()));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }

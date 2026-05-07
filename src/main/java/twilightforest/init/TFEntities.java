@@ -29,6 +29,7 @@ import net.minecraft.world.entity.monster.Stray;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.monster.Zombie;
 import twilightforest.TwilightForestMod;
+import twilightforest.entity.SlideBlock;
 import twilightforest.entity.boss.AlphaYeti;
 import twilightforest.entity.boss.Hydra;
 import twilightforest.entity.boss.HydraMortar;
@@ -152,6 +153,7 @@ public final class TFEntities {
     public static final TFRegistryObject<EntityType<RisingZombie>> RISING_ZOMBIE = entity("rising_zombie", EntityType.Builder.<RisingZombie>of((type, level) -> new RisingZombie(type, level), MobCategory.MONSTER).sized(0.6F, 1.95F));
     public static final TFRegistryObject<EntityType<RovingCube>> ROVING_CUBE = entity("roving_cube", EntityType.Builder.<RovingCube>of((type, level) -> new RovingCube(type, level), MobCategory.MONSTER).sized(1.2F, 2.1F));
     public static final TFRegistryObject<EntityType<SkeletonDruid>> SKELETON_DRUID = entity("skeleton_druid", EntityType.Builder.of(SkeletonDruid::new, MobCategory.MONSTER).sized(0.6F, 1.99F));
+    public static final TFRegistryObject<EntityType<SlideBlock>> SLIDER = projectile("slider", EntityType.Builder.<SlideBlock>of(SlideBlock::new, MobCategory.MISC).sized(0.98F, 0.98F).clientTrackingRange(8).updateInterval(1));
     public static final TFRegistryObject<EntityType<SlimeBeetle>> SLIME_BEETLE = entity("slime_beetle", EntityType.Builder.<SlimeBeetle>of((type, level) -> new SlimeBeetle(type, level), MobCategory.MONSTER).sized(0.9F, 0.5F));
     public static final TFRegistryObject<EntityType<SnowGuardian>> SNOW_GUARDIAN = entity("snow_guardian", EntityType.Builder.<SnowGuardian>of((type, level) -> new SnowGuardian(type, level), MobCategory.MONSTER).sized(0.6F, 1.8F));
     public static final TFRegistryObject<EntityType<SnowQueen>> SNOW_QUEEN = entity("snow_queen", EntityType.Builder.<SnowQueen>of((type, level) -> new SnowQueen(type, level), MobCategory.MONSTER).sized(0.7F, 2.2F).clientTrackingRange(10));

@@ -33,6 +33,10 @@ dependencies {
     include fabricApi.module('fabric-registry-sync-v0', fabricApiVersion)
     modImplementation fabricApi.module('fabric-object-builder-api-v1', fabricApiVersion)
     include fabricApi.module('fabric-object-builder-api-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-api-lookup-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-api-lookup-api-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-transfer-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-transfer-api-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-events-interaction-v0', fabricApiVersion)
     include fabricApi.module('fabric-events-interaction-v0', fabricApiVersion)
     modImplementation fabricApi.module('fabric-command-api-v2', fabricApiVersion)
@@ -42,6 +46,8 @@ dependencies {
     // fabric-rendering-v1 itself is `environment: client` so it only loads on Fabric clients.
     modImplementation fabricApi.module('fabric-rendering-v1', fabricApiVersion)
     include fabricApi.module('fabric-rendering-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-renderer-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-renderer-api-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-resource-loader-v0', fabricApiVersion)
     include fabricApi.module('fabric-resource-loader-v0', fabricApiVersion)
     // F2.8 — custom S2C packet for TF mob hit-spark VFX. Server-side broadcasts on damage;
@@ -53,6 +59,13 @@ dependencies {
     // particle providers; client-only env so it doesn't load on dedicated servers.
     modImplementation fabricApi.module('fabric-particles-v1', fabricApiVersion)
     include fabricApi.module('fabric-particles-v1', fabricApiVersion)
+    // B5 — Fabric port of NeoForge IGeometryLoader for the seven TF-side custom block-model
+    // loaders (noise_varying / connected_texture_block / force_field / giant_block / patch /
+    // royal_rags / neoforge:composite). ModelLoadingPlugin lets us swap a custom UnbakedModel
+    // in for specific model ids; FabricBakedModel.emitBlockQuads (in fabric-renderer-api-v1,
+    // already included above) gives us the BlockPos vanilla BakedModel.getQuads lacks.
+    modImplementation fabricApi.module('fabric-model-loading-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-model-loading-api-v1', fabricApiVersion)
     compileOnly 'org.jetbrains:annotations:24.1.0'
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     // Manningham Mills (shedaniel's fork) — bundled inside aether-1.21.1-1.5.11-fabric.jar at

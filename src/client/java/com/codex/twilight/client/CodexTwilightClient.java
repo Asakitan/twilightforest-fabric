@@ -7,10 +7,12 @@ import com.codex.twilight.client.render.entity.KoboldEntityRenderer;
 import com.codex.twilight.network.CodexGogglesSurveyPayload;
 import com.codex.twilight.network.CodexHitFlashPayload;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.SilverfishModel;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import twilightforest.client.JappaPackReloadListener;
 import twilightforest.client.BakedMultiPartRenderers;
 import twilightforest.init.TFEntities;
+import twilightforest.init.TFMenuTypes;
 import twilightforest.client.model.entity.AlphaYetiModel;
 import twilightforest.client.model.entity.BighornModel;
 import twilightforest.client.model.entity.BoarModel;
@@ -84,6 +87,7 @@ import twilightforest.client.renderer.entity.NagaRenderer;
 import twilightforest.client.renderer.entity.QuestRamRenderer;
 import twilightforest.client.renderer.entity.RovingCubeRenderer;
 import twilightforest.client.renderer.entity.RisingZombieRenderer;
+import twilightforest.client.renderer.entity.SlideBlockRenderer;
 import twilightforest.client.renderer.entity.SlimeBeetleRenderer;
 import twilightforest.client.renderer.entity.SnowGuardianRenderer;
 import twilightforest.client.renderer.entity.SnowQueenRenderer;
@@ -126,10 +130,12 @@ public final class CodexTwilightClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LOGGER.info("Codex Twilight client init (F2.4 — batch renderer registration for TF mob roster).");
+        MenuScreens.register(TFMenuTypes.UNCRAFTING, twilightforest.client.UncraftingScreen::new);
         // F2.1b — Kobold pilot keeps its dedicated renderer with explicit armor layers.
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(JappaPackReloadListener.INSTANCE);
         JappaPackReloadListener.clientSetup();
         CodexModelLayers.bootstrap();
+        registerNoiseVaryingModels();
         EntityRendererRegistry.register(TFEntities.KOBOLD.get(), KoboldEntityRenderer::new);
         EntityRendererRegistry.register(TFEntities.BOAR.get(), ctx ->
             new BoarRenderer<>(ctx, new BoarModel<>(ctx.bakeLayer(CodexModelLayers.BOAR))));
@@ -258,6 +264,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
         EntityRendererRegistry.register(TFEntities.SLIME_BLOB.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(TFEntities.MOONWORM_SHOT.get(), MoonwormShotRenderer::new);
         EntityRendererRegistry.register(TFEntities.FALLING_ICE.get(), FallingIceRenderer::new);
+        EntityRendererRegistry.register(TFEntities.SLIDER.get(), SlideBlockRenderer::new);
         EntityRendererRegistry.register(TFEntities.THROWN_ICE.get(), ThrownIceRenderer::new);
         EntityRendererRegistry.register(TFEntities.THROWN_BLOCK.get(), ThrownBlockRenderer::new);
         EntityRendererRegistry.register(TFEntities.ICE_SNOWBALL.get(), ThrownItemRenderer::new);
@@ -298,6 +305,40 @@ public final class CodexTwilightClient implements ClientModInitializer {
             });
         });
 
+    }
+
+    /**
+     * B5 — register Fabric ModelLoadingPlugin overrides for the seven NeoForge
+     * custom model loaders (currently {@code twilightforest:noise_varying}; other
+     * loaders land in subsequent batches). Each block id known to use the loader
+     * gets its UnbakedModel programmatically swapped, so Fabric's vanilla JSON
+     * parser never has to recognise the {@code "loader"} field.
+     */
+    private static void registerNoiseVaryingModels() {
+        // Hardcoded variant lists per block id — each list mirrors the variants array
+        // in the upstream NeoForge model JSON exactly. Keeping these in code (rather
+        // than re-parsing the JSON we'd otherwise discard) is consistent with how the
+        // NeoForge IGeometryLoader feeds variant lists into UnbakedNoiseVaryingModel.
+        java.util.List<net.minecraft.resources.ResourceLocation> auroraVariants = new java.util.ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            auroraVariants.add(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("twilightforest", "block/aurora_block_" + i));
+        }
+        net.minecraft.resources.ResourceLocation auroraBlockModel =
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("twilightforest", "block/aurora_block");
+        net.minecraft.resources.ResourceLocation auroraBlockModelCodex =
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("codex_twilight", "block/aurora_block");
+
+        ModelLoadingPlugin.register(plugin -> {
+            plugin.resolveModel().register(context -> {
+                net.minecraft.resources.ResourceLocation id = context.id();
+                if (id.equals(auroraBlockModel) || id.equals(auroraBlockModelCodex)) {
+                    return new twilightforest.client.model.block.aurorablock.NoiseVaryingUnbakedModel(auroraVariants);
+                }
+                return null;
+            });
+        });
+
+        LOGGER.info("Codex Twilight client: noise_varying model resolver registered for aurora_block.");
     }
 
     private static void spawnGogglesSurveyFlash(Minecraft mc, CodexGogglesSurveyPayload payload) {

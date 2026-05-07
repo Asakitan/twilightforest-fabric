@@ -104,6 +104,20 @@ public final class TFDataComponents {
                 .build()
     );
 
+    /**
+     * P2.d: registered for {@link twilightforest.block.CandelabraBlock} pickup-as-itemstack
+     * (Silk Touch / clone item). Carries the three candle slots so when a player breaks the
+     * candelabra and re-places it, the original arrangement persists.
+     */
+    public static final DataComponentType<twilightforest.components.item.CandelabraData> CANDELABRA_DATA = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            TwilightForestMod.prefix("candelabra_data"),
+            DataComponentType.<twilightforest.components.item.CandelabraData>builder()
+                .persistent(twilightforest.components.item.CandelabraData.CODEC)
+                .networkSynchronized(twilightforest.components.item.CandelabraData.STREAM_CODEC)
+                .build()
+    );
+
     private TFDataComponents() {
     }
 }

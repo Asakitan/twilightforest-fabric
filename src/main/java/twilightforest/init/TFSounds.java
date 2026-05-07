@@ -14,6 +14,17 @@ public final class TFSounds {
     public static final SoundEvent BLOCK_AND_CHAIN_COLLIDE = register("item.twilightforest.block_and_chain.collide");
     public static final SoundEvent BLOCK_AND_CHAIN_FIRED = register("item.twilightforest.block_and_chain.fire");
     public static final SoundEvent BLOCK_AND_CHAIN_HIT = register("item.twilightforest.block_and_chain.hit");
+    public static final SoundEvent BOOKSHELF_CONVERTS = register("block.twilightforest.chiseled_bookshelf.convert");
+    public static final SoundEvent DRYING_RACK_ADD_ITEM = register("block.twilightforest.drying_rack.add_item");
+    public static final SoundEvent DRYING_RACK_REMOVE_ITEM = register("block.twilightforest.drying_rack.remove_item");
+    public static final SoundEvent UNCRAFTING_TABLE_ACTIVATE = register("block.twilightforest.uncrafting_table.activate");
+    public static final SoundEvent PEDESTAL_ACTIVATE = register("block.twilightforest.trophy_pedestal.activate");
+    public static final SoundEvent JET_START = register("block.twilightforest.fire_jet.start");
+    public static final SoundEvent JET_POP = register("block.twilightforest.fire_jet.pop");
+    public static final SoundEvent JET_ACTIVE = register("block.twilightforest.fire_jet.active");
+    public static final SoundEvent SLIDER = register("block.twilightforest.slider.move");
+    public static final SoundEvent CANDELABRA_LIGHT = register("block.twilightforest.candelabra.light");
+    public static final SoundEvent CANDELABRA_OMINOUS = register("block.twilightforest.candelabra.ominous");
     public static final SoundEvent BOAR_AMBIENT = register("entity.twilightforest.boar.ambient");
     public static final SoundEvent BOAR_DEATH = register("entity.twilightforest.boar.death");
     public static final SoundEvent BOAR_HURT = register("entity.twilightforest.boar.hurt");
