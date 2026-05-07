@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
@@ -31,20 +32,26 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.ITFCharger;
+import twilightforest.init.TFBlocks;
 import twilightforest.init.TFDamageTypes;
+import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
 
 import java.util.List;
 
 public class Minoshroom extends BaseTFBoss implements ITFCharger {
     private static final EntityDataAccessor<Boolean> CHARGING = SynchedEntityData.defineId(Minoshroom.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GROUND_ATTACK = SynchedEntityData.defineId(Minoshroom.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> GROUND_CHARGE = SynchedEntityData.defineId(Minoshroom.class, EntityDataSerializers.INT);
     private static final ResourceLocation CHARGE_SPEED_ID = TwilightForestMod.prefix("minoshroom_charge_speed");
     private static final AttributeModifier CHARGE_SPEED_MODIFIER = new AttributeModifier(CHARGE_SPEED_ID, 0.35D, AttributeModifier.Operation.ADD_VALUE);
 
@@ -52,8 +59,6 @@ public class Minoshroom extends BaseTFBoss implements ITFCharger {
     private int chargeTicks;
     private int groundAttackCooldown;
     private int groundAttackTicks;
-    private boolean groundAttackCharge;
-    private int groundCharge;
     private boolean groundSmashState;
     private float prevClientSideChargeAnimation;
     private float clientSideChargeAnimation;
@@ -78,6 +83,8 @@ public class Minoshroom extends BaseTFBoss implements ITFCharger {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(CHARGING, false);
+        builder.define(GROUND_ATTACK, false);
+        builder.define(GROUND_CHARGE, 0);
     }
 
     @Override
@@ -102,7 +109,7 @@ public class Minoshroom extends BaseTFBoss implements ITFCharger {
         if (this.level().isClientSide()) {
             this.prevClientSideChargeAnimation = this.clientSideChargeAnimation;
             if (this.isGroundAttackCharge()) {
-                this.clientSideChargeAnimation = Mth.clamp(this.clientSideChargeAnimation + (1.0F / Math.max(1.0F, (float) this.groundCharge) * 6.0F), 0.0F, 6.0F);
+                this.clientSideChargeAnimation = Mth.clamp(this.clientSideChargeAnimation + (1.0F / Math.max(1.0F, (float) this.getEntityData().get(GROUND_CHARGE)) * 6.0F), 0.0F, 6.0F);
             } else {
                 this.clientSideChargeAnimation = Mth.clamp(this.clientSideChargeAnimation - 1.0F, 0.0F, 6.0F);
             }
@@ -214,15 +221,15 @@ public class Minoshroom extends BaseTFBoss implements ITFCharger {
     }
 
     public boolean isGroundAttackCharge() {
-        return this.groundAttackCharge;
+        return this.getEntityData().get(GROUND_ATTACK);
     }
 
     public void setGroundAttackCharge(boolean charging) {
-        this.groundAttackCharge = charging;
+        this.getEntityData().set(GROUND_ATTACK, charging);
     }
 
     public void setMaxCharge(int charge) {
-        this.groundCharge = charge;
+        this.getEntityData().set(GROUND_CHARGE, charge);
     }
 
     public float getChargeAnimationScale(float scale) {
@@ -231,7 +238,7 @@ public class Minoshroom extends BaseTFBoss implements ITFCharger {
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource source, DifficultyInstance difficulty) {
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_AXE));
+        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(TFItems.DIAMOND_MINOTAUR_AXE.get()));
     }
 
     @Override
@@ -299,5 +306,25 @@ public class Minoshroom extends BaseTFBoss implements ITFCharger {
         this.chargeTicks = tag.getInt("ChargeTicks");
         this.groundAttackCooldown = tag.getInt("GroundAttackCooldown");
         this.groundAttackTicks = tag.getInt("GroundAttackTicks");
+    }
+
+    @Override
+    public int getHomeRadius() {
+        return 30;
+    }
+
+    @Override
+    public ResourceKey<Structure> getHomeStructure() {
+        return TFStructures.LABYRINTH;
+    }
+
+    @Override
+    public Block getDeathContainer(RandomSource random) {
+        return TFBlocks.MANGROVE_CHEST.get();
+    }
+
+    @Override
+    public Block getBossSpawner() {
+        return TFBlocks.MINOSHROOM_BOSS_SPAWNER.get();
     }
 }

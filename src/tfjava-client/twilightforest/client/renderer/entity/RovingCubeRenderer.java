@@ -13,7 +13,7 @@ import net.minecraft.util.Mth;
 import com.codex.twilight.client.render.CodexModelLayers;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.model.entity.CubeOfAnnihilationModel;
-import twilightforest.entity.monster.RovingCube;
+import twilightforest.entity.RovingCube;
 
 public class RovingCubeRenderer<T extends RovingCube> extends EntityRenderer<T> {
 

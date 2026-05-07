@@ -24,6 +24,12 @@ public final class TFStructureProcessors {
     public static final TFRegistryObject<StructureProcessorType<SmartGrassProcessor>> SMART_GRASS = processor("smart_grass", () -> SmartGrassProcessor.CODEC);
     public static final TFRegistryObject<StructureProcessorType<BoxCuttingProcessor>> BOX_CUTTING_PROCESSOR = processor("box_cutting", () -> BoxCuttingProcessor.CODEC);
     public static final TFRegistryObject<StructureProcessorType<TargetedRotProcessor>> TARGETED_ROT = processor("targeted_rot", () -> TargetedRotProcessor.CODEC);
+    public static final TFRegistryObject<StructureProcessorType<SoftReplaceProcessor>> SOFT_REPLACE = processorMap("soft_replace", () -> SoftReplaceProcessor.CODEC);
+    public static final TFRegistryObject<StructureProcessorType<WoodMultiPaletteSwizzle>> PLANK_MULTISWIZZLE = processorMap("wood_multi_palette_swizzle", () -> WoodMultiPaletteSwizzle.CODEC);
+    public static final TFRegistryObject<StructureProcessorType<VerticalDecayProcessor>> VERTICAL_DECAY = processorMap("vertical_decay", () -> VerticalDecayProcessor.CODEC);
+    public static final TFRegistryObject<StructureProcessorType<InfestBlocksProcessor>> INFEST_BLOCKS = processorMap("infest", () -> InfestBlocksProcessor.CODEC);
+    public static final TFRegistryObject<StructureProcessorType<UpdateMarkingProcessor>> UPDATE_MARKING_PROCESSOR = processorMap("update_marking", () -> UpdateMarkingProcessor.CODEC);
+    public static final TFRegistryObject<StructureProcessorType<SpawnerProcessor>> SPAWNER_PROCESSOR = processorMap("spawner_processor", () -> SpawnerProcessor.CODEC);
     public static final TFRegistryObject<StructureProcessorType<CourtyardTerraceTemplateProcessor>> COURTYARD_TERRACE = processor("courtyard_terrace", () -> CourtyardTerraceTemplateProcessor.CODEC);
     public static final TFRegistryObject<StructureProcessorType<GraveyardFeature.WebTemplateProcessor>> WEB = processor("web", () -> GraveyardFeature.WebTemplateProcessor.CODEC);
 
@@ -35,6 +41,11 @@ public final class TFStructureProcessors {
 
     private static <P extends StructureProcessor> TFRegistryObject<StructureProcessorType<P>> processor(String path, Supplier<Codec<P>> codec) {
         MapCodec<P> mapCodec = codec.get().fieldOf("config");
+        return processorMap(path, () -> mapCodec);
+    }
+
+    private static <P extends StructureProcessor> TFRegistryObject<StructureProcessorType<P>> processorMap(String path, Supplier<MapCodec<P>> codec) {
+        MapCodec<P> mapCodec = codec.get();
         StructureProcessorType<P> type = () -> mapCodec;
         ResourceKey<StructureProcessorType<?>> key = ResourceKey.create(BuiltInRegistries.STRUCTURE_PROCESSOR.key(), TwilightForestMod.prefix(path));
         @SuppressWarnings({"unchecked", "rawtypes"})

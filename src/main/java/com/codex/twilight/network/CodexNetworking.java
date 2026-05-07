@@ -76,6 +76,7 @@ public final class CodexNetworking {
         PayloadTypeRegistry.playS2C().register(MazeMapPacket.TYPE, MazeMapPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TFBossBarPacket.AddTFBossBarPacket.TYPE, TFBossBarPacket.AddTFBossBarPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TFBossBarPacket.UpdateTFBossBarStylePacket.TYPE, TFBossBarPacket.UpdateTFBossBarStylePacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(twilightforest.network.UpdateTFMultipartPacket.TYPE, twilightforest.network.UpdateTFMultipartPacket.STREAM_CODEC);
         // P5.b — 12 additional 1:1 ports of upstream packets (data-only, handlers register elsewhere).
         PayloadTypeRegistry.playS2C().register(twilightforest.network.SyncQuestsPacket.TYPE, twilightforest.network.SyncQuestsPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(twilightforest.network.EnforceProgressionStatusPacket.TYPE, twilightforest.network.EnforceProgressionStatusPacket.STREAM_CODEC);

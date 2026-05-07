@@ -5,7 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
-import twilightforest.entity.monster.RovingCube;
+import twilightforest.entity.RovingCube;
 
 import java.util.EnumSet;
 

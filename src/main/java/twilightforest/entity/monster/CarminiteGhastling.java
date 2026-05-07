@@ -114,12 +114,12 @@ public class CarminiteGhastling extends CarminiteGhastguard {
     }
 
     @Override
-    protected SoundEvent getFireSound() {
+    public SoundEvent getFireSound() {
         return TFSounds.CARMINITE_GHASTLING_SHOOT;
     }
 
     @Override
-    protected SoundEvent getWarnSound() {
+    public SoundEvent getWarnSound() {
         return TFSounds.CARMINITE_GHASTLING_WARN;
     }
 

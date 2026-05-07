@@ -6,10 +6,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -33,22 +35,27 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.entity.IHostileMount;
 import twilightforest.entity.ai.goal.ThrowRiderGoal;
 import twilightforest.entity.projectile.FallingIce;
 import twilightforest.entity.projectile.IceBomb;
+import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItemVisuals;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
 import twilightforest.util.entities.EntityUtil;
 
 import java.util.List;
 
-public class AlphaYeti extends BaseTFBoss implements RangedAttackMob {
+public class AlphaYeti extends BaseTFBoss implements RangedAttackMob, IHostileMount {
     private static final EntityDataAccessor<Byte> RAMPAGE_FLAG = SynchedEntityData.defineId(AlphaYeti.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> TIRED_FLAG = SynchedEntityData.defineId(AlphaYeti.class, EntityDataSerializers.BYTE);
     private static final net.minecraft.resources.ResourceLocation RAMPAGE_SPEED_ID = TwilightForestMod.prefix("alpha_yeti_rampage_speed");
@@ -434,6 +441,26 @@ public class AlphaYeti extends BaseTFBoss implements RangedAttackMob {
 
     public boolean canRiderInteract() {
         return true;
+    }
+
+    @Override
+    public int getHomeRadius() {
+        return 30;
+    }
+
+    @Override
+    public ResourceKey<Structure> getHomeStructure() {
+        return TFStructures.YETI_CAVE;
+    }
+
+    @Override
+    public Block getDeathContainer(RandomSource random) {
+        return TFBlocks.CANOPY_CHEST.get();
+    }
+
+    @Override
+    public Block getBossSpawner() {
+        return TFBlocks.ALPHA_YETI_BOSS_SPAWNER.get();
     }
 
 }

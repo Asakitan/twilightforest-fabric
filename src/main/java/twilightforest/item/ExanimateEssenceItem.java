@@ -55,6 +55,6 @@ public class ExanimateEssenceItem extends CodexItem {
 
     private void playSound(Level level, BlockPos pos) {
         RandomSource random = level.getRandom();
-        level.playSound(null, pos, TFSounds.OMINOUS_FIRE, SoundSource.BLOCKS, 1.5F, (random.nextFloat() - random.nextFloat()) * 0.2F + 0.75F);
+        level.playSound(null, pos, net.minecraft.sounds.SoundEvents.SOUL_ESCAPE.value(), SoundSource.BLOCKS, 1.5F, (random.nextFloat() - random.nextFloat()) * 0.2F + 0.75F);
     }
 }

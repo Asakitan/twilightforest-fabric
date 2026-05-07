@@ -1,39 +1,41 @@
 package twilightforest.block;
 
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.MultifaceBlock;
+import net.minecraft.world.level.block.MultifaceSpreader;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import twilightforest.block.entity.RedThreadBlockEntity;
+import twilightforest.init.TFBlocks;
 
-/**
- * Simplified Block subclass exposing the 6 directional boolean properties
- * upstream {@code MultifaceBlock} provides (north/south/east/west/up/down)
- * so loot tables that test individual face-existence resolve.
- */
-public class RedThreadBlock extends Block {
-    public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
-    public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
-    public static final BooleanProperty EAST = BlockStateProperties.EAST;
-    public static final BooleanProperty WEST = BlockStateProperties.WEST;
-    public static final BooleanProperty UP = BlockStateProperties.UP;
-    public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
+public class RedThreadBlock extends MultifaceBlock implements EntityBlock {
 
-    public RedThreadBlock(BlockBehaviour.Properties properties) {
-        super(properties);
-        this.registerDefaultState(this.getStateDefinition().any()
-                .setValue(NORTH, false).setValue(SOUTH, false)
-                .setValue(EAST, false).setValue(WEST, false)
-                .setValue(UP, false).setValue(DOWN, false));
-    }
+	public static final MapCodec<RedThreadBlock> CODEC = simpleCodec(RedThreadBlock::new);
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, SOUTH, EAST, WEST, UP, DOWN);
-    }
+	public RedThreadBlock(Properties properties) {
+		super(properties);
+	}
 
-    @SuppressWarnings("unused")
-    private static final Direction[] FACES = Direction.values();
+	@Override
+	protected MapCodec<? extends MultifaceBlock> codec() {
+		return CODEC;
+	}
+
+	@Override
+	public boolean canBeReplaced(BlockState state, BlockPlaceContext ctx) {
+		return ctx.getItemInHand().is(TFBlocks.RED_THREAD.get().asItem());
+	}
+
+	@Override
+	public MultifaceSpreader getSpreader() {
+		return new MultifaceSpreader(this);
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new RedThreadBlockEntity(pos, state);
+	}
 }

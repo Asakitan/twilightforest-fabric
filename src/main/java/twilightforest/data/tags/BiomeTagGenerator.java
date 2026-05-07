@@ -7,6 +7,7 @@ import twilightforest.TwilightForestMod;
 
 public final class BiomeTagGenerator {
     public static final TagKey<Biome> IS_TWILIGHT = create("in_twilight_forest");
+    public static final TagKey<Biome> VALID_CAMP_BIOMES = create("valid_camp_biomes");
     public static final TagKey<Biome> VALID_AURORA_PALACE_BIOMES = create("valid_aurora_palace_biomes");
     public static final TagKey<Biome> VALID_DARK_TOWER_BIOMES = create("valid_dark_tower_biomes");
     public static final TagKey<Biome> VALID_GIANT_HOUSE_BIOMES = create("valid_giant_house_biomes");

@@ -10,7 +10,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.Rabbit;
@@ -37,6 +36,7 @@ import twilightforest.entity.boss.KnightPhantom;
 import twilightforest.entity.boss.Lich;
 import twilightforest.entity.boss.Minoshroom;
 import twilightforest.entity.boss.Naga;
+import twilightforest.entity.boss.PlateauBoss;
 import twilightforest.entity.boss.SnowQueen;
 import twilightforest.entity.boss.UrGhast;
 import twilightforest.entity.monster.Adherent;
@@ -66,7 +66,7 @@ import twilightforest.entity.monster.PinchBeetle;
 import twilightforest.entity.monster.Redcap;
 import twilightforest.entity.monster.RedcapSapper;
 import twilightforest.entity.monster.RisingZombie;
-import twilightforest.entity.monster.RovingCube;
+import twilightforest.entity.RovingCube;
 import twilightforest.entity.monster.SkeletonDruid;
 import twilightforest.entity.monster.SlimeBeetle;
 import twilightforest.entity.monster.SnowGuardian;
@@ -188,9 +188,7 @@ public final class TFEntities {
     public static final TFRegistryObject<EntityType<twilightforest.entity.projectile.MoonwormShot>> MOONWORM_SHOT = projectile("moonworm_shot", EntityType.Builder.<twilightforest.entity.projectile.MoonwormShot>of(twilightforest.entity.projectile.MoonwormShot::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(5).updateInterval(2));
     public static final TFRegistryObject<EntityType<ThrownBlock>> THROWN_BLOCK = projectile("thrown_block", EntityType.Builder.<ThrownBlock>of(ThrownBlock::new, MobCategory.MISC).sized(0.75F, 0.75F).clientTrackingRange(8).updateInterval(3));
     public static final TFRegistryObject<EntityType<TinyBird>> TINY_BIRD = entity("tiny_bird", EntityType.Builder.of(TinyBird::new, MobCategory.CREATURE).sized(0.4F, 0.7F));
-    // Final-castle boss alias — mod has no PlateauBoss class yet; alias to IronGolem so the entity-type
-    // id is bound and advancement entity_predicate {"type":"twilightforest:plateau_boss"} parses cleanly.
-    public static final TFRegistryObject<EntityType<IronGolem>> PLATEAU_BOSS = entity("plateau_boss", EntityType.Builder.<IronGolem>of(IronGolem::new, MobCategory.MONSTER).sized(1.4F, 2.7F).clientTrackingRange(10));
+    public static final TFRegistryObject<EntityType<PlateauBoss>> PLATEAU_BOSS = entity("plateau_boss", EntityType.Builder.<PlateauBoss>of((type, level) -> new PlateauBoss(type, level), MobCategory.MONSTER).sized(1.0F, 1.0F).clientTrackingRange(10));
 
     private TFEntities() {
     }
@@ -240,6 +238,7 @@ public final class TFEntities {
         FabricDefaultAttributeRegistry.register(MOSQUITO_SWARM.get(), MosquitoSwarm.registerAttributes().build());
         FabricDefaultAttributeRegistry.register(NAGA.get(), Naga.registerAttributes().build());
         FabricDefaultAttributeRegistry.register(PINCH_BEETLE.get(), PinchBeetle.registerAttributes().build());
+        FabricDefaultAttributeRegistry.register(PLATEAU_BOSS.get(), PlateauBoss.registerAttributes().build());
         FabricDefaultAttributeRegistry.register(QUEST_RAM.get(), QuestRam.registerAttributes().build());
         FabricDefaultAttributeRegistry.register(REDCAP.get(), Redcap.registerAttributes().build());
         FabricDefaultAttributeRegistry.register(REDCAP_SAPPER.get(), RedcapSapper.registerAttributes().build());

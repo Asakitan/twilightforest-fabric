@@ -251,6 +251,13 @@ public final class TFBlockEntities {
                     TFBlocks.QUEST_RAM_WALL_TROPHY.get())
                     .build());
 
+    public static final BlockEntityType<twilightforest.block.entity.RedThreadBlockEntity> RED_THREAD = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            TwilightForestMod.prefix("red_thread"),
+            FabricBlockEntityTypeBuilder.create(twilightforest.block.entity.RedThreadBlockEntity::new,
+                    TFBlocks.RED_THREAD.get())
+                    .build());
+
     public static final BlockEntityType<twilightforest.block.entity.FireJetBlockEntity> FLAME_JET = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             TwilightForestMod.prefix("flame_jet"),

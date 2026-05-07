@@ -47,7 +47,7 @@ public class CarminiteGhastguard extends Ghast {
     private int attackTimer;
     private int previousAttackTimer;
     private int inTrapCounter;
-    private GhastguardAttackGoal attackGoal;
+    private twilightforest.entity.ai.goal.GhastguardAttackGoal attackGoal;
 
     public CarminiteGhastguard(EntityType<? extends CarminiteGhastguard> type, Level level) {
         super(type, level);
@@ -70,11 +70,11 @@ public class CarminiteGhastguard extends Ghast {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(5, new GhastguardHomedFlightGoal(this));
-        this.goalSelector.addGoal(5, new GhastguardRandomFlyGoal(this));
+        this.goalSelector.addGoal(5, new twilightforest.entity.ai.goal.GhastguardHomedFlightGoal(this));
+        this.goalSelector.addGoal(5, new twilightforest.entity.ai.goal.GhastguardRandomFlyGoal(this));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 64.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(7, this.attackGoal = new GhastguardAttackGoal(this));
+        this.goalSelector.addGoal(7, this.attackGoal = new twilightforest.entity.ai.goal.GhastguardAttackGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
@@ -184,11 +184,11 @@ public class CarminiteGhastguard extends Ghast {
         return 0.5F;
     }
 
-    protected SoundEvent getFireSound() {
+    public SoundEvent getFireSound() {
         return TFSounds.CARMINITE_GHASTGUARD_SHOOT;
     }
 
-    protected SoundEvent getWarnSound() {
+    public SoundEvent getWarnSound() {
         return TFSounds.CARMINITE_GHASTGUARD_WARN;
     }
 
@@ -221,6 +221,10 @@ public class CarminiteGhastguard extends Ghast {
 
     public boolean isRestrictionPointValid() {
         return this.getRestrictionPoint() != null && this.getRestrictionPoint().dimension().equals(this.level().dimension());
+    }
+
+    public boolean isRestrictionPointValid(net.minecraft.resources.ResourceKey<Level> dimension) {
+        return this.getRestrictionPoint() != null && this.getRestrictionPoint().dimension().equals(dimension);
     }
 
     public boolean isMobWithinHomeArea(Entity entity) {

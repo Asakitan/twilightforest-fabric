@@ -19,7 +19,9 @@ import twilightforest.init.TFSounds;
 import java.util.List;
 
 public class LichMinion extends Zombie {
-    private LivingEntity master;
+    /** P5.e: visibility bumped private→public so upstream-style Lich goal classes
+     *  can do {@code minion.master == this.lich} identity comparison without a getter call. */
+    public LivingEntity master;
 
     public LichMinion(EntityType<? extends LichMinion> type, Level level) {
         super(type, level);

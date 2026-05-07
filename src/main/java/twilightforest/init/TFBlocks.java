@@ -28,6 +28,7 @@ import twilightforest.block.CodexChestBlock;
 import twilightforest.block.CodexDirectionalBlock;
 import twilightforest.block.CodexFenceBlock;
 import twilightforest.block.CodexFenceGateBlock;
+import twilightforest.block.CodexHollowOakSaplingBlock;
 import twilightforest.block.CodexSlabBlock;
 import twilightforest.block.CodexTrapDoorBlock;
 import twilightforest.block.CodexHugeLilyPadBlock;
@@ -48,6 +49,7 @@ import twilightforest.block.CodexTorchberryPlantBlock;
 import twilightforest.block.UncraftingTableBlock;
 import twilightforest.item.TrophyItem;
 import twilightforest.loot.TFLootTables;
+import twilightforest.world.components.feature.trees.growers.TFTreeGrowers;
 
 /**
  * Alias table — each TFBlocks.X.get() returns the vanilla equivalent that
@@ -153,11 +155,11 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> VIOLET_CASTLE_RUNE_BRICK = solidBlock("violet_castle_rune_brick", Blocks.PURPLE_GLAZED_TERRACOTTA);
     public static final TFRegistryObject<Block> VIOLET_FORCE_FIELD = forceFieldBlock("violet_force_field", Blocks.PURPLE_STAINED_GLASS);
     public static final TFRegistryObject<Block> CANOPY_FENCE = fenceBlock("canopy_fence", Blocks.DARK_OAK_FENCE);
-    public static final TFRegistryObject<Block> CANOPY_SAPLING = saplingBlock("canopy_sapling", Blocks.DARK_OAK_SAPLING, TreeGrower.DARK_OAK);
-    public static final TFRegistryObject<Block> TWILIGHT_OAK_SAPLING = saplingBlock("twilight_oak_sapling", Blocks.OAK_SAPLING, TreeGrower.OAK);
+    public static final TFRegistryObject<Block> CANOPY_SAPLING = saplingBlock("canopy_sapling", Blocks.DARK_OAK_SAPLING, TFTreeGrowers.CANOPY);
+    public static final TFRegistryObject<Block> TWILIGHT_OAK_SAPLING = saplingBlock("twilight_oak_sapling", Blocks.OAK_SAPLING, TFTreeGrowers.TWILIGHT_OAK);
     public static final TFRegistryObject<Block> SNOWY_OAK_SAPLING = saplingBlock("snowy_oak_sapling", Blocks.OAK_SAPLING, TreeGrower.OAK);
-    public static final TFRegistryObject<Block> RAINBOW_OAK_SAPLING = saplingBlock("rainbow_oak_sapling", Blocks.OAK_SAPLING, TreeGrower.OAK);
-    public static final TFRegistryObject<Block> DARKWOOD_SAPLING = saplingBlock("darkwood_sapling", Blocks.DARK_OAK_SAPLING, TreeGrower.DARK_OAK);
+    public static final TFRegistryObject<Block> RAINBOW_OAK_SAPLING = saplingBlock("rainbow_oak_sapling", Blocks.OAK_SAPLING, TFTreeGrowers.RAINBOW_OAK);
+    public static final TFRegistryObject<Block> DARKWOOD_SAPLING = saplingBlock("darkwood_sapling", Blocks.DARK_OAK_SAPLING, TFTreeGrowers.DARK);
     public static final TFRegistryObject<Block> FALLEN_LEAVES = snowLayerBlock("fallen_leaves", Blocks.SNOW);
     public static final TFRegistryObject<Block> HOLLOW_LOG_HORIZONTAL = pillarBlock("hollow_log_horizontal", Blocks.OAK_LOG);
     public static final TFRegistryObject<Block> HUGE_LILY_PAD = hugeLilyPadBlock("huge_lily_pad", Blocks.LILY_PAD);
@@ -253,7 +255,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> STRIPPED_MANGROVE_LOG = pillarBlock("stripped_mangrove_log", Blocks.STRIPPED_MANGROVE_LOG);
     public static final TFRegistryObject<Block> STRIPPED_MANGROVE_WOOD = pillarBlock("stripped_mangrove_wood", Blocks.STRIPPED_MANGROVE_WOOD);
     public static final TFRegistryObject<Block> MANGROVE_LEAVES = leavesBlock("mangrove_leaves", Blocks.MANGROVE_LEAVES);
-    public static final TFRegistryObject<Block> MANGROVE_SAPLING = mangroveSaplingBlock("mangrove_sapling", Blocks.OAK_SAPLING, net.minecraft.world.level.block.grower.TreeGrower.OAK);
+    public static final TFRegistryObject<Block> MANGROVE_SAPLING = mangroveSaplingBlock("mangrove_sapling", Blocks.OAK_SAPLING, TFTreeGrowers.MANGROVE);
 
     // -- Dark/Darkwood family (TF "dark_*" block ids — distinct from canopy; vanilla fallback: dark_oak)
     public static final TFRegistryObject<Block> DARK_PLANKS = solidBlock("dark_planks", Blocks.DARK_OAK_PLANKS);
@@ -279,7 +281,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> STRIPPED_MINING_LOG = pillarBlock("stripped_mining_log", Blocks.STRIPPED_BIRCH_LOG);
     public static final TFRegistryObject<Block> STRIPPED_MINING_WOOD = pillarBlock("stripped_mining_wood", Blocks.STRIPPED_BIRCH_WOOD);
     public static final TFRegistryObject<Block> MINING_LEAVES = leavesBlock("mining_leaves", Blocks.BIRCH_LEAVES);
-    public static final TFRegistryObject<Block> MINING_SAPLING = saplingBlock("mining_sapling", Blocks.BIRCH_SAPLING, net.minecraft.world.level.block.grower.TreeGrower.BIRCH);
+    public static final TFRegistryObject<Block> MINING_SAPLING = saplingBlock("mining_sapling", Blocks.BIRCH_SAPLING, TFTreeGrowers.MINING);
 
     // -- Time family (TF "time_*"; vanilla fallback: spruce)
     public static final TFRegistryObject<Block> TIME_PLANKS = solidBlock("time_planks", Blocks.SPRUCE_PLANKS);
@@ -293,7 +295,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> STRIPPED_TIME_LOG = pillarBlock("stripped_time_log", Blocks.STRIPPED_SPRUCE_LOG);
     public static final TFRegistryObject<Block> STRIPPED_TIME_WOOD = pillarBlock("stripped_time_wood", Blocks.STRIPPED_SPRUCE_WOOD);
     public static final TFRegistryObject<Block> TIME_LEAVES = leavesBlock("time_leaves", Blocks.SPRUCE_LEAVES);
-    public static final TFRegistryObject<Block> TIME_SAPLING = saplingBlock("time_sapling", Blocks.SPRUCE_SAPLING, net.minecraft.world.level.block.grower.TreeGrower.SPRUCE);
+    public static final TFRegistryObject<Block> TIME_SAPLING = saplingBlock("time_sapling", Blocks.SPRUCE_SAPLING, TFTreeGrowers.TIME);
 
     // -- Transformation family (TF "transformation_*"; vanilla fallback: jungle)
     public static final TFRegistryObject<Block> TRANSFORMATION_PLANKS = solidBlock("transformation_planks", Blocks.JUNGLE_PLANKS);
@@ -307,7 +309,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> STRIPPED_TRANSFORMATION_LOG = pillarBlock("stripped_transformation_log", Blocks.STRIPPED_JUNGLE_LOG);
     public static final TFRegistryObject<Block> STRIPPED_TRANSFORMATION_WOOD = pillarBlock("stripped_transformation_wood", Blocks.STRIPPED_JUNGLE_WOOD);
     public static final TFRegistryObject<Block> TRANSFORMATION_LEAVES = transformationLeavesBlock("transformation_leaves", Blocks.JUNGLE_LEAVES);
-    public static final TFRegistryObject<Block> TRANSFORMATION_SAPLING = saplingBlock("transformation_sapling", Blocks.JUNGLE_SAPLING, net.minecraft.world.level.block.grower.TreeGrower.JUNGLE);
+    public static final TFRegistryObject<Block> TRANSFORMATION_SAPLING = saplingBlock("transformation_sapling", Blocks.JUNGLE_SAPLING, TFTreeGrowers.TRANSFORMATION);
 
     // -- Sorting family (TF "sorting_*"; vanilla fallback: cherry)
     public static final TFRegistryObject<Block> SORTING_PLANKS = solidBlock("sorting_planks", Blocks.CHERRY_PLANKS);
@@ -321,7 +323,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> STRIPPED_SORTING_LOG = pillarBlock("stripped_sorting_log", Blocks.STRIPPED_CHERRY_LOG);
     public static final TFRegistryObject<Block> STRIPPED_SORTING_WOOD = pillarBlock("stripped_sorting_wood", Blocks.STRIPPED_CHERRY_WOOD);
     public static final TFRegistryObject<Block> SORTING_LEAVES = leavesBlock("sorting_leaves", Blocks.CHERRY_LEAVES);
-    public static final TFRegistryObject<Block> SORTING_SAPLING = saplingBlock("sorting_sapling", Blocks.CHERRY_SAPLING, net.minecraft.world.level.block.grower.TreeGrower.CHERRY);
+    public static final TFRegistryObject<Block> SORTING_SAPLING = saplingBlock("sorting_sapling", Blocks.CHERRY_SAPLING, TFTreeGrowers.SORTING);
 
     // ====== Q12 batch: banisters + drying racks + wood chests + decoration ======
 
@@ -469,7 +471,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> HOLLOW_VANGROVE_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_vangrove_log_climbable", Blocks.MANGROVE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_VANGROVE_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_vangrove_log_horizontal", Blocks.MANGROVE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_VANGROVE_LOG_VERTICAL = hollowLogVerticalBlock("hollow_vangrove_log_vertical", Blocks.MANGROVE_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_OAK_SAPLING = saplingBlock("hollow_oak_sapling", Blocks.OAK_SAPLING, net.minecraft.world.level.block.grower.TreeGrower.OAK);
+    public static final TFRegistryObject<Block> HOLLOW_OAK_SAPLING = hollowOakSaplingBlock("hollow_oak_sapling", Blocks.OAK_SAPLING);
 
     // -- Trapped chests (TF wood variants) — chestBlock fallback
     public static final TFRegistryObject<Block> CANOPY_TRAPPED_CHEST = chestBlock("canopy_trapped_chest", Blocks.TRAPPED_CHEST);
@@ -1584,6 +1586,12 @@ public final class TFBlocks {
 
     private static TFRegistryObject<Block> saplingBlock(String path, Block fallback, TreeGrower treeGrower) {
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new CodexSaplingBlock(treeGrower, BlockBehaviour.Properties.ofFullCopy(fallback), fallback.defaultBlockState()));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    private static TFRegistryObject<Block> hollowOakSaplingBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new CodexHollowOakSaplingBlock(TreeGrower.OAK, BlockBehaviour.Properties.ofFullCopy(fallback), fallback.defaultBlockState()));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }

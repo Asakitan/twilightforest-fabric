@@ -11,7 +11,6 @@ public class EnderBowItem extends CodexBowItem {
         super(properties, fallback, -1);
     }
 
-    @Override
     public AbstractArrow customArrow(AbstractArrow arrow, ItemStack projectileStack, ItemStack weaponStack) {
         arrow.addTag(KEY);
         return arrow;

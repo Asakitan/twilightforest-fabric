@@ -35,24 +35,6 @@ import twilightforest.util.landmarks.LandmarkUtil;
 
 import java.util.List;
 
-/**
- * 1:1 port of upstream {@code twilightforest.block.TrophyPedestalBlock}.
- *
- * <p>NeoForge → Fabric / codex translations:
- * <ul>
- *   <li>{@code TFSounds.PEDESTAL_ACTIVATE} → codex's direct {@code SoundEvent} field.</li>
- *   <li>{@code PlayerHelper.doesPlayerHaveRequiredAdvancements(player, ResourceLocation)} →
- *       codex's {@code playerHasRequiredAdvancements(player, List)} (List wraps the single id).</li>
- *   <li>{@code TFStats.TROPHY_PEDESTALS_ACTIVATED.get()} → codex stores it as a
- *       {@code ResourceLocation}, so we wrap it through {@code Stats.CUSTOM.get(...)}.</li>
- *   <li>The comparator output (vanilla {@code instanceof TrophyBlock}) cannot resolve until
- *       the upstream {@code TrophyBlock + AbstractTrophyBlock + TrophyBlockEntity} chain is
- *       ported. We use a tag-based fallback: any block on
- *       {@link BlockTagGenerator#TROPHY_PEDESTAL_ACTIVATION_BLOCKS} returns the standard signal
- *       strength of 5 (matches upstream {@code TrophyVariant.NAGA/HYDRA} default analog output).
- *       Updated to per-trophy precise values once the trophy chain ports in P2.f.</li>
- * </ul>
- */
 public class TrophyPedestalBlock extends Block implements SimpleWaterloggedBlock {
 
 	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
@@ -181,16 +163,9 @@ public class TrophyPedestalBlock extends Block implements SimpleWaterloggedBlock
 	@Override
 	@SuppressWarnings("deprecation")
 	public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos pos) {
-		// 1:1 with upstream now that AbstractTrophyBlock chain is in: per-variant precise
-		// comparator value (NAGA=5, LICH=6, HYDRA=12, UR_GHAST=13, KNIGHT_PHANTOM=8,
-		// SNOW_QUEEN=14, MINOSHROOM=7, ALPHA_YETI=9, QUEST_RAM=1). Tag fallback retained
-		// for any non-trophy block on the activation tag (returns the canonical 5).
 		BlockState aboveState = level.getBlockState(pos.above());
 		if (aboveState.getBlock() instanceof AbstractTrophyBlock atb) {
 			return atb.getComparatorValue();
-		}
-		if (aboveState.is(BlockTagGenerator.TROPHY_PEDESTAL_ACTIVATION_BLOCKS)) {
-			return 5;
 		}
 		return 0;
 	}

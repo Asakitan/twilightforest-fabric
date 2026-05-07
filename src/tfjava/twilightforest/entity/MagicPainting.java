@@ -45,10 +45,7 @@ import java.util.Optional;
  * <p>Codex Fabric port note: codex stores {@code MAGIC_PAINTING_VARIANT} as a
  * direct {@link net.minecraft.network.syncher.EntityDataSerializer} (no
  * Holder-wrapping {@code .value()} indirection), so the {@code defineId}
- * call passes {@code TFDataSerializers.MAGIC_PAINTING_VARIANT} directly. If the
- * datapack registry is empty the holder lookup will throw at runtime — clients
- * should fall back to the legacy CMD-driven {@code MagicPaintingItem} path until
- * variant JSONs ship.</p>
+ * call passes {@code TFDataSerializers.MAGIC_PAINTING_VARIANT} directly.</p>
  */
 public class MagicPainting extends HangingEntity {
 	private static final EntityDataAccessor<Holder<MagicPaintingVariant>> MAGIC_PAINTING_VARIANT = SynchedEntityData.defineId(MagicPainting.class, TFDataSerializers.MAGIC_PAINTING_VARIANT);

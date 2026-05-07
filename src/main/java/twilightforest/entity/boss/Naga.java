@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +18,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -39,7 +41,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -48,8 +52,10 @@ import twilightforest.entity.TFPart;
 import twilightforest.entity.ai.control.NagaMoveControl;
 import twilightforest.entity.ai.goal.NagaMovementPattern;
 import twilightforest.entity.ai.goal.NagaSmashGoal;
+import twilightforest.init.TFBlocks;
 import twilightforest.init.TFItemVisuals;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
 import twilightforest.util.entities.EntityUtil;
 
 import java.util.List;
@@ -91,7 +97,8 @@ public class Naga extends BaseTFBoss implements TFPart.Owner {
                 .add(Attributes.MOVEMENT_SPEED, DEFAULT_SPEED)
                 .add(Attributes.ATTACK_DAMAGE, 5.0D)
                 .add(Attributes.FOLLOW_RANGE, 80.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.25D);
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.25D)
+                .add(Attributes.STEP_HEIGHT, 2.0D);
     }
 
     @Override
@@ -442,6 +449,10 @@ public class Naga extends BaseTFBoss implements TFPart.Owner {
         return this.movementAI;
     }
 
+    public NagaMovementPattern getMovementPattern() {
+        return this.movementAI;
+    }
+
     @Override
     public TFPart<?>[] getParts() {
         return this.bodySegments;
@@ -455,7 +466,22 @@ public class Naga extends BaseTFBoss implements TFPart.Owner {
 
     @Override
     public int getHomeRadius() {
-        return XZ_HOME_BOUNDS;
+        return 40;
+    }
+
+    @Override
+    public ResourceKey<Structure> getHomeStructure() {
+        return TFStructures.NAGA_COURTYARD;
+    }
+
+    @Override
+    public Block getDeathContainer(RandomSource random) {
+        return random.nextBoolean() ? TFBlocks.TWILIGHT_OAK_CHEST.get() : TFBlocks.CANOPY_CHEST.get();
+    }
+
+    @Override
+    public Block getBossSpawner() {
+        return TFBlocks.NAGA_BOSS_SPAWNER.get();
     }
 
     @Override

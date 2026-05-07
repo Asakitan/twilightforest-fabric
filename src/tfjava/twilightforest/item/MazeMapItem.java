@@ -10,7 +10,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -28,9 +27,11 @@ import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.init.TFDataMaps;
 import twilightforest.init.TFItems;
 import twilightforest.item.mapdata.TFMagicMapData;
 import twilightforest.item.mapdata.TFMazeMapData;
+import twilightforest.util.datamaps.OreMapOreColor;
 
 import java.util.List;
 import java.util.Optional;
@@ -168,8 +169,9 @@ public class MazeMapItem extends MapItem {
 
 									if (this.mapOres) {
 										// recolor ores
-										if (!state.isAir() && isOre(state)) {
-											multiset.add(MapColor.COLOR_PINK, 1000);
+										OreMapOreColor color = TFDataMaps.getOreMapOreColor(state);
+										if (color != null) {
+											multiset.add(color.color(), 1000);
 										}
 									}
 								}
@@ -252,14 +254,4 @@ public class MazeMapItem extends MapItem {
 		}
 	}
 
-	private static boolean isOre(BlockState state) {
-		return state.is(BlockTags.COAL_ORES)
-			|| state.is(BlockTags.COPPER_ORES)
-			|| state.is(BlockTags.DIAMOND_ORES)
-			|| state.is(BlockTags.EMERALD_ORES)
-			|| state.is(BlockTags.GOLD_ORES)
-			|| state.is(BlockTags.IRON_ORES)
-			|| state.is(BlockTags.LAPIS_ORES)
-			|| state.is(BlockTags.REDSTONE_ORES);
-	}
 }

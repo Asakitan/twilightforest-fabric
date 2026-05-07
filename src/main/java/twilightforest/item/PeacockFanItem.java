@@ -1,5 +1,6 @@
 package twilightforest.item;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.core.BlockPos;
@@ -16,32 +17,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractCandleBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import twilightforest.init.TFDataAttachments;
 import twilightforest.init.TFSounds;
+import twilightforest.network.MovePlayerPacket;
 
-/**
- * Q37 simplified port of TF {@code PeacockFanItem}.
- * <ul>
- *   <li>Right-click → fan AABB in front of player (3 block reach × 4 block diameter):
- *       all entities get a `lookVec * 2` velocity push, projectiles redirect, flowers
- *       have a 1/3 chance to break, candles extinguish.</li>
- *   <li>Mid-air right-click → upward jump impulse (1.5 Y velocity).</li>
- *   <li>Plays {@link TFSounds#PEACOCK_FAN_USE} + cloud particle burst along the AABB.</li>
- *   <li>Costs (1 + fanned entities) durability per use.</li>
- * </ul>
- *
- * <p>Skipped from TF original: NeoForge {@code BlockEvent.BreakEvent} dispatch (Fabric
- * has no equivalent — flowers always break), {@code TFDataAttachments.FEATHER_FAN}
- * mid-air jump tracking (collapsed to a simple onGround check), elytra rocket boost
- * (we still apply when fall-flying, but on the server side via setDeltaMovement),
- * the LightableBlock extinguish branch (TF-only block class). Vanilla candles still
- * extinguish.</p>
- */
 public class PeacockFanItem extends CodexItem {
 
     public PeacockFanItem(Properties properties, Item fallback) {
@@ -55,9 +41,24 @@ public class PeacockFanItem extends CodexItem {
             return InteractionResultHolder.fail(stack);
         }
 
-        boolean midAirJump = !player.onGround() && !player.isSwimming() && !player.isInWater();
+        boolean midAirJump = !player.onGround()
+                && !player.isSwimming()
+                && !TFDataAttachments.get(player, TFDataAttachments.FEATHER_FAN);
 
         if (level.isClientSide()) {
+            if (player.isFallFlying()) {
+                Vec3 look = player.getLookAngle();
+                Vec3 movement = player.getDeltaMovement();
+                player.setDeltaMovement(movement.add(
+                        look.x() * 0.1D + (look.x() * 2.0D - movement.x()) * 0.5D,
+                        (look.y() * 0.1D + (look.y() * 2.0D - movement.y()) * 0.5D) + 1.25D,
+                        look.z() * 0.1D + (look.z() * 2.0D - movement.z()) * 0.5D));
+            }
+            if (midAirJump) {
+                player.setDeltaMovement(player.getDeltaMovement().x() * 1.05D,
+                        1.5D,
+                        player.getDeltaMovement().z() * 1.05D);
+            }
             return InteractionResultHolder.success(stack);
         }
 
@@ -78,6 +79,10 @@ public class PeacockFanItem extends CodexItem {
             if (entity instanceof ServerPlayer pushed && pushed != player && !pushed.isShiftKeyDown()) {
                 pushed.setDeltaMovement(push.x(), push.y(), push.z());
                 pushed.hurtMarked = true;
+                if (ServerPlayNetworking.canSend(pushed, MovePlayerPacket.TYPE)) {
+                    ServerPlayNetworking.send(pushed, new MovePlayerPacket(push.x(), push.y(), push.z()));
+                }
+                player.getCooldowns().addCooldown(this, 40);
                 fanned += 2;
             }
         }
@@ -111,14 +116,29 @@ public class PeacockFanItem extends CodexItem {
 
         // Mid-air jump impulse
         if (midAirJump) {
+            TFDataAttachments.set(player, TFDataAttachments.FEATHER_FAN, true);
             player.setDeltaMovement(player.getDeltaMovement().x * 1.05D, 1.5D, player.getDeltaMovement().z * 1.05D);
             player.hurtMarked = true;
+            if (player instanceof ServerPlayer serverPlayer && ServerPlayNetworking.canSend(serverPlayer, MovePlayerPacket.TYPE)) {
+                ServerPlayNetworking.send(serverPlayer, new MovePlayerPacket(player.getDeltaMovement().x(), player.getDeltaMovement().y(), player.getDeltaMovement().z()));
+            }
         }
 
         if (!player.getAbilities().instabuild) {
             stack.hurtAndBreak(fanned + 1, player, LivingEntity.getSlotForHand(hand));
         }
+        player.startUsingItem(hand);
         return InteractionResultHolder.success(stack);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity user) {
+        return 20;
     }
 
     private AABB getEffectAABB(Player player) {

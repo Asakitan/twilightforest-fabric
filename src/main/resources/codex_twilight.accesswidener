@@ -49,7 +49,6 @@ accessible method net/minecraft/world/level/storage/loot/LootTable shuffleAndSpl
 # P5 boss-bar pipeline (TFBossBarPacket + ServerTFBossBar + ClientTFBossBar)
 accessible method net/minecraft/network/protocol/game/ClientboundBossEventPacket encodeProperties (ZZZ)I
 accessible field net/minecraft/server/level/ServerBossEvent players Ljava/util/Set;
-accessible field net/minecraft/world/BossEvent visible Z
 accessible field net/minecraft/client/gui/components/BossHealthOverlay OVERLAY_BACKGROUND_SPRITES [Lnet/minecraft/resources/ResourceLocation;
 accessible field net/minecraft/client/gui/components/BossHealthOverlay OVERLAY_PROGRESS_SPRITES [Lnet/minecraft/resources/ResourceLocation;
 accessible field net/minecraft/client/gui/components/LerpingBossEvent setTime J
@@ -92,4 +91,17 @@ accessible method net/minecraft/client/model/HumanoidModel getAttackArm (Lnet/mi
 # Twilight Forest grass color modifier (Phase 1 codec swap + MM enum extension)
 mutable field net/minecraft/world/level/biome/BiomeSpecialEffects$GrassColorModifier CODEC Lcom/mojang/serialization/Codec;
 accessible field net/minecraft/world/level/biome/Biome TEMPERATURE_NOISE Lnet/minecraft/world/level/levelgen/synth/PerlinSimplexNoise;
+
+# Twilight Forest game rules
+accessible method net/minecraft/world/level/GameRules register (Ljava/lang/String;Lnet/minecraft/world/level/GameRules$Category;Lnet/minecraft/world/level/GameRules$Type;)Lnet/minecraft/world/level/GameRules$Key;
+accessible method net/minecraft/world/level/GameRules$BooleanValue create (ZLjava/util/function/BiConsumer;)Lnet/minecraft/world/level/GameRules$Type;
+accessible method net/minecraft/world/level/GameRules$IntegerValue create (I)Lnet/minecraft/world/level/GameRules$Type;
+accessible method net/minecraft/world/level/block/state/properties/BlockSetType register (Lnet/minecraft/world/level/block/state/properties/BlockSetType;)Lnet/minecraft/world/level/block/state/properties/BlockSetType;
+accessible method net/minecraft/world/level/block/state/properties/WoodType register (Lnet/minecraft/world/level/block/state/properties/WoodType;)Lnet/minecraft/world/level/block/state/properties/WoodType;
+accessible method net/minecraft/world/level/levelgen/structure/pools/SinglePoolElement sortBySelectionPriority (Ljava/util/List;)V
+accessible method net/minecraft/world/level/levelgen/structure/Structure findGenerationPoint (Lnet/minecraft/world/level/levelgen/structure/Structure$GenerationContext;)Ljava/util/Optional;
+accessible method net/minecraft/world/level/levelgen/structure/TemplateStructurePiece makeTemplateLocation ()Lnet/minecraft/resources/ResourceLocation;
+accessible method net/minecraft/world/level/BaseSpawner setNextSpawnData (Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/SpawnData;)V
+accessible field net/minecraft/world/level/block/entity/BrewingStandBlockEntity fuel I
+accessible field net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity items Lnet/minecraft/core/NonNullList;
 

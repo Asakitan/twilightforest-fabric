@@ -21,6 +21,12 @@ public final class ItemTagGenerator {
     public static final TagKey<Item> SCEPTERS = create("scepters");
     public static final TagKey<Item> KOBOLD_PACIFICATION_BREADS = create("kobold_pacification_breads");
     public static final TagKey<Item> KNIGHTMETAL_INGOTS = common("ingots/knightmetal");
+    public static final TagKey<Item> REPAIRS_IRONWOOD_TOOLS = create("repairs_ironwood_tools");
+    public static final TagKey<Item> REPAIRS_STEELEAF_TOOLS = create("repairs_steeleaf_tools");
+    public static final TagKey<Item> REPAIRS_KNIGHTMETAL_TOOLS = create("repairs_knightmetal_tools");
+    public static final TagKey<Item> REPAIRS_FIERY_TOOLS = create("repairs_fiery_tools");
+    public static final TagKey<Item> REPAIRS_GIANT_TOOLS = create("repairs_giant_tools");
+    public static final TagKey<Item> REPAIRS_ICE_TOOLS = create("repairs_ice_tools");
     public static final TagKey<Item> TRAVELLERS_BELT_BLACKLISTED = create("travellers_belt_blacklisted");
     public static final TagKey<Item> EMPERORS_CLOTH_APPLICABLE = create("emperors_cloth_applicable");
 

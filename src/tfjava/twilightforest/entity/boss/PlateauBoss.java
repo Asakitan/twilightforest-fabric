@@ -14,7 +14,7 @@ import twilightforest.init.TFStructures;
 
 /**
  * 1:1 port of upstream {@code twilightforest.entity.boss.PlateauBoss} — final-castle
- * boss placeholder that returns the canonical home structure / death container /
+ * boss entity that returns the canonical home structure / death container /
  * boss-spawner block. Inherits all the home-restriction + boss-bar machinery from
  * {@link BaseTFBoss}.
  *

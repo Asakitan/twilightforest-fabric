@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import twilightforest.TFRegistries;
@@ -52,6 +53,15 @@ public final class CodexTwilight implements ModInitializer {
     @Override
     public void onInitialize() {
         DynamicRegistries.register(TFRegistries.Keys.STRUCTURE_SPELEOTHEM_SETTINGS, StructureSpeleothemConfig.CODEC);
+        DynamicRegistries.register(TFRegistries.Keys.RESTRICTIONS, twilightforest.util.Restriction.CODEC);
+        DynamicRegistries.register(TFRegistries.Keys.CHUNK_BLANKET_PROCESSORS,
+            twilightforest.init.custom.ChunkBlanketProcessors.DISPATCH_CODEC);
+        DynamicRegistries.register(TFRegistries.Keys.TEMPLATE_MARKER_HANDLER,
+            twilightforest.init.custom.TemplateMarkerHandlers.DISPATCH_CODEC);
+        DynamicRegistries.register(TFRegistries.Keys.TEMPLATE_MARKER_HANDLER_LIST,
+            twilightforest.world.components.structures.util.TemplateMarkerHandlerList.CODEC);
+        DynamicRegistries.register(TFRegistries.Keys.WOOD_PALETTES,
+            twilightforest.util.WoodPalette.CODEC);
         // TINY_BIRD_VARIANT and DWARF_RABBIT_VARIANT are referenced by TFDataSerializers via
         // ByteBufCodecs.holderRegistry(...) in entity SynchedEntityData. The registry must therefore
         // exist on the client too — register them as SYNCED so fabric-registry-sync ships the registry
@@ -61,14 +71,24 @@ public final class CodexTwilight implements ModInitializer {
         DynamicRegistries.registerSynced(TFRegistries.Keys.DWARF_RABBIT_VARIANT,
             twilightforest.entity.passive.DwarfRabbitVariant.DIRECT_CODEC);
         TFDataSerializers.bootstrap();
+        twilightforest.config.TFConfig.load(net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir());
+        twilightforest.config.ConfigSetup.loadConfigs();
+        twilightforest.init.TFGameRules.register();
+        twilightforest.init.custom.ChunkBlanketProcessors.bootstrapTypes();
+        twilightforest.init.custom.TemplateMarkerHandlers.bootstrapTypes();
         // F2.8 — register S2C payload type early so it's available before any TF mob hits arrive.
         com.codex.twilight.network.CodexNetworking.bootstrapServer();
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
+            twilightforest.config.ConfigSetup.syncUncraftingConfig(handler.player));
         TFAttributes.bootstrap();
         TFEntities.ARMORED_GIANT.get();
         TFEntities.addEntityAttributes();
         twilightforest.init.TFRecipes.bootstrap();
+        twilightforest.init.custom.Enforcements.bootstrap();
         twilightforest.init.custom.TravellersModifierTypes.bootstrap();
+        twilightforest.init.custom.ItemDisplays.bootstrap();
         twilightforest.init.TFMenuTypes.bootstrap();
+        twilightforest.events.CapabilityEvents.bootstrap();
         twilightforest.init.TFAdvancements.bootstrap();
         twilightforest.init.TFStats.bootstrap();
         twilightforest.init.TFItemSubPredicates.bootstrap();
@@ -81,7 +101,10 @@ public final class CodexTwilight implements ModInitializer {
         TFMapDecorations.AURORA_PALACE.value();
         TFSounds.bootstrap();
         twilightforest.init.TFItems.bootstrap();
+        twilightforest.init.TFCreativeTabs.bootstrap();
+        twilightforest.init.TFPOITypes.bootstrap();
         twilightforest.init.TFBlockEntities.bootstrap();
+        twilightforest.dispenser.TFDispenserBehaviors.init();
         TFParticleTypes.bootstrap();
         TFFeatureModifiers.bootstrap();
         TFDensityFunctions.bootstrap();
@@ -108,6 +131,31 @@ public final class CodexTwilight implements ModInitializer {
         // Registered globally; charm presence is checked per death.
         net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents.ALLOW_DEATH.register(
                 (entity, source, amount) -> {
+                    if (source.is(twilightforest.init.TFDamageTypes.OMINOUS_FIRE)) {
+                        if (entity instanceof ServerPlayer player) {
+                            net.minecraft.world.entity.monster.Zombie zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(player.level());
+                            if (zombie != null) {
+                                twilightforest.init.TFDataAttachments.set(zombie,
+                                        twilightforest.init.TFDataAttachments.ZOMBIFIED_PLAYER,
+                                        player.getGameProfile());
+                                zombie.setCustomName(player.getName());
+                                zombie.copyPosition(player);
+                                zombie.setCanPickUpLoot(true);
+                                zombie.setBaby(false);
+                                zombie.finalizeSpawn(player.serverLevel(),
+                                        player.level().getCurrentDifficultyAt(player.blockPosition()),
+                                        net.minecraft.world.entity.MobSpawnType.CONVERSION,
+                                        null);
+                                player.level().addFreshEntity(zombie);
+                            }
+                        } else {
+                            twilightforest.util.datamaps.EntityTransformation transformation =
+                                    twilightforest.init.TFDataMaps.getOminousFire(entity.getType());
+                            if (transformation != null && entity instanceof net.minecraft.world.entity.LivingEntity living) {
+                                twilightforest.util.entities.EntityUtil.convertEntity(living, transformation.result());
+                            }
+                        }
+                    }
                     if (!(entity instanceof net.minecraft.world.entity.player.Player player)) return true;
                     net.minecraft.world.item.ItemStack charm = twilightforest.item.CharmOfLifeItem.findCharm(player);
                     if (charm.isEmpty()) return true;
@@ -125,11 +173,11 @@ public final class CodexTwilight implements ModInitializer {
         // Phase F1.4 — /codex ops command
         net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback.EVENT.register(
                 twilightforest.command.CodexCommand::register);
+        net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback.EVENT.register(
+                twilightforest.command.TFCommand::register);
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerLifecycleHooks.setCurrentServer(null));
 
-        // Q35 — Travellers gear extra tick effects (red-thread-vision goggles + dolphin-grace belt
-        // swift-swim). Keeps these out of the per-piece TravellersArmorPieceItem.inventoryTick to
-        // avoid one-effect-per-piece collision with the Q32 base buffs.
+        // Travellers gear extra tick effects run through the component/modifier model.
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (net.minecraft.server.level.ServerPlayer player : server.getPlayerList().getPlayers()) {
                 twilightforest.item.travellers_gear.TravellersGearLogic.travellersWingsSidestepCooldownSound(player);

@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvent;
 import twilightforest.TwilightForestMod;
 
 public final class TFSounds {
+    public static final SoundEvent ACID_RAIN_BURNS = register("environment.twilightforest.acid_rain");
     public static final SoundEvent BIGHORN_SHEEP_AMBIENT = register("entity.twilightforest.bighorn_sheep.ambient");
     public static final SoundEvent BIGHORN_SHEEP_DEATH = register("entity.twilightforest.bighorn_sheep.death");
     public static final SoundEvent BIGHORN_SHEEP_HURT = register("entity.twilightforest.bighorn_sheep.hurt");
@@ -20,6 +21,7 @@ public final class TFSounds {
     public static final SoundEvent DRYING_RACK_REMOVE_ITEM = register("block.twilightforest.drying_rack.remove_item");
     public static final SoundEvent UNCRAFTING_TABLE_ACTIVATE = register("block.twilightforest.uncrafting_table.activate");
     public static final SoundEvent PEDESTAL_ACTIVATE = register("block.twilightforest.trophy_pedestal.activate");
+    public static final SoundEvent PORTAL_WHOOSH = register("block.twilightforest.portal.whoosh");
     public static final SoundEvent BUG_SQUISH = register("block.twilightforest.bug.squish");
     public static final SoundEvent BUILDER_CREATE = register("block.twilightforest.builder.create");
     public static final SoundEvent BUILDER_OFF = register("block.twilightforest.builder.off");
@@ -37,6 +39,11 @@ public final class TFSounds {
     public static final SoundEvent JAR_LID_SWAP = register("block.twilightforest.jar.lid_swap");
     public static final SoundEvent JAR_REMOVE = register("block.twilightforest.jar.remove");
     public static final SoundEvent JAR_WIGGLE = register("block.twilightforest.jar.wiggle");
+    public static final SoundEvent JAR_BREAK = register("block.twilightforest.jar.break");
+    public static final SoundEvent JAR_STEP = register("block.twilightforest.jar.step");
+    public static final SoundEvent JAR_PLACE = register("block.twilightforest.jar.place");
+    public static final SoundEvent JAR_HIT = register("block.twilightforest.jar.hit");
+    public static final SoundEvent JAR_FALL = register("block.twilightforest.jar.fall");
     public static final SoundEvent SKULL_CHEST_CLOSE = register("block.twilightforest.skull_chest.close");
     public static final SoundEvent SKULL_CHEST_LOCKED = register("block.twilightforest.skull_chest.locked");
     public static final SoundEvent SKULL_CHEST_OPEN = register("block.twilightforest.skull_chest.open");
@@ -272,12 +279,14 @@ public final class TFSounds {
     public static final SoundEvent WINTER_WOLF_TARGET = register("entity.twilightforest.winter_wolf.target");
     // Paired clients receive the real twilightforest sound id directly from the registry.
     public static final SoundEvent MUSIC_TWILIGHT_FOREST = register("music.twilightforest.twilight_forest");
+    public static final SoundEvent MUSIC = MUSIC_TWILIGHT_FOREST;
 
     // ====== Q20 batch: Item-behaviour sounds (used by Q17/Q22/Q23 ports) ======
-    public static final SoundEvent BEANSTALK_GROWTH = register("block.twilightforest.beanstalk.growth");
+    public static final SoundEvent BEANSTALK_GROWTH = register("block.twilightforest.beanstalk.grow");
     public static final SoundEvent TWILIGHT_SCEPTER_USE = register("item.twilightforest.twilight_scepter.use");
     public static final SoundEvent TWILIGHT_SCEPTER_HIT = register("item.twilightforest.twilight_scepter.pearl_hit");
-    public static final SoundEvent LIFEDRAIN_SCEPTER_USE = register("item.twilightforest.lifedrain_scepter.use");
+    public static final SoundEvent LIFE_SCEPTER_DRAIN = register("item.twilightforest.life_scepter.drain");
+    public static final SoundEvent LIFEDRAIN_SCEPTER_USE = LIFE_SCEPTER_DRAIN;
     public static final SoundEvent ZOMBIE_SCEPTER_USE = register("item.twilightforest.zombie_scepter.use");
     public static final SoundEvent FORTIFICATION_SCEPTER_USE = register("item.twilightforest.fortification_scepter.use");
     public static final SoundEvent ICE_BOMB_FIRED = register("item.twilightforest.ice_bomb.fired");
@@ -293,6 +302,7 @@ public final class TFSounds {
     public static final SoundEvent BRITTLE_FLASK_CRACK = register("item.twilightforest.brittle_flask.crack");
     public static final SoundEvent BRITTLE_FLASK_BREAK = register("item.twilightforest.brittle_flask.break");
     public static final SoundEvent CRUMBLE_HORN_USE = register("item.twilightforest.crumble_horn.use");
+    public static final SoundEvent FAN_WHOOSH = register("item.twilightforest.fan.whoosh");
     public static final SoundEvent PEACOCK_FAN_USE = register("item.twilightforest.peacock_fan.use");
     public static final SoundEvent ORE_METER_USE = register("item.twilightforest.ore_meter.use");
     public static final SoundEvent ORE_METER_CLEAR = register("item.twilightforest.ore_meter.clear");
@@ -322,6 +332,15 @@ public final class TFSounds {
     public static final SoundEvent CYCLE_MAPS_EMPTY = register("item.twilightforest.travellers_gear.cycle_maps_empty");
     public static final SoundEvent GOGGLES_ZOOM_IN = register("item.twilightforest.travellers_goggles.zoom_in");
     public static final SoundEvent GOGGLES_ZOOM_OUT = register("item.twilightforest.travellers_goggles.zoom_out");
+    public static final SoundEvent MUSIC_DISC_RADIANCE = register("music_disc.twilightforest.radiance");
+    public static final SoundEvent MUSIC_DISC_STEPS = register("music_disc.twilightforest.steps");
+    public static final SoundEvent MUSIC_DISC_SUPERSTITIOUS = register("music_disc.twilightforest.superstitious");
+    public static final SoundEvent MUSIC_DISC_HOME = register("music_disc.twilightforest.home");
+    public static final SoundEvent MUSIC_DISC_WAYFARER = register("music_disc.twilightforest.wayfarer");
+    public static final SoundEvent MUSIC_DISC_FINDINGS = register("music_disc.twilightforest.findings");
+    public static final SoundEvent MUSIC_DISC_MAKER = register("music_disc.twilightforest.maker");
+    public static final SoundEvent MUSIC_DISC_THREAD = register("music_disc.twilightforest.thread");
+    public static final SoundEvent MUSIC_DISC_MOTION = register("music_disc.twilightforest.motion");
 
     private TFSounds() {
     }

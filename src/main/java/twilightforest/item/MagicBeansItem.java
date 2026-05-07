@@ -1,7 +1,6 @@
 package twilightforest.item;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -10,12 +9,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFSounds;
 
 /**
  * Q17 ported behaviour: right-click {@code uberous_soil} with air above to
- * sprout a {@code beanstalk_grower} stalk and consume one bean. Sound uses a
- * vanilla grass-break fallback because TFSounds.BEANSTALK_GROWTH is not yet
- * registered. Original TF advancement award is skipped (no advancements ported).
+ * sprout a {@code beanstalk_grower} stalk and consume one bean. Original TF
+ * advancement award is skipped until advancement hooks are ported.
  */
 public class MagicBeansItem extends CodexItem {
 
@@ -34,7 +33,7 @@ public class MagicBeansItem extends CodexItem {
             if (!level.isClientSide()) {
                 stack.shrink(1);
                 level.setBlockAndUpdate(pos.above(), TFBlocks.BEANSTALK_GROWER.get().defaultBlockState());
-                level.playSound(null, pos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 4.0F, 1.0F);
+                level.playSound(null, pos, TFSounds.BEANSTALK_GROWTH, SoundSource.BLOCKS, 4.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }

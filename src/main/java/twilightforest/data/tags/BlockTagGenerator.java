@@ -9,6 +9,10 @@ import twilightforest.TwilightForestMod;
 public final class BlockTagGenerator {
     /** Boss-explosion grief blacklist — blocks tagged here resist Hydra mortar megaBlast etc. */
     public static final TagKey<Block> COMMON_PROTECTIONS = create("common_protections");
+    public static final TagKey<Block> PORTAL_EDGE = create("portal/edge");
+    public static final TagKey<Block> PORTAL_POOL = create("portal/fluid");
+    public static final TagKey<Block> PORTAL_DECO = create("portal/decoration");
+    public static final TagKey<Block> GENERATED_PORTAL_DECO = create("portal/generated_decoration");
     public static final TagKey<Block> CASTLE_BLOCKS = create("castle_blocks");
     public static final TagKey<Block> CLOUDS = create("clouds");
     public static final TagKey<Block> CANNOT_TROLL_CAVE_HOLLOW = create("cannot_troll_cave_hollow");
@@ -42,6 +46,13 @@ public final class BlockTagGenerator {
     public static final TagKey<Block> BLOCK_AND_CHAIN_NEVER_BREAKS = create("block_and_chain_never_breaks");
     public static final TagKey<Block> MINEABLE_WITH_BLOCK_AND_CHAIN = create("mineable_with_block_and_chain");
     public static final TagKey<Block> ORE_METER_TARGETABLE = create("ore_meter_targetable");
+    public static final TagKey<Block> INCORRECT_FOR_IRONWOOD_TOOL = create("incorrect_for_ironwood_tool");
+    public static final TagKey<Block> INCORRECT_FOR_FIERY_TOOL = create("incorrect_for_fiery_tool");
+    public static final TagKey<Block> INCORRECT_FOR_STEELEAF_TOOL = create("incorrect_for_steeleaf_tool");
+    public static final TagKey<Block> INCORRECT_FOR_KNIGHTMETAL_TOOL = create("incorrect_for_knightmetal_tool");
+    public static final TagKey<Block> INCORRECT_FOR_GIANT_TOOL = create("incorrect_for_giant_tool");
+    public static final TagKey<Block> INCORRECT_FOR_ICE_TOOL = create("incorrect_for_ice_tool");
+    public static final TagKey<Block> INCORRECT_FOR_GLASS_TOOL = create("incorrect_for_glass_tool");
 
     private BlockTagGenerator() {
     }

@@ -14,7 +14,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import twilightforest.TwilightForestMod;
-import twilightforest.components.item.GogglesContents;
 import twilightforest.components.item.OreScannerComponent;
 import twilightforest.components.item.OreScannerData;
 import twilightforest.components.item.PotionFlaskComponent;
@@ -41,20 +40,6 @@ public final class TFDataComponents {
             DataComponentType.<PotionFlaskComponent>builder()
                 .persistent(PotionFlaskComponent.CODEC)
                 .networkSynchronized(PotionFlaskComponent.STREAM_CODEC)
-                .build()
-    );
-
-    /**
-     * Q38: registered for {@code TravellersGogglesItem} bundle storage.
-     * Carries up to 4 stacks (typically maps) inside the goggles. Right-click
-     * the goggles in inventory with another item to swap in/out.
-     */
-    public static final DataComponentType<GogglesContents> GOGGLES_CONTENTS = Registry.register(
-            BuiltInRegistries.DATA_COMPONENT_TYPE,
-            TwilightForestMod.prefix("goggles_contents"),
-            DataComponentType.<GogglesContents>builder()
-                .persistent(GogglesContents.CODEC)
-                .networkSynchronized(GogglesContents.STREAM_CODEC)
                 .build()
     );
 

@@ -13,6 +13,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import twilightforest.TwilightForestMod;
+import twilightforest.network.UpdateTFMultipartPacket;
 
 import java.util.Objects;
 
@@ -162,6 +163,28 @@ public abstract class TFPart<T extends Entity> extends Entity {
     @Override
     public boolean saveAsPassenger(CompoundTag tag) {
         return false;
+    }
+
+    public UpdateTFMultipartPacket.PartDataHolder writeData() {
+        return new UpdateTFMultipartPacket.PartDataHolder(
+                this.getX(),
+                this.getY(),
+                this.getZ(),
+                this.getYRot(),
+                this.getXRot(),
+                this.realSize.width(),
+                this.realSize.height(),
+                this.realSize.fixed(),
+                this.getEntityData().packDirty());
+    }
+
+    public void readData(UpdateTFMultipartPacket.PartDataHolder data) {
+        this.setPositionAndRotationDirect(data.x(), data.y(), data.z(), data.yRot(), data.xRot(), 3);
+        this.setSize(data.fixed() ? EntityDimensions.fixed(data.width(), data.height()) : EntityDimensions.scalable(data.width(), data.height()));
+        if (data.data() != null) {
+            this.getEntityData().assignValues(data.data());
+        }
+        this.refreshDimensions();
     }
 
     public static void assignPartIDs(Entity parent) {

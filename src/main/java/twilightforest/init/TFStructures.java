@@ -17,6 +17,7 @@ public final class TFStructures {
     public static final ResourceKey<Structure> HOLLOW_HILL_MEDIUM = key("medium_hollow_hill");
     public static final ResourceKey<Structure> HOLLOW_HILL_LARGE = key("large_hollow_hill");
     public static final ResourceKey<Structure> HOLLOW_TREE = key("hollow_tree");
+    public static final ResourceKey<Structure> SWAMP_HOLLOW_TREE = key("swamp_hollow_tree");
     public static final ResourceKey<Structure> HYDRA_LAIR = key("hydra_lair");
     public static final ResourceKey<Structure> KNIGHT_STRONGHOLD = key("knight_stronghold");
     public static final ResourceKey<Structure> LABYRINTH = key("labyrinth");
@@ -25,6 +26,9 @@ public final class TFStructures {
     public static final ResourceKey<Structure> NAGA_COURTYARD = key("naga_courtyard");
     public static final ResourceKey<Structure> QUEST_GROVE = key("quest_grove");
     public static final ResourceKey<Structure> QUEST_ISLAND = key("quest_island");
+    public static final ResourceKey<Structure> DRUID_GROVE = key("druid_grove");
+    public static final ResourceKey<Structure> FLOATING_RUINS = key("floating_ruins");
+    public static final ResourceKey<Structure> WORLD_TREE = key("world_tree");
     public static final ResourceKey<Structure> TROLL_CAVE = key("troll_cave");
     public static final ResourceKey<Structure> YETI_CAVE = key("yeti_cave");
 

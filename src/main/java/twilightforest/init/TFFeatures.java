@@ -38,6 +38,9 @@ import twilightforest.world.components.feature.config.RootConfig;
 import twilightforest.world.components.feature.config.SwizzleConfig;
 import twilightforest.world.components.feature.config.ThornsConfig;
 import twilightforest.world.components.feature.config.WeightedListFeatureConfig;
+import twilightforest.world.components.feature.trollcave.TrollBigMushgloomFeature;
+import twilightforest.world.components.feature.trollcave.TrollHugeBrownMushroomFeature;
+import twilightforest.world.components.feature.trollcave.TrollHugeRedMushroomFeature;
 
 /**
  * Registers TF custom Feature types into BuiltInRegistries.FEATURE.
@@ -84,6 +87,7 @@ public final class TFFeatures {
             register("huge_water_lily", new HugeWaterLilyFeature(NoneFeatureConfiguration.CODEC));
     public static final TFRegistryObject<Feature<WeightedListFeatureConfig>> WEIGHTED_LIST =
             register("weighted_list", new WeightedListFeature(WeightedListFeatureConfig.CODEC));
+    public static final TFRegistryObject<Feature<WeightedListFeatureConfig>> WEIGHTED_LIST_SELECTOR = WEIGHTED_LIST;
     public static final TFRegistryObject<Feature<HugeMushroomFeatureConfiguration>> CANOPY_RED_VANILLA_MUSHROOM =
             register("canopy_red_vanilla_mushroom", new twilightforest.world.components.feature.trees.RedCanopyMushroomFeature(HugeMushroomFeatureConfiguration.CODEC, 0));
     public static final TFRegistryObject<Feature<HugeMushroomFeatureConfiguration>> CANOPY_RED_SMOOTH_MUSHROOM =
@@ -94,8 +98,15 @@ public final class TFFeatures {
             register("canopy_red_flat_mushroom", new twilightforest.world.components.feature.trees.RedCanopyMushroomFeature(HugeMushroomFeatureConfiguration.CODEC, 3));
     public static final TFRegistryObject<Feature<HugeMushroomFeatureConfiguration>> BIG_MUSHGLOOM =
             register("big_mushgloom", new BigMushgloomFeature(HugeMushroomFeatureConfiguration.CODEC));
+    public static final TFRegistryObject<Feature<HugeMushroomFeatureConfiguration>> TROLL_BIG_MUSHGLOOM =
+            register("troll_cave_big_mushgloom", new TrollBigMushgloomFeature(HugeMushroomFeatureConfiguration.CODEC));
+    public static final TFRegistryObject<Feature<HugeMushroomFeatureConfiguration>> TROLL_HUGE_RED_MUSHROOM =
+            register("troll_cave_huge_red_mushroom", new TrollHugeRedMushroomFeature(HugeMushroomFeatureConfiguration.CODEC));
+    public static final TFRegistryObject<Feature<HugeMushroomFeatureConfiguration>> TROLL_HUGE_BROWN_MUSHROOM =
+            register("troll_cave_huge_brown_mushroom", new TrollHugeBrownMushroomFeature(HugeMushroomFeatureConfiguration.CODEC));
     public static final TFRegistryObject<Feature<NoneFeatureConfiguration>> BLOCK_SPIKE =
             register("block_spike", new BlockSpikeFeature(NoneFeatureConfiguration.CODEC));
+    public static final TFRegistryObject<Feature<NoneFeatureConfiguration>> CAVE_STALACTITE = BLOCK_SPIKE;
     public static final TFRegistryObject<Feature<DiskConfiguration>> MYCELIUM_BLOB =
             register("mycelium_blob", new CheckAbovePatchFeature(DiskConfiguration.CODEC));
 
@@ -130,12 +141,17 @@ public final class TFFeatures {
             register("mega_oak", new twilightforest.world.components.feature.trees.MegaOakTreeFeature(twilightforest.world.components.feature.config.TFTreeFeatureConfig.codecTFTreeConfig));
     public static final TFRegistryObject<Feature<twilightforest.world.components.feature.config.TFTreeFeatureConfig>> MEGA_CANOPY =
             register("mega_canopy", new twilightforest.world.components.feature.trees.MegaCanopyTreeFeature(twilightforest.world.components.feature.config.TFTreeFeatureConfig.codecTFTreeConfig));
+    public static final TFRegistryObject<Feature<twilightforest.world.components.feature.config.TFTreeFeatureConfig>> MINERS_TREE =
+            register("miners_tree", new twilightforest.world.components.feature.trees.MiningTreeFeature(twilightforest.world.components.feature.config.TFTreeFeatureConfig.codecTFTreeConfig));
+    public static final TFRegistryObject<Feature<twilightforest.world.components.feature.config.TFTreeFeatureConfig>> TREE_OF_TIME =
+            register("tree_of_time", new twilightforest.world.components.feature.trees.TimeTreeFeature(twilightforest.world.components.feature.config.TFTreeFeatureConfig.codecTFTreeConfig));
     public static final TFRegistryObject<Feature<net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration>> DARK_CANOPY_TREE =
             register("dark_canopy_tree", new twilightforest.world.components.feature.trees.DarkCanopyTreeFeature(net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration.CODEC));
     public static final TFRegistryObject<Feature<twilightforest.world.components.feature.config.TFTreeFeatureConfig>> LARGE_WINTER_TREE =
             register("large_winter_tree", new twilightforest.world.components.feature.trees.LargeWinterTreeFeature(twilightforest.world.components.feature.config.TFTreeFeatureConfig.codecTFTreeConfig));
     public static final TFRegistryObject<Feature<net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration>> ANYWHERE_TREE =
             register("anywhere_tree", new twilightforest.world.components.feature.trees.SnowTreeFeature(net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration.CODEC));
+    public static final TFRegistryObject<Feature<net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration>> SNOW_TREE = ANYWHERE_TREE;
     public static final TFRegistryObject<Feature<twilightforest.world.components.feature.config.TFTreeFeatureConfig>> HOLLOW_STUMP =
             register("hollow_stump", new twilightforest.world.components.feature.trees.HollowStumpFeature(twilightforest.world.components.feature.config.TFTreeFeatureConfig.codecTFTreeConfig));
 
@@ -160,12 +176,17 @@ public final class TFFeatures {
         HUGE_LILY_PAD.get();
         HUGE_WATER_LILY.get();
         WEIGHTED_LIST.get();
+        WEIGHTED_LIST_SELECTOR.get();
         CANOPY_RED_VANILLA_MUSHROOM.get();
         CANOPY_RED_SMOOTH_MUSHROOM.get();
         CANOPY_RED_SPHEROID_MUSHROOM.get();
         CANOPY_RED_FLAT_MUSHROOM.get();
         BIG_MUSHGLOOM.get();
+        TROLL_BIG_MUSHGLOOM.get();
+        TROLL_HUGE_RED_MUSHROOM.get();
+        TROLL_HUGE_BROWN_MUSHROOM.get();
         BLOCK_SPIKE.get();
+        CAVE_STALACTITE.get();
         MYCELIUM_BLOB.get();
         MONOLITH.get();
         SMALL_LAKE.get();
@@ -181,9 +202,12 @@ public final class TFFeatures {
         GRAVEYARD.get();
         MEGA_OAK.get();
         MEGA_CANOPY.get();
+        MINERS_TREE.get();
+        TREE_OF_TIME.get();
         DARK_CANOPY_TREE.get();
         LARGE_WINTER_TREE.get();
         ANYWHERE_TREE.get();
+        SNOW_TREE.get();
         HOLLOW_STUMP.get();
     }
 

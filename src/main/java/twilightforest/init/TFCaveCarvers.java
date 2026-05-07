@@ -2,9 +2,11 @@ package twilightforest.init;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.carver.CaveCarverConfiguration;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import twilightforest.TwilightForestMod;
@@ -13,6 +15,8 @@ import twilightforest.world.components.TFCavesCarver;
 public final class TFCaveCarvers {
     public static final TFRegistryObject<WorldCarver<CaveCarverConfiguration>> TFCAVES = carver("tf_caves", new TFCavesCarver(CaveCarverConfiguration.CODEC, false, BlockStateProvider.simple(Blocks.DIRT)));
     public static final TFRegistryObject<WorldCarver<CaveCarverConfiguration>> HIGHLAND_CAVES = carver("highland_caves", new TFCavesCarver(CaveCarverConfiguration.CODEC, true, BlockStateProvider.simple(Blocks.STONE)));
+    public static final ResourceKey<ConfiguredWorldCarver<?>> TFCAVES_CONFIGURED = configuredKey("tf_caves");
+    public static final ResourceKey<ConfiguredWorldCarver<?>> HIGHLANDCAVES_CONFIGURED = configuredKey("highland_caves");
 
     private TFCaveCarvers() {
     }
@@ -29,5 +33,9 @@ public final class TFCaveCarvers {
         @SuppressWarnings({"unchecked", "rawtypes"})
         TFRegistryObject<WorldCarver<C>> holder = new TFRegistryObject(registered, key);
         return holder;
+    }
+
+    private static ResourceKey<ConfiguredWorldCarver<?>> configuredKey(String path) {
+        return ResourceKey.create(Registries.CONFIGURED_CARVER, TwilightForestMod.prefix(path));
     }
 }

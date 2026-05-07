@@ -62,6 +62,8 @@ dependencies {
     include fabricApi.module('fabric-renderer-api-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-resource-loader-v0', fabricApiVersion)
     include fabricApi.module('fabric-resource-loader-v0', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-key-binding-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-key-binding-api-v1', fabricApiVersion)
     // F2.8 — custom S2C packet for TF mob hit-spark VFX. Server-side broadcasts on damage;
     // client-side receives + spawns vanilla CRIT particles. Module is dual-env, so both
     // server registration and client receiver compile against the same payload type.
@@ -92,11 +94,6 @@ sourceSets {
     main {
         java {
             srcDir 'src/tfjava'
-            exclude 'twilightforest/world/components/structures/util/CodecResourceReloadListener.java'
-            exclude 'twilightforest/world/components/structures/util/StructureTemplateDefinition.java'
-            exclude 'twilightforest/world/components/structures/util/StructureTemplateDefinitions.java'
-            exclude 'twilightforest/world/components/structures/util/TemplateMarkerHandlerList.java'
-            exclude 'twilightforest/world/components/structures/util/TemplatePoolInstance.java'
         }
     }
     datagen {

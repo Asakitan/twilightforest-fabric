@@ -1,14 +1,17 @@
 package twilightforest.entity.boss;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,13 +33,24 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import twilightforest.entity.TFPart;
+import twilightforest.entity.ai.goal.HoverBeamGoal;
+import twilightforest.entity.ai.goal.HoverSummonGoal;
+import twilightforest.entity.ai.goal.HoverThenDropGoal;
 import twilightforest.entity.monster.IceCrystal;
+import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
+import twilightforest.util.entities.EntityUtil;
 
 import java.util.List;
 
@@ -91,6 +105,9 @@ public class SnowQueen extends BaseTFBoss implements TFPart.Owner {
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(1, new HoverSummonGoal(this));
+        this.goalSelector.addGoal(2, new HoverThenDropGoal(this, 80, 20));
+        this.goalSelector.addGoal(3, new HoverBeamGoal(this, 80, 100));
         this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -101,59 +118,29 @@ public class SnowQueen extends BaseTFBoss implements TFPart.Owner {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide()) {
-            this.updatePhaseBehavior();
-        } else {
+        if (this.level().isClientSide()) {
             this.spawnParticles();
         }
         this.updateIceShieldDisplays();
     }
 
-    private void updatePhaseBehavior() {
-        this.phaseTicks++;
-        LivingEntity target = this.getTarget();
-        if (target == null || !target.isAlive()) {
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        if (this.getTarget() == null || !this.getTarget().isAlive()) {
             Player nearest = this.level().getNearestPlayer(this, 40.0D);
             if (nearest != null && !nearest.isCreative()) {
                 this.setTarget(nearest);
             }
-            return;
         }
-        this.getLookControl().setLookAt(target, 30.0F, 30.0F);
-        Phase phase = this.getCurrentPhase();
-        if (phase == Phase.SUMMON) {
-            this.moveControl.setWantedPosition(target.getX(), target.getY() + 7.0D, target.getZ(), 0.6D);
-            if (this.phaseTicks % 35 == 0 && this.summonsRemaining > 0) {
-                this.summonMinionAt(target);
-            }
-            if (this.summonsRemaining <= 0 && this.countMyMinions() <= 0) {
-                this.setCurrentPhase(Phase.DROP);
-            } else if (this.phaseTicks > 220) {
-                this.setCurrentPhase(Phase.DROP);
-            }
-        } else if (phase == Phase.DROP) {
-            if (this.phaseTicks < 45) {
-                this.moveControl.setWantedPosition(target.getX(), target.getY() + 10.0D, target.getZ(), 1.0D);
-            } else {
-                this.moveControl.setWantedPosition(target.getX(), target.getY(), target.getZ(), 1.4D);
-                if (this.onGround() || this.distanceToSqr(target) < 4.0D || this.phaseTicks > 90) {
-                    this.doDropImpact();
-                    this.successfulDrops++;
-                    this.phaseTicks = 0;
-                }
-            }
-            if (this.successfulDrops >= this.maxDrops) {
-                this.setCurrentPhase(Phase.BEAM);
-            }
-        } else if (phase == Phase.BEAM) {
-            this.moveControl.setWantedPosition(target.getX(), target.getY() + 4.0D, target.getZ(), 0.4D);
-            this.setBreathing(true);
-            if (this.phaseTicks % 5 == 0 && target.distanceToSqr(this) < 32.0D * 32.0D && this.getSensing().hasLineOfSight(target)) {
-                this.doBreathAttack(target);
-            }
-            if (this.damageWhileBeaming >= MAX_DAMAGE_WHILE_BEAMING || this.phaseTicks > 160) {
-                this.setCurrentPhase(Phase.SUMMON);
-            }
+        if (this.getCurrentPhase() == Phase.SUMMON && this.getSummonsRemaining() == 0 && this.countMyMinions() <= 0) {
+            this.setCurrentPhase(Phase.DROP);
+        }
+        if (this.getCurrentPhase() == Phase.DROP && this.successfulDrops >= this.maxDrops) {
+            this.setCurrentPhase(Phase.BEAM);
+        }
+        if (this.getCurrentPhase() == Phase.BEAM && this.damageWhileBeaming >= MAX_DAMAGE_WHILE_BEAMING) {
+            this.setCurrentPhase(Phase.SUMMON);
         }
     }
 
@@ -179,8 +166,35 @@ public class SnowQueen extends BaseTFBoss implements TFPart.Owner {
         this.summonsRemaining--;
     }
 
+    public int getSummonsRemaining() {
+        return this.summonsRemaining;
+    }
+
+    public void setSummonsRemaining(int summonsRemaining) {
+        this.summonsRemaining = summonsRemaining;
+    }
+
     public int countMyMinions() {
         return this.level().getEntitiesOfClass(IceCrystal.class, this.getBoundingBox().inflate(32.0D, 16.0D, 32.0D)).size();
+    }
+
+    public void incrementSuccessfulDrops() {
+        this.successfulDrops++;
+        this.doDropImpact();
+    }
+
+    public void destroyBlocksInAABB(AABB box) {
+        if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            return;
+        }
+        BlockPos min = BlockPos.containing(box.minX, box.minY, box.minZ);
+        BlockPos max = BlockPos.containing(box.maxX, box.maxY, box.maxZ);
+        for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
+            BlockState state = this.level().getBlockState(pos);
+            if (state.is(BlockTags.ICE) && EntityUtil.canDestroyBlock(this.level(), pos, this)) {
+                this.level().destroyBlock(pos, false);
+            }
+        }
     }
 
     private void doDropImpact() {
@@ -275,7 +289,7 @@ public class SnowQueen extends BaseTFBoss implements TFPart.Owner {
         this.phaseTicks = 0;
         this.setBreathing(false);
         if (phase == Phase.SUMMON) {
-            this.summonsRemaining = MAX_SUMMONS;
+            this.setSummonsRemaining(MAX_SUMMONS);
         } else if (phase == Phase.DROP) {
             this.successfulDrops = 0;
             this.maxDrops = 2 + this.getRandom().nextInt(3);
@@ -363,5 +377,25 @@ public class SnowQueen extends BaseTFBoss implements TFPart.Owner {
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
         TFPart.assignPartIDs(this);
+    }
+
+    @Override
+    public int getHomeRadius() {
+        return 30;
+    }
+
+    @Override
+    public ResourceKey<Structure> getHomeStructure() {
+        return TFStructures.AURORA_PALACE;
+    }
+
+    @Override
+    public Block getDeathContainer(RandomSource random) {
+        return TFBlocks.TWILIGHT_OAK_CHEST.get();
+    }
+
+    @Override
+    public Block getBossSpawner() {
+        return TFBlocks.SNOW_QUEEN_BOSS_SPAWNER.get();
     }
 }

@@ -12,9 +12,8 @@ import net.minecraft.world.item.alchemy.PotionContents;
  * dose counter + breakage counter for {@code BrittleFlaskItem}/{@code GreaterFlaskItem}.
  *
  * <p>Registered via {@link twilightforest.init.TFDataComponents#POTION_FLASK_CONTENTS}.
- * Brewing-stand recipe wiring is deferred — for now the data component just
- * carries state set at item creation time (e.g. via /give NBT or future
- * BrewerEvent integration).</p>
+ * Upstream stores only the flask state here; brewing integration belongs to the
+ * platform recipe/event layer rather than this component record.</p>
  */
 public record PotionFlaskComponent(PotionContents potion, int doses, int breakage, boolean breakable) {
 

@@ -112,6 +112,7 @@ public class BlockChainGoblin extends Monster implements TFPart.Owner {
         if (!this.level().isClientSide()) {
             this.getEntityData().set(DATA_CHAIN_LENGTH, (byte) Math.floor(this.getChainLength() * 127.0F));
             this.getEntityData().set(DATA_CHAIN_POS, (byte) Math.floor(this.chainAngle / 360.0F * 255.0F));
+            twilightforest.util.multiparts.MultipartEntityUtil.sendDirtyMultipartEntityData(this);
             if (this.isAlive() && (this.isThrowing() || this.isSwingingChain())) {
                 this.applyBlockCollisions();
             }

@@ -1,5 +1,6 @@
 package twilightforest.item;
 
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.core.BlockPos;
@@ -21,21 +22,6 @@ import net.minecraft.world.phys.AABB;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFSounds;
 
-/**
- * Q31 simplified port of TF {@code LampOfCindersItem}. Original Ur-Ghast tower
- * tool: right-click a thorn block to burn it, or hold + release to incinerate
- * thorns in a 4-block radius and ignite nearby living entities for 5 seconds.
- *
- * <p>This port keeps the behaviour 1:1 except:</p>
- * <ul>
- *   <li>{@code CriteriaTriggers.PLACED_BLOCK} is dropped — no advancement
- *       wiring exists for the lamp on this server.</li>
- *   <li>Particles use vanilla {@code FLAME} + {@code SMOKE} (TF original
- *       used the same).</li>
- *   <li>Thorn variants checked are {@link TFBlocks#BROWN_THORNS},
- *       {@link TFBlocks#GREEN_THORNS} → {@link TFBlocks#BURNT_THORNS}.</li>
- * </ul>
- */
 public class LampOfCindersItem extends CodexItem {
 
     private static final int FIRING_TIME = 12;
@@ -76,6 +62,9 @@ public class LampOfCindersItem extends CodexItem {
         Player player = context.getPlayer();
         if (this.burnBlock(level, pos)) {
             if (player != null) {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    CriteriaTriggers.PLACED_BLOCK.trigger(serverPlayer, pos, context.getItemInHand());
+                }
                 player.playSound(TFSounds.LAMP_BURN, 0.5F, 1.5F);
             }
             for (int i = 0; i < 10; i++) {

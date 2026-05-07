@@ -6,7 +6,10 @@
   "mixins": [
     "PlayerMixin",
     "LivingEntityMixin",
+    "DamageSourcesMixin",
+    "WrittenBookItemMixin",
     "AbstractArrowMixin",
+    "BushBlockMixin",
     "FireBlockMixin",
     "LootTableMixin",
     "GrassColorModifierCodecMixin"

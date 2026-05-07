@@ -32,11 +32,8 @@ import java.util.Optional;
  * MOB_EFFECT_CATEGORY etc.).
  *
  * <p>Codex Fabric port note: variant-resolver helpers (getVariantId /
- * getVariantResourceLocation) reference {@code MagicPaintingVariants.DEFAULT}
- * which on codex is a {@link ResourceKey} pointing at the empty datapack registry
- * (codex doesn't currently ship the 5 upstream variants as JSON; if no datapack
- * supplies entries the holder lookup will return empty). Lookups gracefully
- * fall back via {@code Optional.empty()} return.</p>
+ * getVariantResourceLocation) reference {@code MagicPaintingVariants.DEFAULT};
+ * the five upstream variants are supplied as datapack JSON in this port.</p>
  */
 public record MagicPaintingVariant(int width, int height, List<Layer> layers, Component author, ResourceLocation backTexture) {
 	public static final Codec<MagicPaintingVariant> CODEC = RecordCodecBuilder.create((recordCodecBuilder) -> recordCodecBuilder.group(

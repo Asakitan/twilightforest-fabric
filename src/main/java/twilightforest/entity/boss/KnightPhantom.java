@@ -6,8 +6,11 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -29,16 +32,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.Vec3;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.ai.goal.PhantomAttackStartGoal;
 import twilightforest.entity.ai.goal.PhantomThrowWeaponGoal;
 import twilightforest.entity.ai.goal.PhantomUpdateFormationAndMoveGoal;
 import twilightforest.entity.ai.goal.PhantomWatchAndAttackGoal;
+import twilightforest.init.TFBlocks;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFItemVisuals;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
 
 import java.util.List;
 
@@ -346,6 +353,33 @@ public class KnightPhantom extends BaseTFBoss {
     @Override
     public int getHomeRadius() {
         return 30;
+    }
+
+    @Override
+    protected boolean shouldSpawnLoot() {
+        return super.shouldSpawnLoot() && this.level().getEntitiesOfClass(KnightPhantom.class, this.getBoundingBox().inflate(64.0D), knight -> knight != this && knight.isAlive()).isEmpty();
+    }
+
+    @Override
+    protected void postRemoval(ServerLevel serverLevel, RemovalReason reason) {
+        if (reason != RemovalReason.KILLED || this.shouldSpawnLoot()) {
+            super.postRemoval(serverLevel, reason);
+        }
+    }
+
+    @Override
+    public ResourceKey<Structure> getHomeStructure() {
+        return TFStructures.KNIGHT_STRONGHOLD;
+    }
+
+    @Override
+    public Block getDeathContainer(RandomSource random) {
+        return TFBlocks.DARK_CHEST.get();
+    }
+
+    @Override
+    public Block getBossSpawner() {
+        return TFBlocks.KNIGHT_PHANTOM_BOSS_SPAWNER.get();
     }
 
     @Override

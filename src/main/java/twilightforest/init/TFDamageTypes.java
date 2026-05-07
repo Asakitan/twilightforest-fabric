@@ -5,9 +5,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.util.entities.EntityExcludedDamageSource;
 
 public final class TFDamageTypes {
     public static final ResourceKey<DamageType> EXPIRED = create("expired");
@@ -45,7 +47,10 @@ public final class TFDamageTypes {
     public static final ResourceKey<DamageType> THROWN_AXE = create("thrown_axe");
     public static final ResourceKey<DamageType> STALE_SANDWICH = create("stale_sandwich");
     public static final ResourceKey<DamageType> TWILIGHT_SCEPTER = create("twilight_scepter");
+    public static final ResourceKey<DamageType> LIFEDRAIN = create("lifedrain");
     public static final ResourceKey<DamageType> MOONWORM = create("moonworm");
+    public static final ResourceKey<DamageType> FAILED_CHALLENGE = create("failed_challenge");
+    public static final ResourceKey<DamageType> ACID_RAIN = create("acid_rain");
 
     private TFDamageTypes() {
     }
@@ -55,14 +60,28 @@ public final class TFDamageTypes {
     }
 
     public static DamageSource source(Level level, ResourceKey<DamageType> type) {
-        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type));
+        return source(level, type, new EntityType<?>[0]);
+    }
+
+    public static DamageSource source(Level level, ResourceKey<DamageType> type, EntityType<?>... toIgnore) {
+        var holder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type);
+        return toIgnore.length > 0 ? new EntityExcludedDamageSource(holder, toIgnore) : new DamageSource(holder);
     }
 
     public static DamageSource entitySource(Level level, ResourceKey<DamageType> type, @Nullable Entity attacker) {
-        return indirectSource(level, type, attacker, attacker);
+        return entitySource(level, type, attacker, new EntityType<?>[0]);
+    }
+
+    public static DamageSource entitySource(Level level, ResourceKey<DamageType> type, @Nullable Entity attacker, EntityType<?>... toIgnore) {
+        return indirectSource(level, type, attacker, attacker, toIgnore);
     }
 
     public static DamageSource indirectSource(Level level, ResourceKey<DamageType> type, @Nullable Entity direct, @Nullable Entity cause) {
-        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), direct, cause);
+        return indirectSource(level, type, direct, cause, new EntityType<?>[0]);
+    }
+
+    public static DamageSource indirectSource(Level level, ResourceKey<DamageType> type, @Nullable Entity direct, @Nullable Entity cause, EntityType<?>... toIgnore) {
+        var holder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type);
+        return toIgnore.length > 0 ? new EntityExcludedDamageSource(holder, direct, cause, toIgnore) : new DamageSource(holder, direct, cause);
     }
 }

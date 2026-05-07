@@ -35,11 +35,10 @@ import java.util.List;
  * fake-player parameter, {@code TriState canSustainPlant}). Codex doesn't have a
  * fake-player factory, so we replace the 15× bonemeal application with a direct
  * {@link BonemealableBlock#performBonemeal} loop — this preserves the gameplay effect
- * (15 cycles of growth) without needing a Player object. The {@code canSustainPlant}
- * crop-on-uberous-soil hook is intentionally omitted: vanilla {@code CropBlock.mayPlaceOn}
- * only accepts farmland, so allowing crops directly on uberous soil would require a
- * Fabric mixin (deferred). The auto-transform-to-farmland-on-crop-place path
- * compensates for this in practice.</p>
+ * (15 cycles of growth) without needing a Player object. The upstream crop-sustain hook
+ * is restored on Fabric by {@code twilightforest.mixin.BushBlockMixin}, which lets
+ * {@code #minecraft:crops} survive on Uberous Soil long enough for this block to
+ * convert itself to wet farmland and trigger growth.</p>
  */
 public class UberousSoilBlock extends Block implements BonemealableBlock {
 

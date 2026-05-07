@@ -14,10 +14,7 @@ import java.util.List;
  * 1:1 port of upstream {@code twilightforest.block.AuroraBrickBlock}.
  *
  * <p>Returns a much faster destroy progress (0.1F) once the breaking player has the
- * {@code progress_glacier} advancement, otherwise falls back to vanilla destroy speed.
- * In codex-twilight's stub PlayerHelper this currently always returns true (any player
- * gets the fast destroy) — upgrading the stub to read the player's actual advancement
- * tracker is left for a future advancement-runtime port.</p>
+ * {@code progress_glacier} advancement, otherwise falls back to vanilla destroy speed.</p>
  */
 public class AuroraBrickBlock extends Block {
 	public AuroraBrickBlock(Properties properties) {

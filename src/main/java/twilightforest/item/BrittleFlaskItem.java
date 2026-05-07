@@ -1,9 +1,9 @@
 package twilightforest.item;
 
-import net.minecraft.server.level.ServerPlayer;
-
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -13,6 +13,7 @@ import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -21,33 +22,16 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import twilightforest.components.item.PotionFlaskComponent;
+import twilightforest.init.TFDamageTypes;
+import twilightforest.init.TFDataAttachments;
 import twilightforest.init.TFDataComponents;
 import twilightforest.init.TFSounds;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Q30 → Q32 promoted port of TF {@code BrittleFlaskItem} / {@code GreaterFlaskItem}.
- *
- * <p>Q30 shipped a placeholder that always granted Regen + Absorption. Q32 wires
- * up the real {@link PotionFlaskComponent} data component so the flask now:</p>
- * <ul>
- *   <li>Carries up to {@code DOSES} (3 brittle, 4 greater) of one potion type.</li>
- *   <li>Right-click on a Potion stack (secondary click in inventory) → fills one
- *       dose, returns a glass bottle, plays {@link TFSounds#FLASK_FILL}.</li>
- *   <li>Right-click in world → drinks one dose, applies the potion's effects,
- *       decrements doses, increments breakage. Breakage = DOSES → flask shatters
- *       ({@link TFSounds#BRITTLE_FLASK_BREAK}); else cracks ({@link TFSounds#BRITTLE_FLASK_CRACK}).</li>
- *   <li>Greater flask is unbreakable (set via constructor) so its breakage
- *       counter is ignored.</li>
- *   <li>Empty flask (no potion stored) falls back to the Q30 hardcoded
- *       Regen + Absorption effect so legacy stacks/Mythic drops still drink.</li>
- * </ul>
- *
- * <p>Brewing-stand recipe (vanilla potion → flask in slot) is not wired here —
- * users can fill via the inventory click flow above, /give with an NBT
- * {@code potion_flask_contents} component, or Mythic item drops with the
- * component pre-set.</p>
+ * Fabric port of TF {@code BrittleFlaskItem} / {@code GreaterFlaskItem}.
  */
 public class BrittleFlaskItem extends CodexItem {
 
@@ -66,6 +50,18 @@ public class BrittleFlaskItem extends CodexItem {
         stack.set(TFDataComponents.POTION_FLASK_CONTENTS,
                 this.greater ? PotionFlaskComponent.EMPTY_UNBREAKABLE : PotionFlaskComponent.EMPTY);
         return stack;
+    }
+
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
+        return stack.getOrDefault(TFDataComponents.POTION_FLASK_CONTENTS,
+                this.greater ? PotionFlaskComponent.EMPTY_UNBREAKABLE : PotionFlaskComponent.EMPTY).potion().potion().isPresent();
+    }
+
+    @Override
+    public int getBarColor(ItemStack stack) {
+        return FastColor.ARGB32.opaque(stack.getOrDefault(TFDataComponents.POTION_FLASK_CONTENTS,
+                this.greater ? PotionFlaskComponent.EMPTY_UNBREAKABLE : PotionFlaskComponent.EMPTY).potion().getColor());
     }
 
     @Override
@@ -109,29 +105,15 @@ public class BrittleFlaskItem extends CodexItem {
         PotionFlaskComponent flask = stack.getOrDefault(TFDataComponents.POTION_FLASK_CONTENTS,
                 this.greater ? PotionFlaskComponent.EMPTY_UNBREAKABLE : PotionFlaskComponent.EMPTY);
 
-        // Real potion path: requires doses > 0 and a stored potion.
-        if (flask.potion() != PotionContents.EMPTY && flask.doses() > 0) {
+        if (flask.potion() == PotionContents.EMPTY) {
+            return InteractionResultHolder.fail(stack);
+        }
+
+        if (flask.doses() > 0) {
             return ItemUtils.startUsingInstantly(level, player, hand);
         }
 
-        // Legacy fallback (Q30 behaviour) — empty flask still drinks for Regen + Absorption.
-        if (stack.getDamageValue() >= stack.getMaxDamage() && !player.getAbilities().instabuild) {
-            return InteractionResultHolder.fail(stack);
-        }
-        if (!level.isClientSide()) {
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    TFSounds.FLASK_DRINK, SoundSource.PLAYERS, 1.0F, 1.0F);
-            int regenAmplifier = greater ? 1 : 0;
-            int absorptionAmplifier = greater ? 1 : 0;
-            int regenDuration = greater ? 200 : 160;
-            int absorptionDuration = greater ? 1200 : 600;
-            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, regenDuration, regenAmplifier));
-            player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, absorptionDuration, absorptionAmplifier));
-            if (!player.getAbilities().instabuild && player instanceof ServerPlayer sp && level instanceof net.minecraft.server.level.ServerLevel sl) {
-                stack.hurtAndBreak(1, sl, sp, removed -> {});
-            }
-        }
-        return InteractionResultHolder.success(stack);
+        return InteractionResultHolder.fail(stack);
     }
 
     @Override
@@ -154,14 +136,20 @@ public class BrittleFlaskItem extends CodexItem {
 
         if (!level.isClientSide()) {
             for (MobEffectInstance effect : flask.potion().getAllEffects()) {
-                if (effect.getEffect().value().isInstantenous()) {
+                if (effect.is(MobEffects.HARM) != entity.isInvertedHealAndHarm() && effect.getAmplifier() > 0) {
+                    entity.hurt(TFDamageTypes.source(level, TFDamageTypes.FAILED_CHALLENGE), (float) (6 << effect.getAmplifier()));
+                } else if (effect.getEffect().value().isInstantenous()) {
                     effect.getEffect().value().applyInstantenousEffect(player, player, player, effect.getAmplifier(), 1.0D);
                 } else {
                     player.addEffect(new MobEffectInstance(effect));
                 }
             }
+            if (!player.isCreative() && !player.isSpectator() && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                flask.potion().potion().ifPresent(potion -> TFDataAttachments.get(player, TFDataAttachments.FLASK_DOSES).trackDrink(potion, serverPlayer));
+            }
             level.playSound(null, player, TFSounds.FLASK_DRINK, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
+        player.awardStat(Stats.ITEM_USED.get(this));
         if (!player.getAbilities().instabuild) {
             changeAndConsumeFlask(stack, player, st -> {
                 PotionFlaskComponent next = flask.removeDose();
@@ -177,6 +165,18 @@ public class BrittleFlaskItem extends CodexItem {
         return super.finishUsingItem(stack, level, entity);
     }
 
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        return Optional.of(new Tooltip(stack.getOrDefault(TFDataComponents.POTION_FLASK_CONTENTS,
+                this.greater ? PotionFlaskComponent.EMPTY_UNBREAKABLE : PotionFlaskComponent.EMPTY), this.maxDoses));
+    }
+
+    @Override
+    public int getBarWidth(ItemStack stack) {
+        return Math.round(13.0F - Math.abs(stack.getOrDefault(TFDataComponents.POTION_FLASK_CONTENTS,
+                this.greater ? PotionFlaskComponent.EMPTY_UNBREAKABLE : PotionFlaskComponent.EMPTY).doses() - this.maxDoses) * 13.0F / this.maxDoses);
+    }
+
     private void changeAndConsumeFlask(ItemStack stack, Player player, Consumer<ItemStack> mutator) {
         if (stack.getCount() > 1) {
             ItemStack copy = stack.copyWithCount(1);
@@ -188,5 +188,8 @@ public class BrittleFlaskItem extends CodexItem {
         } else {
             mutator.accept(stack);
         }
+    }
+
+    public record Tooltip(PotionFlaskComponent component, int maxDoses) implements TooltipComponent {
     }
 }

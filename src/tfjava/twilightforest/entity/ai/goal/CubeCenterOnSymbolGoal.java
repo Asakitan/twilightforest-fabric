@@ -1,7 +1,7 @@
 package twilightforest.entity.ai.goal;
 
 import net.minecraft.world.entity.ai.goal.Goal;
-import twilightforest.entity.monster.RovingCube;
+import twilightforest.entity.RovingCube;
 
 import java.util.EnumSet;
 

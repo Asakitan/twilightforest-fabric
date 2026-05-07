@@ -39,6 +39,9 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> AURORA_CACHE = register("aurora_cache");
     public static final ResourceKey<LootTable> AURORA_ROOM = register("aurora_room");
     public static final ResourceKey<LootTable> BASEMENT = register("chests/basement");
+    public static final ResourceKey<LootTable> CAMP_ARMOR_RACK = register("camp_armor_rack");
+    public static final ResourceKey<LootTable> CAMP_DRYING_RACK = register("camp_drying_rack");
+    public static final ResourceKey<LootTable> CAMP_POT = register("camp_pot");
     public static final ResourceKey<LootTable> DARKTOWER_CACHE = register("darktower_cache");
     public static final ResourceKey<LootTable> DARKTOWER_KEY = register("darktower_key");
     public static final ResourceKey<LootTable> FALLEN_TRUNK_LOOT = register("fallen_trunk_loot");
@@ -53,6 +56,7 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> LABYRINTH_VAULT = register("labyrinth_vault");
     public static final ResourceKey<LootTable> LABYRINTH_VAULT_JACKPOT = register("labyrinth_vault_jackpot");
     public static final ResourceKey<LootTable> LARGE_HOLLOW_HILL = register("hill_3");
+    public static final ResourceKey<LootTable> LIFEDRAIN_SCEPTER_KILL_BONUS = register("items/lifedrain_scepter_kill_bonus");
     public static final ResourceKey<LootTable> MEDIUM_HOLLOW_HILL = register("hill_2");
     public static final ResourceKey<LootTable> QUEST_GROVE = register("quest_grove");
     public static final ResourceKey<LootTable> BIGHORN_SHEEP_WHITE = register("entities/bighorn_sheep/white");
@@ -75,6 +79,10 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> SMALL_HOLLOW_HILL = register("hill_1");
     public static final ResourceKey<LootTable> STRONGHOLD_CACHE = register("stronghold_cache");
     public static final ResourceKey<LootTable> STRONGHOLD_ROOM = register("stronghold_room");
+    public static final ResourceKey<LootTable> TOWER_FOYER = register("chests/tower_foyer");
+    public static final ResourceKey<LootTable> TOWER_POTION = register("chests/tower_potion");
+    public static final ResourceKey<LootTable> TOWER_ENCHANTING = register("chests/tower_enchanting");
+    public static final ResourceKey<LootTable> TOWER_JARS = register("chests/tower_jars");
     public static final ResourceKey<LootTable> TOWER_LIBRARY = register("chests/tower_library");
     public static final ResourceKey<LootTable> TOWER_ROOM = register("chests/tower_room");
     public static final ResourceKey<LootTable> TREE_CACHE = register("tree_cache");
@@ -93,6 +101,7 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> DUSKBERRY_BUSH_BERRIES = register("blocks/duskberry_bush_berries");
     public static final ResourceKey<LootTable> SKYBERRY_BUSH_BERRIES = register("blocks/skyberry_bush_berries");
     public static final ResourceKey<LootTable> STINGBERRY_BUSH_BERRIES = register("blocks/stingberry_bush_berries");
+    public static final ResourceKey<LootTable> OMINOUS_SPAWNER_DROPS = register("blocks/ominous_spawner_drops");
 
     private TFLootTables() {
     }

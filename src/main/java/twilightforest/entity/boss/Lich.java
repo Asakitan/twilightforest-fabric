@@ -7,15 +7,24 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,13 +43,18 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.data.tags.DamageTypeTagGenerator;
 import twilightforest.data.tags.EntityTagGenerator;
 import twilightforest.entity.ai.goal.AlwaysWatchTargetGoal;
 import twilightforest.entity.ai.goal.AttemptToGoHomeGoal;
@@ -57,9 +71,11 @@ import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Lich extends BaseTFBoss implements RangedAttackMob {
@@ -71,19 +87,21 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     public static final int PARTICLE_BURST_COOLDOWN = 10;
     public static final int DEATH_ANIMATION_POINT_A = PARTICLE_BURST_COOLDOWN * 5;
     public static final int DEATH_ANIMATION_POINT_B = DEATH_ANIMATION_POINT_A + 16;
+    private static final EntityDataAccessor<Optional<UUID>> MASTER_LICH = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Integer> SHIELD_STRENGTH = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MINIONS_LEFT = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ATTACK_TYPE = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TELEPORT_INVISIBILITY = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
     private int attackCooldown;
     private int minionCooldown;
     private int popCooldown;
     private int heldScepterTime;
-    private int teleportInvisibility;
-    private boolean shadowClone;
-    private int shieldStrength = INITIAL_SHIELD_STRENGTH;
-    private int minionsToSummon = INITIAL_MINIONS_TO_SUMMON;
-    private int nextAttackType;
+    private int spawnTime;
     private boolean initializedAttributes;
+    private int previousPhase = 1;
+    private int babyMinionsSummoned;
+    private int hitsWithoutTeleport;
     private final List<UUID> summonedClones = new ArrayList<>();
-    @Nullable
-    private UUID masterUuid;
     @Nullable
     private Lich masterLich;
 
@@ -109,6 +127,28 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
                 .add(TFAttributes.MINION_COUNT, INITIAL_MINIONS_TO_SUMMON);
     }
 
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        if (!this.isShadowClone()) {
+            this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(TFItems.FORTIFICATION_SCEPTER.get()));
+            this.playSound(TFSounds.SHIELD_ADD, 1.5F, this.getVoicePitch());
+            this.swing(InteractionHand.MAIN_HAND);
+        }
+        return data;
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MASTER_LICH, Optional.empty());
+        builder.define(SHIELD_STRENGTH, INITIAL_SHIELD_STRENGTH);
+        builder.define(MINIONS_LEFT, INITIAL_MINIONS_TO_SUMMON);
+        builder.define(ATTACK_TYPE, 0);
+        builder.define(TELEPORT_INVISIBILITY, 0);
+    }
+
     @Override
     protected BossEvent.BossBarColor getBossBarColor() {
         return BossEvent.BossBarColor.YELLOW;
@@ -126,9 +166,12 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
 
     @Override
     protected void tickBossBar() {
-        this.getBossBar().setProgress(this.getPhase() == 1 ? this.getShieldStrength() / (float) INITIAL_SHIELD_STRENGTH : this.getHealth() / this.getMaxHealth());
-        this.getBossBar().setOverlay(this.getPhase() == 1 ? BossEvent.BossBarOverlay.NOTCHED_6 : BossEvent.BossBarOverlay.PROGRESS);
-        this.getBossBar().setColor(this.getPhase() == 1 ? BossEvent.BossBarColor.YELLOW : this.getPhase() == 2 ? BossEvent.BossBarColor.PURPLE : BossEvent.BossBarColor.RED);
+        this.getBossBar().setVisible(!this.isShadowClone());
+        int phase = this.getPhase();
+        this.getBossBar().setProgress(phase == 1 ? this.getShieldStrength() / (float) Math.max(1.0D, this.getAttributeValue(TFAttributes.SHIELD_STRENGTH)) : this.getHealth() / this.getMaxHealth());
+        this.getBossBar().setOverlay(phase == 1 ? BossEvent.BossBarOverlay.NOTCHED_6 : BossEvent.BossBarOverlay.PROGRESS);
+        this.getBossBar().setColor(phase == 1 ? BossEvent.BossBarColor.YELLOW : phase == 2 ? BossEvent.BossBarColor.PURPLE : BossEvent.BossBarColor.RED);
+        this.previousPhase = phase;
     }
 
     @Override
@@ -176,7 +219,7 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
                 }
                 super.tick();
                 if (this.mob.getTarget() != null && !this.mob.isWithinMeleeAttackRange(this.mob.getTarget()) && this.mob.getNavigation().isDone()) {
-                    if (!this.mob.getNavigation().moveTo(this.mob.getTarget(), this.speedModifier)) {
+                    if (!this.mob.getNavigation().moveTo(this.mob.getTarget(), 0.75D)) {
                         Lich.this.teleportToSightOfEntity(this.mob.getTarget());
                     }
                 }
@@ -213,7 +256,6 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putBoolean("ShadowClone", this.isShadowClone());
         if (this.getMasterUUID() != null) {
             tag.putUUID("MasterLich", this.getMasterUUID());
         }
@@ -226,12 +268,13 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
         }
         tag.putInt("ShieldStrength", this.getShieldStrength());
         tag.putInt("MinionsToSummon", this.getMinionsToSummon());
+        tag.putInt("BabyMinionsSummoned", this.babyMinionsSummoned);
+        tag.putInt("HitsWithoutTeleport", this.hitsWithoutTeleport);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.setShadowClone(tag.getBoolean("ShadowClone"));
         if (tag.contains("MasterLich")) {
             this.setMasterUUID(tag.getUUID("MasterLich"));
         }
@@ -242,6 +285,8 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
         }
         this.setShieldStrength(tag.contains("ShieldStrength") ? tag.getInt("ShieldStrength") : INITIAL_SHIELD_STRENGTH);
         this.setMinionsToSummon(tag.contains("MinionsToSummon") ? tag.getInt("MinionsToSummon") : INITIAL_MINIONS_TO_SUMMON);
+        this.babyMinionsSummoned = tag.getInt("BabyMinionsSummoned");
+        this.hitsWithoutTeleport = tag.getInt("HitsWithoutTeleport");
     }
 
     @Override
@@ -273,17 +318,26 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     protected void customServerAiStep() {
         super.customServerAiStep();
         this.initializeAttributesOnce();
-        if (this.attackCooldown > 0) {
+        if (this.isOutsideHomeRange(this.position()) && this.getTeleportInvisibility() <= 0) {
+            this.teleportHome();
+        }
+        if (this.attackCooldown > 0 && this.spawnTime <= 0) {
             --this.attackCooldown;
         }
         if (this.minionCooldown > 0) {
             --this.minionCooldown;
         }
-        if (this.popCooldown > 0) {
+        if (this.popCooldown > 0 && this.getHealth() < this.getMaxHealth() && this.getScepterTimeLeft() <= 0) {
             --this.popCooldown;
+        }
+        if (this.getScepterTimeLeft() == 0 && this.getPopCooldown() < 30 && this.getItemInHand(InteractionHand.MAIN_HAND).is(TFItems.LIFEDRAIN_SCEPTER.get())) {
+            this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(this.getPhase() == 2 ? TFItems.ZOMBIE_SCEPTER.get() : Items.GOLDEN_SWORD));
         }
         if (this.heldScepterTime > 0) {
             --this.heldScepterTime;
+        }
+        if (this.spawnTime > 0) {
+            --this.spawnTime;
         }
     }
 
@@ -317,14 +371,21 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     }
 
     public void setExtinguishTimer() {
-        this.clearFire();
+        this.spawnTime = 40;
     }
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (this.isShadowClone()) {
+        if (this.getTeleportInvisibility() > 0 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return false;
+        }
+
+        if (source.is(DamageTypes.IN_WALL) && this.getTarget() != null) {
+            this.teleportToNewTarget(this.getTarget(), 20.0F, null);
+        }
+
+        if (this.isShadowClone() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             this.playSound(TFSounds.LICH_CLONE_HURT, 1.0F, this.getVoicePitch() * 2.0F);
-            this.discard();
             return false;
         }
 
@@ -332,26 +393,32 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
             return false;
         }
 
-        if (this.getShieldStrength() > 0) {
-            int newShieldStrength = this.getShieldStrength() - 1;
-            this.setShieldStrength(newShieldStrength);
-            float volume = 1.5F;
-            if (newShieldStrength < INITIAL_SHIELD_STRENGTH) {
-                volume += 0.25F * (INITIAL_SHIELD_STRENGTH - newShieldStrength);
+        if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && this.getShieldStrength() > 0) {
+            if (source.is(DamageTypeTagGenerator.BREAKS_LICH_SHIELDS) && amount > 2.0F) {
+                int newShieldStrength = this.getShieldStrength() - 1;
+                this.setShieldStrength(newShieldStrength);
+                float volume = 1.5F;
+                if (newShieldStrength < INITIAL_SHIELD_STRENGTH) {
+                    volume += 0.25F * (INITIAL_SHIELD_STRENGTH - newShieldStrength);
+                }
+                if (newShieldStrength == 0) {
+                    volume += 0.5F;
+                }
+                this.playSound(TFSounds.SHIELD_BREAK, volume, this.getVoicePitch() * 1.25F);
+            } else {
+                this.playSound(TFSounds.SHIELD_BLOCK, 0.75F, this.getVoicePitch() * 1.75F);
+                if (source.getEntity() instanceof LivingEntity living) {
+                    this.setLastHurtByMob(living);
+                }
             }
-            if (newShieldStrength == 0) {
-                volume += 0.5F;
-            }
-            this.playSound(newShieldStrength == 0 ? TFSounds.FORTIFICATION_SHIELD_BREAK : TFSounds.FORTIFICATION_SHIELD_BLOCK, volume, this.getVoicePitch() * 1.25F);
-            if (source.getEntity() instanceof LivingEntity living) {
-                this.setLastHurtByMob(living);
-            }
+            this.gameEvent(GameEvent.ENTITY_DAMAGE);
             return false;
         }
 
         boolean hurt = super.hurt(source, amount);
-        if (hurt && this.getTarget() != null && this.random.nextInt(3) == 0) {
-            this.teleportNearTarget();
+        if (hurt && this.getRandom().nextInt(this.getPhase() == 3 ? 6 : 3) <= this.hitsWithoutTeleport++ && !this.isDeadOrDying()) {
+            this.hitsWithoutTeleport = 0;
+            this.teleportToNewTarget(this.getTarget(), 20.0F, null);
         }
         return hurt;
     }
@@ -359,6 +426,13 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     @Override
     public void die(DamageSource cause) {
         super.die(cause);
+        if (!this.isShadowClone()) {
+            this.despawnClones();
+            if (this.getShieldStrength() > 0) {
+                this.setShieldStrength(0);
+                this.playSound(TFSounds.SHIELD_BREAK, 1.2F, this.getVoicePitch() * 2.0F);
+            }
+        }
     }
 
     @Override
@@ -377,7 +451,7 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TFSounds.LICH_AMBIENT;
+        return this.isShadowClone() ? null : TFSounds.LICH_AMBIENT;
     }
 
     @Override
@@ -387,7 +461,7 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TFSounds.LICH_DEATH;
+        return this.deathTime > 1 || this.isShadowClone() ? TFSounds.LICH_DEATH : TFSounds.LICH_HURT;
     }
 
     @Override
@@ -628,16 +702,18 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     }
 
     public boolean isShadowClone() {
-        return this.shadowClone;
+        return this.getEntityData().get(MASTER_LICH).isPresent();
     }
 
     public void setShadowClone(boolean clone) {
-        this.shadowClone = clone;
+        if (!clone) {
+            this.setMasterUUID(null);
+        }
     }
 
     @Nullable
     public UUID getMasterUUID() {
-        return this.masterUuid;
+        return this.getEntityData().get(MASTER_LICH).orElse(null);
     }
 
     @Nullable
@@ -645,7 +721,8 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
         if (this.masterLich != null && this.masterLich.isAlive()) {
             return this.masterLich;
         }
-        if (this.level() instanceof ServerLevel server && this.masterUuid != null && server.getEntity(this.masterUuid) instanceof Lich lich) {
+        UUID masterUuid = this.getMasterUUID();
+        if (this.level() instanceof ServerLevel server && masterUuid != null && server.getEntity(masterUuid) instanceof Lich lich) {
             this.masterLich = lich;
             return lich;
         }
@@ -653,48 +730,83 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     }
 
     public void setMasterUUID(@Nullable UUID uuid) {
-        this.masterUuid = uuid;
-        this.shadowClone = uuid != null;
+        this.getEntityData().set(MASTER_LICH, Optional.ofNullable(uuid));
+        this.masterLich = null;
         this.getBossBar().setVisible(uuid == null);
     }
 
     public int getShieldStrength() {
-        return this.shieldStrength;
+        return this.isShadowClone() ? 0 : this.getEntityData().get(SHIELD_STRENGTH);
     }
 
     public void setShieldStrength(int strength) {
-        this.shieldStrength = Math.max(0, strength);
+        this.getEntityData().set(SHIELD_STRENGTH, Math.max(0, strength));
     }
 
     public int getMinionsToSummon() {
-        return this.minionsToSummon;
+        return this.getEntityData().get(MINIONS_LEFT);
     }
 
     public void setMinionsToSummon(int count) {
-        this.minionsToSummon = Math.max(0, count);
+        this.getEntityData().set(MINIONS_LEFT, Math.max(0, count));
     }
 
     public int getNextAttackType() {
-        return this.nextAttackType;
+        return this.getEntityData().get(ATTACK_TYPE);
     }
 
     public void setNextAttackType(int type) {
-        this.nextAttackType = type;
+        this.getEntityData().set(ATTACK_TYPE, type);
     }
 
     public int getPhase() {
-        if (this.getShieldStrength() > 0) {
+        if (this.isShadowClone() || this.getShieldStrength() > 0) {
             return 1;
         }
         return this.getMinionsToSummon() > 0 || this.countMyMinions() > 0 ? 2 : 3;
     }
 
     public int getTeleportInvisibility() {
-        return this.teleportInvisibility;
+        return this.getEntityData().get(TELEPORT_INVISIBILITY);
     }
 
     public void setTeleportInvisibility(int teleportInvisibility) {
-        this.teleportInvisibility = Math.max(0, teleportInvisibility);
+        this.getEntityData().set(TELEPORT_INVISIBILITY, Math.max(0, teleportInvisibility));
+    }
+
+    public int getBabyMinionsSummoned() {
+        return this.babyMinionsSummoned;
+    }
+
+    public void setBabyMinionsSummoned(int babyMinionsSummoned) {
+        this.babyMinionsSummoned = babyMinionsSummoned;
+    }
+
+    @Override
+    public int getHomeRadius() {
+        return 30;
+    }
+
+    public ResourceKey<Structure> getHomeStructure() {
+        return TFStructures.LICH_TOWER;
+    }
+
+    public Block getDeathContainer(RandomSource random) {
+        return this.getRandom().nextBoolean() ? TFBlocks.CANOPY_CHEST.get() : TFBlocks.TWILIGHT_OAK_CHEST.get();
+    }
+
+    public Block getBossSpawner() {
+        return TFBlocks.LICH_BOSS_SPAWNER.get();
+    }
+
+    @Override
+    protected boolean shouldCreateSpawner() {
+        return !this.isShadowClone();
+    }
+
+    @Override
+    protected boolean shouldSpawnLoot() {
+        return !this.isShadowClone() && super.shouldSpawnLoot();
     }
 
 }

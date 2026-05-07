@@ -7,10 +7,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -28,9 +30,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.entity.ai.goal.UrGhastAttackGoal;
+import twilightforest.entity.ai.goal.UrGhastFlightGoal;
+import twilightforest.entity.ai.goal.UrGhastLookGoal;
 import twilightforest.entity.monster.CarminiteGhastling;
 import twilightforest.entity.projectile.UrGhastFireball;
 import twilightforest.init.TFBlocks;
@@ -38,6 +45,7 @@ import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFItemVisuals;
 import twilightforest.init.TFSounds;
+import twilightforest.init.TFStructures;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +62,7 @@ public class UrGhast extends BaseTFBoss {
     private int prevTripleFireballCooldown;
     private int inTrapCounter;
     private boolean charging;
+    private UrGhastAttackGoal attackGoal;
     private final List<BlockPos> trapLocations = new ArrayList<>();
     public UrGhast(EntityType<? extends UrGhast> type, Level level) {
         super(type, level);
@@ -86,6 +95,9 @@ public class UrGhast extends BaseTFBoss {
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(5, new UrGhastFlightGoal(this));
+        this.goalSelector.addGoal(7, new UrGhastLookGoal(this));
+        this.goalSelector.addGoal(7, this.attackGoal = new UrGhastAttackGoal(this));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
@@ -127,20 +139,8 @@ public class UrGhast extends BaseTFBoss {
             Player nearest = this.level().getNearestPlayer(this, 96.0D);
             if (nearest != null && !nearest.isCreative()) {
                 this.setTarget(nearest);
-            } else {
-                this.updateFlightTarget(null);
             }
             return;
-        }
-        this.updateFlightTarget(target);
-        if (target.distanceToSqr(this) < 4096.0D && this.getSensing().hasLineOfSight(target) && this.tripleFireballCooldown <= 0) {
-            this.getLookControl().setLookAt(target, 10.0F, this.getMaxHeadXRot());
-            this.playSound(TFSounds.UR_GHAST_WARN, this.getSoundVolume(), this.getVoicePitch());
-            this.setCharging(true);
-            this.spitFireball(target);
-            this.tripleFireballCooldown = 90 + this.getRandom().nextInt(60);
-        } else {
-            this.setCharging(this.tripleFireballCooldown > 70);
         }
     }
 
@@ -356,19 +356,18 @@ public class UrGhast extends BaseTFBoss {
     }
 
     public int getAttackStatus() {
-        return this.tripleFireballCooldown > 70 ? 2 : this.tripleFireballCooldown > 0 ? 1 : 0;
+        if (this.attackGoal == null || this.getTarget() == null || this.isInTantrum()) {
+            return 0;
+        }
+        return this.attackGoal.attackTimer > 10 ? 2 : 1;
     }
 
     public int getAttackTimer() {
-        return Math.max(0, 90 - this.tripleFireballCooldown);
+        return this.attackGoal != null ? this.attackGoal.attackTimer : Math.max(0, 90 - this.tripleFireballCooldown);
     }
 
     public int getPrevAttackTimer() {
-        return Math.max(0, 90 - this.prevTripleFireballCooldown);
-    }
-
-    public boolean isCharging() {
-        return this.getAttackStatus() == 2;
+        return this.attackGoal != null ? this.attackGoal.prevAttackTimer : Math.max(0, 90 - this.prevTripleFireballCooldown);
     }
 
     public void setInTantrum(boolean tantrum) {
@@ -445,5 +444,20 @@ public class UrGhast extends BaseTFBoss {
         this.damageUntilNextPhase = tag.getFloat("damageUntilNextPhase");
         this.tripleFireballCooldown = tag.getInt("tripleFireballCooldown");
         this.setCharging(tag.getBoolean("Charging"));
+    }
+
+    @Override
+    public ResourceKey<Structure> getHomeStructure() {
+        return TFStructures.DARK_TOWER;
+    }
+
+    @Override
+    public Block getDeathContainer(RandomSource random) {
+        return TFBlocks.DARK_CHEST.get();
+    }
+
+    @Override
+    public Block getBossSpawner() {
+        return TFBlocks.UR_GHAST_BOSS_SPAWNER.get();
     }
 }

@@ -70,6 +70,10 @@ public class MasonJarBlockEntity extends JarBlockEntity {
         return true;
     }
 
+    public boolean fillFromLootTable(ResourceKey<LootTable> lootTableKey, long seed, ServerLevel serverLevel) {
+        return this.fillFromLootTable(lootTableKey, seed, serverLevel, serverLevel.getServer().reloadableRegistries());
+    }
+
     private void acceptLootTable(ItemStack stack) {
         MasonJarItemStackHandler jarInv = this.getItemHandler();
         if (jarInv.isEmpty()) {

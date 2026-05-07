@@ -16,6 +16,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.client.model.SilverfishModel;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -111,15 +112,18 @@ import twilightforest.TwilightForestMod;
 import twilightforest.block.entity.MasonJarBlockEntity;
 import twilightforest.components.entity.TravellersWingsAttachment;
 import twilightforest.init.TFDataAttachments;
+import twilightforest.init.TFParticleType;
 import twilightforest.item.MagicMapItem;
 import twilightforest.item.MazeMapItem;
 import twilightforest.item.mapdata.TFMagicMapData;
 import twilightforest.item.mapdata.TFMazeMapData;
 import twilightforest.network.GogglesZoomPacket;
 import twilightforest.network.GradualGlidePacket;
+import twilightforest.network.LifedrainParticlePacket;
 import twilightforest.network.MagicMapPacket;
 import twilightforest.network.MazeMapPacket;
 import twilightforest.network.MovePlayerPacket;
+import twilightforest.network.ParticlePacket;
 import twilightforest.network.SetMasonJarItemPacket;
 import twilightforest.network.TravellersWingsStatePacket;
 import twilightforest.network.UpdateThrownPacket;
@@ -150,6 +154,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
         // F2.1b — Kobold pilot keeps its dedicated renderer with explicit armor layers.
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(JappaPackReloadListener.INSTANCE);
         JappaPackReloadListener.clientSetup();
+        twilightforest.init.TFKeyBinds.bootstrap();
         CodexModelLayers.bootstrap();
         registerNoiseVaryingModels();
         EntityRendererRegistry.register(TFEntities.KOBOLD.get(), KoboldEntityRenderer::new);
@@ -248,6 +253,8 @@ public final class CodexTwilightClient implements ClientModInitializer {
                 BakedMultiPartRenderers.bakeMultiPartRenderers(ctx);
                 return new NagaRenderer<>(ctx, new NagaModel<>(ctx.bakeLayer(CodexModelLayers.NAGA)), 1.45F);
             });
+        EntityRendererRegistry.register(TFEntities.PLATEAU_BOSS.get(), ctx ->
+            new TFGenericMobRenderer<>(ctx, new NoopModel<>(ctx.bakeLayer(CodexModelLayers.NOOP)), 0.5F, "textures/entity/iron_golem/iron_golem.png"));
         EntityRendererRegistry.register(TFEntities.HYDRA.get(), ctx -> {
             BakedMultiPartRenderers.bakeMultiPartRenderers(ctx);
             return new HydraRenderer<>(ctx, new HydraModel(ctx.bakeLayer(CodexModelLayers.HYDRA)), 4.0F);
@@ -318,6 +325,28 @@ public final class CodexTwilightClient implements ClientModInitializer {
             mc.execute(() -> {
                 if (mc.level == null) return;
                 spawnGogglesSurveyFlash(mc, payload);
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(LifedrainParticlePacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                spawnLifedrainTrail(mc, payload);
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(ParticlePacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null) return;
+                for (ParticlePacket.QueuedParticle particle : payload.queuedParticles()) {
+                    if (particle.b()) {
+                        mc.level.addAlwaysVisibleParticle(particle.particleOptions(), particle.x(), particle.y(), particle.z(), particle.x2(), particle.y2(), particle.z2());
+                    } else {
+                        mc.level.addParticle(particle.particleOptions(), particle.x(), particle.y(), particle.z(), particle.x2(), particle.y2(), particle.z2());
+                    }
+                }
             });
         });
 
@@ -429,6 +458,23 @@ public final class CodexTwilightClient implements ClientModInitializer {
             });
         });
 
+        ClientPlayNetworking.registerGlobalReceiver(twilightforest.network.UpdateTFMultipartPacket.TYPE, (payload, ctx) -> {
+            Minecraft mc = ctx.client();
+            mc.execute(() -> {
+                if (mc.level == null || payload.data() == null) return;
+                net.minecraft.world.entity.Entity entity = mc.level.getEntity(payload.entityId());
+                if (!(entity instanceof twilightforest.entity.TFPart.Owner owner)) return;
+                twilightforest.entity.TFPart<?>[] parts = owner.getParts();
+                if (parts == null) return;
+                for (twilightforest.entity.TFPart<?> part : parts) {
+                    twilightforest.network.UpdateTFMultipartPacket.PartDataHolder data = payload.data().get(part.getId());
+                    if (data != null) {
+                        part.readData(data);
+                    }
+                }
+            });
+        });
+
     }
 
     /**
@@ -487,6 +533,24 @@ public final class CodexTwilightClient implements ClientModInitializer {
             Vec3 p = center.add(right.scale(jitter)).add(up.scale(Math.sin(i) * 0.025D));
             mc.level.addParticle(ParticleTypes.ENCHANT, p.x, p.y, p.z,
                     right.x * 0.02D, 0.02D, right.z * 0.02D);
+        }
+    }
+
+    private static void spawnLifedrainTrail(Minecraft mc, LifedrainParticlePacket payload) {
+        net.minecraft.world.entity.Entity entity = mc.level.getEntity(payload.entityID());
+        if (!(entity instanceof net.minecraft.world.entity.LivingEntity living)) {
+            return;
+        }
+
+        Vec3 start = living.getEyePosition().subtract(0.0D, living.getBbHeight() * 0.35D, 0.0D);
+        Vec3 end = payload.victimPos();
+        double distance = start.distanceTo(end);
+        int steps = Math.max(1, (int) (distance * 3.0D));
+
+        for (int i = 0; i <= steps; i++) {
+            Vec3 pos = start.lerp(end, i / (double) steps);
+            mc.level.addParticle(ColorParticleOption.create(TFParticleType.MAGIC_EFFECT, 1.0F, 0.5F, 0.5F),
+                    pos.x(), pos.y(), pos.z(), 0.0D, 0.0D, 0.0D);
         }
     }
 }
