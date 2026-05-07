@@ -236,18 +236,13 @@ public abstract class AbstractTrophyBlock extends BaseEntityBlock implements Equ
 					break;
 				case QUEST_RAM:
 					for (int p = 0; p < 10; p++) {
-						server.sendParticles(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, rand.nextFloat(), rand.nextFloat(), rand.nextFloat()),
+						server.sendParticles(ColorParticleOption.create(TFParticleType.MAGIC_EFFECT, rand.nextFloat(), rand.nextFloat(), rand.nextFloat()),
 							(double) pos.getX() + 0.5 + (rand.nextDouble() - 0.5),
 							(double) pos.getY() + (rand.nextDouble() - 0.5),
 							(double) pos.getZ() + 0.5 + (rand.nextDouble() - 0.5),
 							1,
 							rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), 0.0D);
 					}
-					// Codex Fabric note: upstream used TFParticleType.MAGIC_EFFECT (a custom paired-client
-					// particle). ColorParticleOption.create requires a ColorableParticleType — vanilla's
-					// ParticleTypes.ENTITY_EFFECT is the closest tinted equivalent that's guaranteed
-					// resolvable on every client (paired or vanilla). The behaviour intent — quest-ram
-					// magical sparkle — is preserved 1:1.
 					break;
 				default:
 					break;

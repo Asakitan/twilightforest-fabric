@@ -42,6 +42,7 @@ import twilightforest.block.CodexStairBlock;
 import twilightforest.block.CodexThornsBlock;
 import twilightforest.block.CodexTorchberryPlantBlock;
 import twilightforest.block.UncraftingTableBlock;
+import twilightforest.item.TrophyItem;
 
 /**
  * Alias table — each TFBlocks.X.get() returns the vanilla equivalent that
@@ -201,27 +202,26 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> EXPERIMENT_115 = experiment115Block("experiment_115");
 
     // ====== Q10 batch: boss trophies (standing + wall) ======
-    // Standing trophies use SKELETON_SKULL fallback, walls use SKELETON_WALL_SKULL — these
-    // are server sentinels; paired-client RP supplies the official trophy model via
-    // assets/twilightforest/models/block/<id>.json.
+    // TrophyItem binds each standing trophy to its wall trophy, matching upstream's
+    // one-item/two-placement behavior while paired clients supply the official models.
     public static final TFRegistryObject<Block> NAGA_TROPHY = trophyBlock("naga_trophy", twilightforest.enums.BossVariant.NAGA, 5);
-    public static final TFRegistryObject<Block> NAGA_WALL_TROPHY = trophyWallBlock("naga_wall_trophy", twilightforest.enums.BossVariant.NAGA);
+    public static final TFRegistryObject<Block> NAGA_WALL_TROPHY = trophyWallBlock("naga_wall_trophy", twilightforest.enums.BossVariant.NAGA, NAGA_TROPHY);
     public static final TFRegistryObject<Block> LICH_TROPHY = trophyBlock("lich_trophy", twilightforest.enums.BossVariant.LICH, 6);
-    public static final TFRegistryObject<Block> LICH_WALL_TROPHY = trophyWallBlock("lich_wall_trophy", twilightforest.enums.BossVariant.LICH);
+    public static final TFRegistryObject<Block> LICH_WALL_TROPHY = trophyWallBlock("lich_wall_trophy", twilightforest.enums.BossVariant.LICH, LICH_TROPHY);
     public static final TFRegistryObject<Block> HYDRA_TROPHY = trophyBlock("hydra_trophy", twilightforest.enums.BossVariant.HYDRA, 12);
-    public static final TFRegistryObject<Block> HYDRA_WALL_TROPHY = trophyWallBlock("hydra_wall_trophy", twilightforest.enums.BossVariant.HYDRA);
+    public static final TFRegistryObject<Block> HYDRA_WALL_TROPHY = trophyWallBlock("hydra_wall_trophy", twilightforest.enums.BossVariant.HYDRA, HYDRA_TROPHY);
     public static final TFRegistryObject<Block> UR_GHAST_TROPHY = trophyBlock("ur_ghast_trophy", twilightforest.enums.BossVariant.UR_GHAST, 13);
-    public static final TFRegistryObject<Block> UR_GHAST_WALL_TROPHY = trophyWallBlock("ur_ghast_wall_trophy", twilightforest.enums.BossVariant.UR_GHAST);
+    public static final TFRegistryObject<Block> UR_GHAST_WALL_TROPHY = trophyWallBlock("ur_ghast_wall_trophy", twilightforest.enums.BossVariant.UR_GHAST, UR_GHAST_TROPHY);
     public static final TFRegistryObject<Block> KNIGHT_PHANTOM_TROPHY = trophyBlock("knight_phantom_trophy", twilightforest.enums.BossVariant.KNIGHT_PHANTOM, 8);
-    public static final TFRegistryObject<Block> KNIGHT_PHANTOM_WALL_TROPHY = trophyWallBlock("knight_phantom_wall_trophy", twilightforest.enums.BossVariant.KNIGHT_PHANTOM);
+    public static final TFRegistryObject<Block> KNIGHT_PHANTOM_WALL_TROPHY = trophyWallBlock("knight_phantom_wall_trophy", twilightforest.enums.BossVariant.KNIGHT_PHANTOM, KNIGHT_PHANTOM_TROPHY);
     public static final TFRegistryObject<Block> SNOW_QUEEN_TROPHY = trophyBlock("snow_queen_trophy", twilightforest.enums.BossVariant.SNOW_QUEEN, 14);
-    public static final TFRegistryObject<Block> SNOW_QUEEN_WALL_TROPHY = trophyWallBlock("snow_queen_wall_trophy", twilightforest.enums.BossVariant.SNOW_QUEEN);
+    public static final TFRegistryObject<Block> SNOW_QUEEN_WALL_TROPHY = trophyWallBlock("snow_queen_wall_trophy", twilightforest.enums.BossVariant.SNOW_QUEEN, SNOW_QUEEN_TROPHY);
     public static final TFRegistryObject<Block> MINOSHROOM_TROPHY = trophyBlock("minoshroom_trophy", twilightforest.enums.BossVariant.MINOSHROOM, 7);
-    public static final TFRegistryObject<Block> MINOSHROOM_WALL_TROPHY = trophyWallBlock("minoshroom_wall_trophy", twilightforest.enums.BossVariant.MINOSHROOM);
+    public static final TFRegistryObject<Block> MINOSHROOM_WALL_TROPHY = trophyWallBlock("minoshroom_wall_trophy", twilightforest.enums.BossVariant.MINOSHROOM, MINOSHROOM_TROPHY);
     public static final TFRegistryObject<Block> ALPHA_YETI_TROPHY = trophyBlock("alpha_yeti_trophy", twilightforest.enums.BossVariant.ALPHA_YETI, 9);
-    public static final TFRegistryObject<Block> ALPHA_YETI_WALL_TROPHY = trophyWallBlock("alpha_yeti_wall_trophy", twilightforest.enums.BossVariant.ALPHA_YETI);
+    public static final TFRegistryObject<Block> ALPHA_YETI_WALL_TROPHY = trophyWallBlock("alpha_yeti_wall_trophy", twilightforest.enums.BossVariant.ALPHA_YETI, ALPHA_YETI_TROPHY);
     public static final TFRegistryObject<Block> QUEST_RAM_TROPHY = trophyBlock("quest_ram_trophy", twilightforest.enums.BossVariant.QUEST_RAM, 1);
-    public static final TFRegistryObject<Block> QUEST_RAM_WALL_TROPHY = trophyWallBlock("quest_ram_wall_trophy", twilightforest.enums.BossVariant.QUEST_RAM);
+    public static final TFRegistryObject<Block> QUEST_RAM_WALL_TROPHY = trophyWallBlock("quest_ram_wall_trophy", twilightforest.enums.BossVariant.QUEST_RAM, QUEST_RAM_TROPHY);
 
     // ====== Q11 batch: 8 TF wood families × 11 blocks each (sentinels) ======
     // Each family mirrors a vanilla wood family stat-wise; paired-client RP supplies
@@ -429,56 +429,56 @@ public final class TFBlocks {
     // All use pillarBlock with the matching vanilla log fallback to preserve AXIS state.
     public static final TFRegistryObject<Block> HOLLOW_OAK_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_oak_log_climbable", Blocks.OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_OAK_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_oak_log_horizontal", Blocks.OAK_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_OAK_LOG_VERTICAL = pillarBlock("hollow_oak_log_vertical", Blocks.OAK_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_OAK_LOG_VERTICAL = hollowLogVerticalBlock("hollow_oak_log_vertical", Blocks.OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_SPRUCE_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_spruce_log_climbable", Blocks.SPRUCE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_SPRUCE_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_spruce_log_horizontal", Blocks.SPRUCE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_BIRCH_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_birch_log_climbable", Blocks.BIRCH_LOG);
     public static final TFRegistryObject<Block> HOLLOW_BIRCH_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_birch_log_horizontal", Blocks.BIRCH_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_BIRCH_LOG_VERTICAL = pillarBlock("hollow_birch_log_vertical", Blocks.BIRCH_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_BIRCH_LOG_VERTICAL = hollowLogVerticalBlock("hollow_birch_log_vertical", Blocks.BIRCH_LOG);
     public static final TFRegistryObject<Block> HOLLOW_JUNGLE_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_jungle_log_climbable", Blocks.JUNGLE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_JUNGLE_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_jungle_log_horizontal", Blocks.JUNGLE_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_JUNGLE_LOG_VERTICAL = pillarBlock("hollow_jungle_log_vertical", Blocks.JUNGLE_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_JUNGLE_LOG_VERTICAL = hollowLogVerticalBlock("hollow_jungle_log_vertical", Blocks.JUNGLE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_ACACIA_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_acacia_log_climbable", Blocks.ACACIA_LOG);
     public static final TFRegistryObject<Block> HOLLOW_ACACIA_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_acacia_log_horizontal", Blocks.ACACIA_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_ACACIA_LOG_VERTICAL = pillarBlock("hollow_acacia_log_vertical", Blocks.ACACIA_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_ACACIA_LOG_VERTICAL = hollowLogVerticalBlock("hollow_acacia_log_vertical", Blocks.ACACIA_LOG);
     public static final TFRegistryObject<Block> HOLLOW_DARK_OAK_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_dark_oak_log_climbable", Blocks.DARK_OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_DARK_OAK_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_dark_oak_log_horizontal", Blocks.DARK_OAK_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_DARK_OAK_LOG_VERTICAL = pillarBlock("hollow_dark_oak_log_vertical", Blocks.DARK_OAK_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_DARK_OAK_LOG_VERTICAL = hollowLogVerticalBlock("hollow_dark_oak_log_vertical", Blocks.DARK_OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_MANGROVE_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_mangrove_log_climbable", Blocks.MANGROVE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_MANGROVE_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_mangrove_log_horizontal", Blocks.MANGROVE_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_MANGROVE_LOG_VERTICAL = pillarBlock("hollow_mangrove_log_vertical", Blocks.MANGROVE_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_MANGROVE_LOG_VERTICAL = hollowLogVerticalBlock("hollow_mangrove_log_vertical", Blocks.MANGROVE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_CHERRY_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_cherry_log_climbable", Blocks.CHERRY_LOG);
     public static final TFRegistryObject<Block> HOLLOW_CHERRY_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_cherry_log_horizontal", Blocks.CHERRY_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_CHERRY_LOG_VERTICAL = pillarBlock("hollow_cherry_log_vertical", Blocks.CHERRY_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_CHERRY_LOG_VERTICAL = hollowLogVerticalBlock("hollow_cherry_log_vertical", Blocks.CHERRY_LOG);
     public static final TFRegistryObject<Block> HOLLOW_CRIMSON_STEM_CLIMBABLE = hollowLogClimbableBlock("hollow_crimson_stem_climbable", Blocks.CRIMSON_STEM);
     public static final TFRegistryObject<Block> HOLLOW_CRIMSON_STEM_HORIZONTAL = hollowLogHorizontalBlock("hollow_crimson_stem_horizontal", Blocks.CRIMSON_STEM);
-    public static final TFRegistryObject<Block> HOLLOW_CRIMSON_STEM_VERTICAL = pillarBlock("hollow_crimson_stem_vertical", Blocks.CRIMSON_STEM);
+    public static final TFRegistryObject<Block> HOLLOW_CRIMSON_STEM_VERTICAL = hollowLogVerticalBlock("hollow_crimson_stem_vertical", Blocks.CRIMSON_STEM);
     public static final TFRegistryObject<Block> HOLLOW_WARPED_STEM_CLIMBABLE = hollowLogClimbableBlock("hollow_warped_stem_climbable", Blocks.WARPED_STEM);
     public static final TFRegistryObject<Block> HOLLOW_WARPED_STEM_HORIZONTAL = hollowLogHorizontalBlock("hollow_warped_stem_horizontal", Blocks.WARPED_STEM);
-    public static final TFRegistryObject<Block> HOLLOW_WARPED_STEM_VERTICAL = pillarBlock("hollow_warped_stem_vertical", Blocks.WARPED_STEM);
+    public static final TFRegistryObject<Block> HOLLOW_WARPED_STEM_VERTICAL = hollowLogVerticalBlock("hollow_warped_stem_vertical", Blocks.WARPED_STEM);
     public static final TFRegistryObject<Block> HOLLOW_TWILIGHT_OAK_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_twilight_oak_log_climbable", Blocks.OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_TWILIGHT_OAK_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_twilight_oak_log_horizontal", Blocks.OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_CANOPY_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_canopy_log_climbable", Blocks.DARK_OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_CANOPY_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_canopy_log_horizontal", Blocks.DARK_OAK_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_CANOPY_LOG_VERTICAL = pillarBlock("hollow_canopy_log_vertical", Blocks.DARK_OAK_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_CANOPY_LOG_VERTICAL = hollowLogVerticalBlock("hollow_canopy_log_vertical", Blocks.DARK_OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_DARK_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_dark_log_climbable", Blocks.DARK_OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_DARK_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_dark_log_horizontal", Blocks.DARK_OAK_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_DARK_LOG_VERTICAL = pillarBlock("hollow_dark_log_vertical", Blocks.DARK_OAK_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_DARK_LOG_VERTICAL = hollowLogVerticalBlock("hollow_dark_log_vertical", Blocks.DARK_OAK_LOG);
     public static final TFRegistryObject<Block> HOLLOW_MINING_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_mining_log_climbable", Blocks.BIRCH_LOG);
     public static final TFRegistryObject<Block> HOLLOW_MINING_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_mining_log_horizontal", Blocks.BIRCH_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_MINING_LOG_VERTICAL = pillarBlock("hollow_mining_log_vertical", Blocks.BIRCH_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_MINING_LOG_VERTICAL = hollowLogVerticalBlock("hollow_mining_log_vertical", Blocks.BIRCH_LOG);
     public static final TFRegistryObject<Block> HOLLOW_TIME_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_time_log_climbable", Blocks.SPRUCE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_TIME_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_time_log_horizontal", Blocks.SPRUCE_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_TIME_LOG_VERTICAL = pillarBlock("hollow_time_log_vertical", Blocks.SPRUCE_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_TIME_LOG_VERTICAL = hollowLogVerticalBlock("hollow_time_log_vertical", Blocks.SPRUCE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_TRANSFORMATION_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_transformation_log_climbable", Blocks.JUNGLE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_TRANSFORMATION_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_transformation_log_horizontal", Blocks.JUNGLE_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_TRANSFORMATION_LOG_VERTICAL = pillarBlock("hollow_transformation_log_vertical", Blocks.JUNGLE_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_TRANSFORMATION_LOG_VERTICAL = hollowLogVerticalBlock("hollow_transformation_log_vertical", Blocks.JUNGLE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_SORTING_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_sorting_log_climbable", Blocks.CHERRY_LOG);
     public static final TFRegistryObject<Block> HOLLOW_SORTING_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_sorting_log_horizontal", Blocks.CHERRY_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_SORTING_LOG_VERTICAL = pillarBlock("hollow_sorting_log_vertical", Blocks.CHERRY_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_SORTING_LOG_VERTICAL = hollowLogVerticalBlock("hollow_sorting_log_vertical", Blocks.CHERRY_LOG);
     public static final TFRegistryObject<Block> HOLLOW_VANGROVE_LOG_CLIMBABLE = hollowLogClimbableBlock("hollow_vangrove_log_climbable", Blocks.MANGROVE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_VANGROVE_LOG_HORIZONTAL = hollowLogHorizontalBlock("hollow_vangrove_log_horizontal", Blocks.MANGROVE_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_VANGROVE_LOG_VERTICAL = pillarBlock("hollow_vangrove_log_vertical", Blocks.MANGROVE_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_VANGROVE_LOG_VERTICAL = hollowLogVerticalBlock("hollow_vangrove_log_vertical", Blocks.MANGROVE_LOG);
     public static final TFRegistryObject<Block> HOLLOW_OAK_SAPLING = saplingBlock("hollow_oak_sapling", Blocks.OAK_SAPLING, net.minecraft.world.level.block.grower.TreeGrower.OAK);
 
     // -- Trapped chests (TF wood variants) — chestBlock fallback
@@ -653,8 +653,8 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> DARK_DOOR = doorBlock("dark_door", Blocks.DARK_OAK_DOOR, net.minecraft.world.level.block.state.properties.BlockSetType.DARK_OAK);
     public static final TFRegistryObject<Block> MANGROVE_DOOR = doorBlock("mangrove_door", Blocks.MANGROVE_DOOR, net.minecraft.world.level.block.state.properties.BlockSetType.MANGROVE);
     public static final TFRegistryObject<Block> CANOPY_BOOKSHELF = solidBlock("canopy_bookshelf", Blocks.BOOKSHELF);
-    public static final TFRegistryObject<Block> HOLLOW_SPRUCE_LOG_VERTICAL = pillarBlock("hollow_spruce_log_vertical", Blocks.STRIPPED_SPRUCE_LOG);
-    public static final TFRegistryObject<Block> HOLLOW_TWILIGHT_OAK_LOG_VERTICAL = pillarBlock("hollow_twilight_oak_log_vertical", Blocks.STRIPPED_OAK_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_SPRUCE_LOG_VERTICAL = hollowLogVerticalBlock("hollow_spruce_log_vertical", Blocks.STRIPPED_SPRUCE_LOG);
+    public static final TFRegistryObject<Block> HOLLOW_TWILIGHT_OAK_LOG_VERTICAL = hollowLogVerticalBlock("hollow_twilight_oak_log_vertical", Blocks.STRIPPED_OAK_LOG);
     public static final TFRegistryObject<Block> SORTING_LOG_CORE = solidBlock("sorting_log_core", Blocks.STRIPPED_CHERRY_LOG);
     public static final TFRegistryObject<Block> TRANSFORMATION_LOG_CORE = solidBlock("transformation_log_core", Blocks.STRIPPED_JUNGLE_LOG);
     public static final TFRegistryObject<Block> OMINOUS_CANDLE = candleBlock("ominous_candle", Blocks.CANDLE);
@@ -998,17 +998,18 @@ public final class TFBlocks {
     private static TFRegistryObject<Block> trophyBlock(String path, twilightforest.enums.BossVariant variant, int comparatorValue) {
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
                 new twilightforest.block.TrophyBlock(variant, comparatorValue, BlockBehaviour.Properties.of().instabreak()));
-        registerBlockItem(path, block, Blocks.SKELETON_SKULL);
         return new TFRegistryObject<>(block);
     }
 
     /** 1:1 upstream {@link twilightforest.block.TrophyWallBlock} — wall-mounted boss trophy with
      * HORIZONTAL_FACING + POWERED state. Comparator slot is unused (wall trophies pass 0).
      * Properties{@code .of().instabreak()} matches upstream. */
-    private static TFRegistryObject<Block> trophyWallBlock(String path, twilightforest.enums.BossVariant variant) {
+    private static TFRegistryObject<Block> trophyWallBlock(String path, twilightforest.enums.BossVariant variant, TFRegistryObject<Block> floorBlock) {
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
                 new twilightforest.block.TrophyWallBlock(variant, BlockBehaviour.Properties.of().instabreak()));
-        registerBlockItem(path, block, Blocks.SKELETON_WALL_SKULL);
+        String itemPath = path.replace("_wall_trophy", "_trophy");
+        Item blockItem = new TrophyItem(floorBlock.get(), block, new Item.Properties());
+        Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(itemPath), blockItem);
         return new TFRegistryObject<>(block);
     }
 

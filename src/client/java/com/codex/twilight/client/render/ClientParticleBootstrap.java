@@ -2,13 +2,16 @@ package com.codex.twilight.client.render;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.client.particle.SuspendedTownParticle;
+import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import twilightforest.client.particle.MagicEffectParticle;
 import twilightforest.init.TFParticleTypes;
 
 /**
  * F2.6 — paired client-side particle providers for TF custom particles.
  *
- * <p>Each TF {@link SimpleParticleType} is bound to vanilla
+ * <p>Most TF {@link SimpleParticleType} ids are bound to vanilla
  * {@link SuspendedTownParticle.Provider}: a small 2D sprite-based particle
  * with gentle drift physics. The provider receives the {@code SpriteSet}
  * auto-loaded by the vanilla particle atlas from
@@ -58,7 +61,7 @@ public final class ClientParticleBootstrap {
         register(registry, TFParticleTypes.TRANSFORMATION_PARTICLE);
         register(registry, TFParticleTypes.LOG_CORE_PARTICLE);
         register(registry, TFParticleTypes.CLOUD_PUFF);
-        register(registry, TFParticleTypes.MAGIC_EFFECT);
+        registerMagicEffect(registry, TFParticleTypes.MAGIC_EFFECT);
         register(registry, TFParticleTypes.ANGRY_LICH);
         register(registry, TFParticleTypes.TWILIGHT_ORB);
         register(registry, TFParticleTypes.SHIELD_BREAK);
@@ -69,6 +72,15 @@ public final class ClientParticleBootstrap {
         if (type == null) return;
         try {
             registry.register(type, SuspendedTownParticle.Provider::new);
+        } catch (Throwable ignored) {
+            // Defensive — never let one bad provider abort the bootstrap.
+        }
+    }
+
+    private static void registerMagicEffect(ParticleFactoryRegistry registry, ParticleType<ColorParticleOption> type) {
+        if (type == null) return;
+        try {
+            registry.register(type, MagicEffectParticle.Factory::new);
         } catch (Throwable ignored) {
             // Defensive — never let one bad provider abort the bootstrap.
         }

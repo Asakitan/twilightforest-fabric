@@ -1,6 +1,8 @@
 package twilightforest.init;
 
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 
 /**
  * Shared aliases for registered Twilight particle ids.
@@ -35,7 +37,7 @@ public final class TFParticleType {
     public static final ParticleOptions TRANSFORMATION_PARTICLE = TFParticleTypes.TRANSFORMATION_PARTICLE;
     public static final ParticleOptions LOG_CORE_PARTICLE = TFParticleTypes.LOG_CORE_PARTICLE;
     public static final ParticleOptions CLOUD_PUFF = TFParticleTypes.CLOUD_PUFF;
-    public static final ParticleOptions MAGIC_EFFECT = TFParticleTypes.MAGIC_EFFECT;
+    public static final ParticleType<ColorParticleOption> MAGIC_EFFECT = TFParticleTypes.MAGIC_EFFECT;
     public static final ParticleOptions ANGRY_LICH = TFParticleTypes.ANGRY_LICH;
     public static final ParticleOptions TWILIGHT_ORB = TFParticleTypes.TWILIGHT_ORB;
     public static final ParticleOptions SHIELD_BREAK = TFParticleTypes.SHIELD_BREAK;

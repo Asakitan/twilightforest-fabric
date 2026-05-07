@@ -1,8 +1,13 @@
 package twilightforest.init;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import twilightforest.TwilightForestMod;
 
 public final class TFParticleTypes {
@@ -30,7 +35,17 @@ public final class TFParticleTypes {
     public static final SimpleParticleType TRANSFORMATION_PARTICLE = register("transformation_particle");
     public static final SimpleParticleType LOG_CORE_PARTICLE = register("log_core_particle");
     public static final SimpleParticleType CLOUD_PUFF = register("cloud_puff");
-    public static final SimpleParticleType MAGIC_EFFECT = register("magic_effect");
+    public static final ParticleType<ColorParticleOption> MAGIC_EFFECT = register("magic_effect", new ParticleType<ColorParticleOption>(false) {
+        @Override
+        public MapCodec<ColorParticleOption> codec() {
+            return ColorParticleOption.codec(this);
+        }
+
+        @Override
+        public StreamCodec<? super RegistryFriendlyByteBuf, ColorParticleOption> streamCodec() {
+            return ColorParticleOption.streamCodec(this);
+        }
+    });
     public static final SimpleParticleType ANGRY_LICH = register("angry_lich");
     public static final SimpleParticleType TWILIGHT_ORB = register("twilight_orb");
     public static final SimpleParticleType SHIELD_BREAK = register("shield_break");
@@ -46,7 +61,7 @@ public final class TFParticleTypes {
         return register(path, new SimpleParticleType(false));
     }
 
-    private static <T extends SimpleParticleType> T register(String path, T particleType) {
+    private static <T extends ParticleType<?>> T register(String path, T particleType) {
         return Registry.register(BuiltInRegistries.PARTICLE_TYPE,
                 TwilightForestMod.prefix(path), particleType);
     }
