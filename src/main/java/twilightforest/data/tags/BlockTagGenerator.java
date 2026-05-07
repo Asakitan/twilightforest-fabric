@@ -20,6 +20,10 @@ public final class BlockTagGenerator {
     public static final TagKey<Block> ICE_BOMB_REPLACEABLES = create("ice_bomb_replaceables");
     public static final TagKey<Block> PENGUINS_SPAWNABLE_ON = create("penguins_spawnable_on");
     public static final TagKey<Block> GIANTS_SPAWNABLE_ON = create("giants_spawnable_on");
+    public static final TagKey<Block> BANISTERS = create("banisters");
+    public static final TagKey<Block> DRYING_RACKS = create("drying_racks");
+    public static final TagKey<Block> HOLLOW_LOGS = create("hollow_logs");
+    public static final TagKey<Block> TOWERWOOD = create("towerwood");
 
     private BlockTagGenerator() {
     }
