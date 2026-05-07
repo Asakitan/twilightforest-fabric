@@ -11,6 +11,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
@@ -18,6 +20,8 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import twilightforest.util.features.FeaturePlacers;
 
 import java.util.ArrayList;
@@ -56,6 +60,25 @@ public final class EntityUtil {
             }
         });
         return valid.isEmpty() ? null : valid.get(random.nextInt(valid.size()));
+    }
+
+    /** Ports upstream {@code twilightforest.util.entities.EntityUtil.rayTrace} — basic block-only
+     * ray cast from a player's eye position out to a 5-block reach (matches the upstream constant
+     * implicitly used at every call site). Used by {@code HedgeBlock} to detect a player swinging
+     * at a hedge from a distance. */
+    public static BlockHitResult rayTrace(Player player) {
+        return rayTrace(player, range -> range);
+    }
+
+    /** Overload that allows the caller to adjust the default 5-block reach (used by
+     * {@code StrongholdShieldBlock} to extend the ray a tick further before deciding whether the
+     * front-face is being hit). */
+    public static BlockHitResult rayTrace(Player player, java.util.function.DoubleUnaryOperator rangeAdjuster) {
+        double reach = rangeAdjuster.applyAsDouble(5.0D);
+        Vec3 eye = player.getEyePosition(1.0F);
+        Vec3 look = player.getViewVector(1.0F);
+        Vec3 end = eye.add(look.x * reach, look.y * reach, look.z * reach);
+        return player.level().clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
 
     public static List<Entity> getEntitiesInAABB(WorldGenLevel world, AABB boundingBox) {

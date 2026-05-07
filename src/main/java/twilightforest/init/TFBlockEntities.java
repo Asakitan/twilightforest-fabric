@@ -87,11 +87,58 @@ public final class TFBlockEntities {
                     TFBlocks.ENCASED_FIRE_JET.get())
                     .build());
 
+    public static final BlockEntityType<twilightforest.block.entity.TFSmokerBlockEntity> SMOKER = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            TwilightForestMod.prefix("smoker"),
+            FabricBlockEntityTypeBuilder.create(twilightforest.block.entity.TFSmokerBlockEntity::new,
+                    TFBlocks.SMOKER.get(),
+                    TFBlocks.ENCASED_SMOKER.get())
+                    .build());
+
     public static final BlockEntityType<twilightforest.block.entity.CandelabraBlockEntity> CANDELABRA = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             TwilightForestMod.prefix("candelabra"),
             FabricBlockEntityTypeBuilder.create(twilightforest.block.entity.CandelabraBlockEntity::new,
                     TFBlocks.CANDELABRA.get())
+                    .build());
+
+    public static final BlockEntityType<twilightforest.block.entity.BrazierBlockEntity> BRAZIER = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            TwilightForestMod.prefix("brazier"),
+            FabricBlockEntityTypeBuilder.create(twilightforest.block.entity.BrazierBlockEntity::new,
+                    TFBlocks.BRAZIER.get())
+                    .build());
+
+    public static final BlockEntityType<twilightforest.block.entity.CarminiteReactorBlockEntity> CARMINITE_REACTOR = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            TwilightForestMod.prefix("carminite_reactor"),
+            FabricBlockEntityTypeBuilder.create(twilightforest.block.entity.CarminiteReactorBlockEntity::new,
+                    TFBlocks.CARMINITE_REACTOR.get())
+                    .build());
+
+    public static final BlockEntityType<twilightforest.block.entity.ReactorDebrisBlockEntity> REACTOR_DEBRIS = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            TwilightForestMod.prefix("reactor_debris"),
+            FabricBlockEntityTypeBuilder.create(twilightforest.block.entity.ReactorDebrisBlockEntity::new,
+                    TFBlocks.REACTOR_DEBRIS.get())
+                    .build());
+
+    public static final BlockEntityType<twilightforest.block.entity.SkullCandleBlockEntity> SKULL_CANDLE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            TwilightForestMod.prefix("skull_candle"),
+            FabricBlockEntityTypeBuilder.create(twilightforest.block.entity.SkullCandleBlockEntity::new,
+                    TFBlocks.CREEPER_SKULL_CANDLE.get(),
+                    TFBlocks.CREEPER_WALL_SKULL_CANDLE.get(),
+                    TFBlocks.SKELETON_SKULL_CANDLE.get(),
+                    TFBlocks.SKELETON_WALL_SKULL_CANDLE.get(),
+                    TFBlocks.WITHER_SKELETON_SKULL_CANDLE.get(),
+                    TFBlocks.WITHER_SKELETON_WALL_SKULL_CANDLE.get(),
+                    TFBlocks.ZOMBIE_SKULL_CANDLE.get(),
+                    TFBlocks.ZOMBIE_WALL_SKULL_CANDLE.get(),
+                    TFBlocks.PLAYER_SKULL_CANDLE.get(),
+                    TFBlocks.PLAYER_WALL_SKULL_CANDLE.get(),
+                    TFBlocks.PIGLIN_SKULL_CANDLE.get(),
+                    TFBlocks.PIGLIN_WALL_SKULL_CANDLE.get())
                     .build());
 
     private TFBlockEntities() {}

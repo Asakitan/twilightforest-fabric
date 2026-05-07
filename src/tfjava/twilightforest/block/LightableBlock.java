@@ -5,9 +5,12 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.FireChargeItem;
@@ -44,12 +47,27 @@ public interface LightableBlock {
 	EnumProperty<Lighting> LIGHTING = EnumProperty.create("lighting", Lighting.class);
 
 	default ItemInteractionResult tryLightCandles(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player) {
+		return this.tryLightCandles(stack, state, level, pos, player, InteractionHand.MAIN_HAND);
+	}
+
+	default ItemInteractionResult tryLightCandles(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
 		if (stack.isEmpty() && player.getAbilities().mayBuild && state.getValue(LIGHTING) != Lighting.NONE) {
 			this.extinguish(player, state, level, pos);
 			return ItemInteractionResult.sidedSuccess(level.isClientSide());
 		} else if (this.canBeLit(state)) {
 			if (stack.getItem() instanceof FlintAndSteelItem || stack.getItem() instanceof FireChargeItem) {
-				return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+				if (!level.isClientSide()) {
+					this.setLit(level, state, pos, true);
+					level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+					level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+					player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+					if (stack.getItem() instanceof FlintAndSteelItem) {
+						stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+					} else {
+						stack.consume(1, player);
+					}
+				}
+				return ItemInteractionResult.sidedSuccess(level.isClientSide());
 			}
 		}
 		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

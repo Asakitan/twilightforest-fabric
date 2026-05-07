@@ -72,6 +72,7 @@ public final class CodexTwilight implements ModInitializer {
         twilightforest.init.TFLoot.bootstrap();
         twilightforest.init.TFMobEffects.bootstrap();
         twilightforest.init.TFEnchantmentEffects.bootstrap();
+        twilightforest.events.SkullCandleEvents.bootstrap();
         TFDataComponents.TRANSLATABLE_BOOK.toString();
         TFMapDecorations.AURORA_PALACE.value();
         TFSounds.bootstrap();

@@ -118,6 +118,15 @@ public final class TFDataComponents {
                 .build()
     );
 
+    public static final DataComponentType<twilightforest.components.item.SkullCandles> SKULL_CANDLES = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            TwilightForestMod.prefix("skull_candles"),
+            DataComponentType.<twilightforest.components.item.SkullCandles>builder()
+                .persistent(twilightforest.components.item.SkullCandles.CODEC)
+                .networkSynchronized(twilightforest.components.item.SkullCandles.STREAM_CODEC)
+                .build()
+    );
+
     private TFDataComponents() {
     }
 }

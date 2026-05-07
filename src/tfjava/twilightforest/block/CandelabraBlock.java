@@ -234,7 +234,7 @@ public class CandelabraBlock extends BaseEntityBlock implements LightableBlock, 
 			}
 			return ItemInteractionResult.sidedSuccess(level.isClientSide());
 		}
-		return this.tryLightCandles(stack, state, level, pos, player);
+		return this.tryLightCandles(stack, state, level, pos, player, hand);
 	}
 
 	private void eruptFlameParticles(ParticleOptions particle, Level level, BlockPos pos, BlockState state) {

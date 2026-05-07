@@ -19,12 +19,22 @@ public final class TFSounds {
     public static final SoundEvent DRYING_RACK_REMOVE_ITEM = register("block.twilightforest.drying_rack.remove_item");
     public static final SoundEvent UNCRAFTING_TABLE_ACTIVATE = register("block.twilightforest.uncrafting_table.activate");
     public static final SoundEvent PEDESTAL_ACTIVATE = register("block.twilightforest.trophy_pedestal.activate");
+    public static final SoundEvent BUG_SQUISH = register("block.twilightforest.bug.squish");
+    public static final SoundEvent JAR_INSERT = register("block.twilightforest.jar.insert");
+    public static final SoundEvent JAR_LID_SWAP = register("block.twilightforest.jar.lid_swap");
+    public static final SoundEvent JAR_REMOVE = register("block.twilightforest.jar.remove");
+    public static final SoundEvent JAR_WIGGLE = register("block.twilightforest.jar.wiggle");
     public static final SoundEvent JET_START = register("block.twilightforest.fire_jet.start");
     public static final SoundEvent JET_POP = register("block.twilightforest.fire_jet.pop");
     public static final SoundEvent JET_ACTIVE = register("block.twilightforest.fire_jet.active");
     public static final SoundEvent SLIDER = register("block.twilightforest.slider.move");
     public static final SoundEvent CANDELABRA_LIGHT = register("block.twilightforest.candelabra.light");
     public static final SoundEvent CANDELABRA_OMINOUS = register("block.twilightforest.candelabra.ominous");
+    public static final SoundEvent REACTOR_AMBIENT = register("block.twilightforest.reactor.ambient");
+    public static final SoundEvent SMOKER_START = register("block.twilightforest.smoker.start");
+    public static final SoundEvent DOOR_ACTIVATED = register("block.twilightforest.castle_door.activated");
+    public static final SoundEvent DOOR_VANISH = register("block.twilightforest.castle_door.vanish");
+    public static final SoundEvent DOOR_REAPPEAR = register("block.twilightforest.castle_door.reappear");
     public static final SoundEvent BOAR_AMBIENT = register("entity.twilightforest.boar.ambient");
     public static final SoundEvent BOAR_DEATH = register("entity.twilightforest.boar.death");
     public static final SoundEvent BOAR_HURT = register("entity.twilightforest.boar.hurt");
@@ -65,6 +75,7 @@ public final class TFSounds {
     public static final SoundEvent FIRE_BEETLE_HURT = register("entity.twilightforest.fire_beetle.hurt");
     public static final SoundEvent FIRE_BEETLE_SHOOT = register("entity.twilightforest.fire_beetle.shoot");
     public static final SoundEvent FIRE_BEETLE_STEP = register("entity.twilightforest.fire_beetle.step");
+    public static final SoundEvent LOCKED_VANISHING_BLOCK = register("block.twilightforest.vanish.locked");
     public static final SoundEvent GOBLIN_KNIGHT_AMBIENT = register("entity.twilightforest.goblin_knight.ambient");
     public static final SoundEvent GOBLIN_KNIGHT_DEATH = register("entity.twilightforest.goblin_knight.death");
     public static final SoundEvent GOBLIN_KNIGHT_HURT = register("entity.twilightforest.goblin_knight.hurt");
@@ -114,6 +125,7 @@ public final class TFSounds {
     public static final SoundEvent PINCH_BEETLE_DEATH = register("entity.twilightforest.pinch_beetle.death");
     public static final SoundEvent PINCH_BEETLE_HURT = register("entity.twilightforest.pinch_beetle.hurt");
     public static final SoundEvent PINCH_BEETLE_STEP = register("entity.twilightforest.pinch_beetle.step");
+    public static final SoundEvent PICKED_TORCHBERRIES = register("block.twilightforest.torchberry.harvest");
     public static final SoundEvent PENGUIN_AMBIENT = register("entity.twilightforest.penguin.ambient");
     public static final SoundEvent PENGUIN_DEATH = register("entity.twilightforest.penguin.death");
     public static final SoundEvent PENGUIN_HURT = register("entity.twilightforest.penguin.hurt");
@@ -124,6 +136,8 @@ public final class TFSounds {
     public static final SoundEvent REDCAP_AMBIENT = register("entity.twilightforest.redcap.ambient");
     public static final SoundEvent REDCAP_DEATH = register("entity.twilightforest.redcap.death");
     public static final SoundEvent REDCAP_HURT = register("entity.twilightforest.redcap.hurt");
+    public static final SoundEvent REAPPEAR_BLOCK = register("block.twilightforest.reappearing_block.reappear");
+    public static final SoundEvent REAPPEAR_POOF = register("block.twilightforest.reappearing_block.vanish");
     public static final SoundEvent RAVEN_CAW = register("entity.twilightforest.raven.caw");
     public static final SoundEvent RAVEN_SQUAWK = register("entity.twilightforest.raven.squawk");
     public static final SoundEvent FORTIFICATION_SHIELD_BLOCK = register("entity.twilightforest.fortification_shield.block");
@@ -218,6 +232,8 @@ public final class TFSounds {
     public static final SoundEvent WRAITH_AMBIENT = register("entity.twilightforest.wraith.ambient");
     public static final SoundEvent WRAITH_DEATH = register("entity.twilightforest.wraith.death");
     public static final SoundEvent WRAITH_HURT = register("entity.twilightforest.wraith.hurt");
+    public static final SoundEvent UNLOCK_VANISHING_BLOCK = register("block.twilightforest.vanish.unlock");
+    public static final SoundEvent VANISHING_BLOCK = register("block.twilightforest.vanish.vanish");
     public static final SoundEvent YETI_DEATH = register("entity.twilightforest.yeti.death");
     public static final SoundEvent YETI_GRAB = register("entity.twilightforest.yeti.grab");
     public static final SoundEvent YETI_GROWL = register("entity.twilightforest.yeti.growl");
@@ -241,7 +257,8 @@ public final class TFSounds {
     public static final SoundEvent MOONWORM_PLACED = register("item.twilightforest.moonworm.placed");
     public static final SoundEvent MOONWORM_SHOOT = register("item.twilightforest.moonworm.shoot");
     public static final SoundEvent CHARM_USE = register("item.twilightforest.charm.use");
-    public static final SoundEvent CICADA_AMBIENT = register("block.twilightforest.cicada.ambient");
+    public static final SoundEvent CICADA = register("block.twilightforest.cicada");
+    public static final SoundEvent CICADA_AMBIENT = CICADA;
     public static final SoundEvent FLASK_BREW = register("item.twilightforest.flask.brew");
     public static final SoundEvent FLASK_DRINK = register("item.twilightforest.flask.drink");
     public static final SoundEvent FLASK_FILL = register("item.twilightforest.flask.fill");

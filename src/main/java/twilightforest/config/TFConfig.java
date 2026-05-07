@@ -41,6 +41,9 @@ public final class TFConfig {
     public static boolean silentCicadas = false;
     public static boolean silentCicadasOnHead = false;
 
+    public static boolean disableSkullCandles = false;
+    public static int commonCloudBlockPrecipitationDistance = 32;
+
     /** Default «adjusts loot rolls when multiple players fight a boss». */
     public static final MultiplayerFightAdjuster multiplayerFightAdjuster = new MultiplayerFightAdjuster();
 
