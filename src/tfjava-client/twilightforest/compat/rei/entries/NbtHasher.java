@@ -52,9 +52,9 @@ public class NbtHasher implements EntryComparator<Tag> {
 
 	private int hashCompoundTag(CompoundTag tag) {
 		int i = 1;
-		for (Map.Entry<String, Tag> entry : tag.tags.entrySet()) {
-			if (shouldHash(entry.getKey())) {
-				i = i * 31 + (Objects.hashCode(entry.getKey()) ^ hashTag(entry.getValue()));
+		for (String key : tag.getAllKeys()) {
+			if (shouldHash(key)) {
+				i = i * 31 + (Objects.hashCode(key) ^ hashTag(tag.get(key)));
 			}
 		}
 		return i;

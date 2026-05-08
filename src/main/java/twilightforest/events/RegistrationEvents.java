@@ -3,8 +3,6 @@ package twilightforest.events;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
@@ -399,8 +397,7 @@ public final class RegistrationEvents {
 	}
 
 	private static void addPlant(FlowerPotBlock pot, TFRegistryObject<Block> plant, TFRegistryObject<Block> potted) {
-		ResourceLocation id = BuiltInRegistries.BLOCK.getKey(plant.get());
-		((FlowerPotBlockInvoker) pot).codex_twilight$addPlant(id, potted);
+		FlowerPotBlockInvoker.codex_twilight$getPottedByContent().put(plant.get(), potted.get());
 	}
 
 	private static void setFlammable(FireBlock fire, TFRegistryObject<Block> block, int encouragement, int flammability) {

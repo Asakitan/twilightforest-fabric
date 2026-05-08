@@ -1,19 +1,24 @@
 package twilightforest.dispenser;
 
+import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
+import twilightforest.entity.projectile.IceBomb;
 import twilightforest.entity.projectile.MoonwormShot;
 import twilightforest.entity.projectile.TwilightWandBolt;
 import twilightforest.init.TFBlocks;
+import twilightforest.init.TFEntities;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 
@@ -88,7 +93,25 @@ public class TFDispenserBehaviors {
 			}
 		});
 
-		DispenserBlock.registerProjectileBehavior(TFItems.ICE_BOMB.get());
+		DispenserBlock.registerBehavior(TFItems.ICE_BOMB.get(), new DefaultDispenseItemBehavior() {
+			@Override
+			protected ItemStack execute(BlockSource source, ItemStack stack) {
+				Level level = source.level();
+				Position position = DispenserBlock.getDispensePosition(source);
+				Direction direction = source.state().getValue(DispenserBlock.FACING);
+				IceBomb ice = new IceBomb(TFEntities.THROWN_ICE.get(), level);
+				ice.setPos(position.x(), position.y(), position.z());
+				ice.shoot(direction.getStepX(), direction.getStepY() + 0.1F, direction.getStepZ(), 1.25F, 1.0F);
+				level.addFreshEntity(ice);
+				stack.shrink(1);
+				return stack;
+			}
+
+			@Override
+			protected void playSound(BlockSource source) {
+				source.level().playSound(null, source.center().x(), source.center().y(), source.center().z(), TFSounds.ICE_BOMB_FIRED, SoundSource.NEUTRAL, 0.5F, 1.0F);
+			}
+		});
 
 		//handling tags should be a thing smh
 		DispenserBlock.registerBehavior(Items.CANDLE, new CandleDispenseBehavior());

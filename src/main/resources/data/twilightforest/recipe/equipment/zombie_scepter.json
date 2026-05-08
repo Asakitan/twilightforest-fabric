@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "twilightforest:scepter_repair",
   "durability": 9,
   "repair_ingredients": [
@@ -7,7 +7,7 @@
       "ingredients": [
         {
           "fabric:type": "twilightforest:components",
-          "base": "minecraft:potion",
+          "base": { "item": "minecraft:potion" },
           "components": {
             "minecraft:potion_contents": {
               "potion": "minecraft:strength"
@@ -16,7 +16,7 @@
         },
         {
           "fabric:type": "twilightforest:components",
-          "base": "minecraft:potion",
+          "base": { "item": "minecraft:potion" },
           "components": {
             "minecraft:potion_contents": {
               "potion": "minecraft:long_strength"
@@ -25,7 +25,7 @@
         },
         {
           "fabric:type": "twilightforest:components",
-          "base": "minecraft:potion",
+          "base": { "item": "minecraft:potion" },
           "components": {
             "minecraft:potion_contents": {
               "potion": "minecraft:strong_strength"

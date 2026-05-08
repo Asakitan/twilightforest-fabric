@@ -28,19 +28,25 @@ public class CodexGrassColorEarlyRiser implements Runnable {
 
     @Override
     public void run() {
-        ClassTinkerers.enumBuilder(mapClass("class_8107"), String.class, net.minecraft.sounds.SoundEvent.class)
+        ClassTinkerers.addTransformation(mapClass("class_4763$class_5486"), node -> {
+            if (node.permittedSubclasses != null) {
+                node.permittedSubclasses.clear();
+            }
+        });
+
+        ClassTinkerers.enumBuilder(mapClass("class_8107"), "Ljava/lang/String;", descriptor(mapClass("class_3414")))
                 .addEnum("TWILIGHTFOREST_PINCH", () -> new Object[]{"twilightforest:pinch", TFSounds.PINCH_BEETLE_ATTACK})
                 .build();
 
-        ClassTinkerers.enumBuilder(mapClass("class_1814"), int.class, String.class, ChatFormatting.class)
-                .addEnum("TWILIGHTFOREST_TWILIGHT", () -> new Object[]{4, "twilightforest:twilight", ChatFormatting.DARK_GREEN})
+        ClassTinkerers.enumBuilder(mapClass("class_1814"), "I", "Ljava/lang/String;", descriptor(mapClass("class_124")))
+                .addEnum("TWILIGHTFOREST_TWILIGHT", () -> new Object[]{5, "twilightforest:twilight", ChatFormatting.DARK_GREEN})
                 .build();
 
         ClassTinkerers.enumBuilder(mapClass("class_811"), int.class, String.class)
                 .addEnum("TWILIGHTFOREST_JARRED", () -> new Object[]{9, "twilightforest:jarred"})
                 .build();
 
-        ClassTinkerers.enumBuilder(mapClass("class_1690$class_1692"), net.minecraft.world.level.block.Block.class, String.class)
+        ClassTinkerers.enumBuilder(mapClass("class_1690$class_1692"), descriptor(mapClass("class_2248")), "Ljava/lang/String;")
                 .addEnum("TWILIGHTFOREST_TWILIGHT_OAK", () -> new Object[]{Blocks.OAK_PLANKS, "twilightforest:twilight_oak"})
                 .addEnum("TWILIGHTFOREST_CANOPY", () -> new Object[]{Blocks.DARK_OAK_PLANKS, "twilightforest:canopy"})
                 .addEnum("TWILIGHTFOREST_MANGROVE", () -> new Object[]{Blocks.MANGROVE_PLANKS, "twilightforest:mangrove"})
@@ -63,5 +69,9 @@ public class CodexGrassColorEarlyRiser implements Runnable {
     private static String mapClass(String intermediaryName) {
         return FabricLoader.getInstance().getMappingResolver()
                 .mapClassName("intermediary", "net.minecraft." + intermediaryName);
+    }
+
+    private static String descriptor(String mappedClassName) {
+        return "L" + mappedClassName.replace('.', '/') + ";";
     }
 }

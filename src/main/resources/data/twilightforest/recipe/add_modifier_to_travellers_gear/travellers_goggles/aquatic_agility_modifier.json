@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "twilightforest:travellers_gear_modifier_shaped_recipe",
   "is_rotated": false,
   "modifier_key": "twilightforest:aquatic_agility",
@@ -18,7 +18,7 @@
         "ingredients": [
           {
             "fabric:type": "twilightforest:components",
-            "base": "minecraft:potion",
+            "base": { "item": "minecraft:potion" },
             "components": {
               "minecraft:potion_contents": {
                 "potion": "minecraft:water_breathing"
@@ -27,7 +27,7 @@
           },
           {
             "fabric:type": "twilightforest:components",
-            "base": "minecraft:potion",
+            "base": { "item": "minecraft:potion" },
             "components": {
               "minecraft:potion_contents": {
                 "potion": "minecraft:long_water_breathing"

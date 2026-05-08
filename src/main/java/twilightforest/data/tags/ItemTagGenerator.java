@@ -60,6 +60,7 @@ public final class ItemTagGenerator {
     public static final TagKey<Item> EMPERORS_CLOTH_APPLICABLE = create("emperors_cloth_applicable");
     public static final TagKey<Item> KEPT_ON_DEATH = create("kept_on_death");
     public static final TagKey<Item> PORTAL_ACTIVATOR = create("portal/activator");
+    public static final TagKey<Item> DRYING_RACKS = create("drying_racks");
     public static final TagKey<Item> RENDER_LOWER_ON_DRYING_RACK = create("lower_on_drying_rack");
     public static final TagKey<Item> TWILIGHT_LOGS = create("logs");
     public static final TagKey<Item> FOODS_JERKY = common("foods/jerky");

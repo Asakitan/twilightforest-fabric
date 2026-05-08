@@ -34,7 +34,7 @@ public final class TFEnumExtensions {
 
 	public static Object Rarity_TWILIGHT(int idx, Class<?> type) {
 		return switch (idx) {
-			case 0 -> cast(type, -1);
+			case 0 -> cast(type, 5);
 			case 1 -> cast(type, prefix("twilight"));
 			case 2 -> cast(type, (UnaryOperator<Style>) style -> style.withColor(ChatFormatting.DARK_GREEN));
 			default -> unexpected(idx);

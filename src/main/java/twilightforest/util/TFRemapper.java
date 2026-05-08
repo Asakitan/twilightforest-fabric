@@ -5,6 +5,7 @@ import twilightforest.TwilightForestMod;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public final class TFRemapper {
@@ -218,6 +219,6 @@ public final class TFRemapper {
 	}
 
 	private static void alias(Map<ResourceLocation, ResourceLocation> map, String oldId, String newId) {
-		map.put(TwilightForestMod.prefix(oldId), TwilightForestMod.prefix(newId));
+		map.put(TwilightForestMod.prefix(oldId.toLowerCase(Locale.ROOT)), TwilightForestMod.prefix(newId.toLowerCase(Locale.ROOT)));
 	}
 }

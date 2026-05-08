@@ -33,7 +33,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -60,7 +59,7 @@ import twilightforest.init.TFDataComponents;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStats;
 
-public abstract class CritterBlock extends BaseEntityBlock implements Equipable, SimpleWaterloggedBlock {
+public abstract class CritterBlock extends BaseEntityBlock implements Equipable {
 	public static final DirectionProperty FACING = DirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final String CLIENT_SOUND_HOOKS = "com.codex.twilight.client.render.ClientCritterSoundHooks";
@@ -74,7 +73,7 @@ public abstract class CritterBlock extends BaseEntityBlock implements Equipable,
 
 	protected CritterBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.UP).setValue(WATERLOGGED, Boolean.FALSE));
+		this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.UP));
 	}
 
 	@Override
@@ -89,24 +88,23 @@ public abstract class CritterBlock extends BaseEntityBlock implements Equipable,
 		};
 	}
 
-	@Override
-	public FluidState getFluidState(BlockState state) {
-		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
-	}
-
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		Direction clicked = context.getClickedFace();
 		FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
-		BlockState state = this.defaultBlockState().setValue(FACING, clicked).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+		BlockState state = this.defaultBlockState()
+			.setValue(FACING, clicked)
+			.trySetValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 
 		if (this.canSurvive(state, context.getLevel(), context.getClickedPos())) {
 			return state;
 		}
 
 		for (Direction direction : context.getNearestLookingDirections()) {
-			state = this.defaultBlockState().setValue(FACING, direction.getOpposite()).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+			state = this.defaultBlockState()
+				.setValue(FACING, direction.getOpposite())
+				.trySetValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
 			if (this.canSurvive(state, context.getLevel(), context.getClickedPos())) {
 				return state;
 			}
@@ -117,7 +115,7 @@ public abstract class CritterBlock extends BaseEntityBlock implements Equipable,
 
 	@Override
 	protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor accessor, BlockPos pos, BlockPos neighborPos) {
-		if (state.getValue(WATERLOGGED)) {
+		if (state.hasProperty(WATERLOGGED) && state.getValue(WATERLOGGED)) {
 			accessor.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(accessor));
 		}
 
@@ -169,13 +167,13 @@ public abstract class CritterBlock extends BaseEntityBlock implements Equipable,
 		}
 
 		player.getInventory().add(jarStack);
-		level.setBlockAndUpdate(pos, state.getValue(WATERLOGGED) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
+		level.setBlockAndUpdate(pos, state.hasProperty(WATERLOGGED) && state.getValue(WATERLOGGED) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
 	}
 
 	@Override
 	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
 		if ((entity instanceof Projectile && !entity.getType().is(EntityTagGenerator.DONT_KILL_BUGS)) || entity instanceof FallingBlockEntity) {
-			level.setBlockAndUpdate(pos, state.getValue(WATERLOGGED) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
+			level.setBlockAndUpdate(pos, state.hasProperty(WATERLOGGED) && state.getValue(WATERLOGGED) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
 			stopCicadaSoundIfClient(level);
 
 			level.playSound(null, pos, TFSounds.BUG_SQUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -232,6 +230,6 @@ public abstract class CritterBlock extends BaseEntityBlock implements Equipable,
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		super.createBlockStateDefinition(builder);
-		builder.add(FACING, WATERLOGGED);
+		builder.add(FACING);
 	}
 }

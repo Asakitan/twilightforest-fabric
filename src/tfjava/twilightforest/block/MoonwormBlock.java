@@ -76,7 +76,7 @@ public class MoonwormBlock extends CritterBlock implements SimpleWaterloggedBloc
 	public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
 		//allow waterlogging but allow for fluids to destroy moonworms if it flows into them
 		if (fluidState.isSource()) {
-			return super.placeLiquid(level, pos, state, fluidState);
+			return SimpleWaterloggedBlock.super.placeLiquid(level, pos, state, fluidState);
 		} else {
 			if (!state.isAir() && fluidState.getType() instanceof FlowingFluid fluid) {
 				//would have been lovely if FlowingFluid.beforeDestroyingBlock wasnt protected...

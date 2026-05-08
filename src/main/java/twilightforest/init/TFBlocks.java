@@ -1260,7 +1260,10 @@ public final class TFBlocks {
      * (canopy/dwarves' kitchens) backed by TFSmokerBlockEntity for the client-side smoke
      * particle ticker. */
     private static TFRegistryObject<Block> tfSmokerBlock(String path, Block fallback) {
-        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.TFSmokerBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.TFSmokerBlock(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.GRASS)
+                .sound(SoundType.GRASS)
+                .strength(1.5F, 6.0F)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }
@@ -1268,7 +1271,12 @@ public final class TFBlocks {
     /** 1:1 upstream {@link twilightforest.block.EncasedSmokerBlock} — TFSmokerBlock subclass
      * with redstone-driven ACTIVE toggle (plays smoker_start cue on transitions). */
     private static TFRegistryObject<Block> encasedSmokerBlock(String path, Block fallback) {
-        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.EncasedSmokerBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.EncasedSmokerBlock(BlockBehaviour.Properties.of()
+                .ignitedByLava()
+                .mapColor(MapColor.SAND)
+                .requiresCorrectToolForDrops()
+                .sound(SoundType.WOOD)
+                .strength(1.5F, 6.0F)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }
@@ -1276,15 +1284,19 @@ public final class TFBlocks {
     /** 1:1 upstream {@link twilightforest.block.GiantLeavesBlock} — GiantBlock subclass with
      * empty support shape. */
     private static TFRegistryObject<Block> giantBlock(String path, Block fallback) {
-        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.GiantBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.GiantBlock(giantProperties(fallback)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }
 
     private static TFRegistryObject<Block> giantLeavesBlock(String path, Block fallback) {
-        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.GiantLeavesBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.GiantLeavesBlock(giantProperties(fallback)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
+    }
+
+    private static BlockBehaviour.Properties giantProperties(Block fallback) {
+        return BlockBehaviour.Properties.ofFullCopy(fallback).mapColor(fallback.defaultMapColor());
     }
 
     /** 1:1 upstream {@link twilightforest.block.HugeWaterLilyBlock} — vanilla WaterlilyBlock

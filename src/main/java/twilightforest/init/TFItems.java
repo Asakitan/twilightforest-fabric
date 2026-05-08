@@ -2,6 +2,8 @@ package twilightforest.init;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ArmorItem;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.SignItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
@@ -122,6 +125,13 @@ public final class TFItems {
     public static final TFRegistryObject<Item> TANNIN = tfItem("tannin", new Item.Properties().craftRemainder(Items.GLASS_BOTTLE), Items.GLASS_BOTTLE);
     public static final TFRegistryObject<Item> COPPER_NUGGET = tfItem("copper_nugget", new Item.Properties(), Items.COPPER_INGOT);
     public static final TFRegistryObject<Item> NAGA_SCALE = tfItem("naga_scale", rarity(Rarity.UNCOMMON), Items.PRISMARINE_SHARD);
+
+    // ====== Spawn eggs referenced by JEED/effect-provider data ======
+    public static final TFRegistryObject<Item> ALPHA_YETI_SPAWN_EGG = spawnEggItem("alpha_yeti_spawn_egg", TFEntities.ALPHA_YETI, 0xcdcdcd, 0x29486e);
+    public static final TFRegistryObject<Item> DEATH_TOME_SPAWN_EGG = spawnEggItem("death_tome_spawn_egg", TFEntities.DEATH_TOME, 0x774e22, 0xdbcdbe);
+    public static final TFRegistryObject<Item> MIST_WOLF_SPAWN_EGG = spawnEggItem("mist_wolf_spawn_egg", TFEntities.MIST_WOLF, 0x3a1411, 0xe2c88a);
+    public static final TFRegistryObject<Item> MOSQUITO_SWARM_SPAWN_EGG = spawnEggItem("mosquito_swarm_spawn_egg", TFEntities.MOSQUITO_SWARM, 0x080904, 0x2d2f21);
+    public static final TFRegistryObject<Item> SKELETON_DRUID_SPAWN_EGG = spawnEggItem("skeleton_druid_spawn_egg", TFEntities.SKELETON_DRUID, 0xa3a3a3, 0x2a3b17);
 
     // ====== Foods ======
     public static final TFRegistryObject<Item> RAW_VENISON = tfItem("raw_venison",
@@ -531,6 +541,13 @@ public final class TFItems {
 
     private static TFRegistryObject<Item> tfItem(String path, Item.Properties properties, Item fallback, int cmd) {
         Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path), new CodexItem(properties, fallback, cmd));
+        return new TFRegistryObject<>(registered);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static TFRegistryObject<Item> spawnEggItem(String path, TFRegistryObject<? extends EntityType<?>> entityType, int primary, int secondary) {
+        Item registered = Registry.register(BuiltInRegistries.ITEM, TwilightForestMod.prefix(path),
+                new SpawnEggItem((EntityType<? extends Mob>) entityType.get(), primary, secondary, new Item.Properties()));
         return new TFRegistryObject<>(registered);
     }
 

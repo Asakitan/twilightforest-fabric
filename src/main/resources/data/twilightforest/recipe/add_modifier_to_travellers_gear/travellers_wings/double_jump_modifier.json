@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "twilightforest:travellers_gear_modifier_shaped_recipe",
   "is_rotated": false,
   "modifier_key": "twilightforest:double_jump",
@@ -9,7 +9,7 @@
         "ingredients": [
           {
             "fabric:type": "twilightforest:components",
-            "base": "minecraft:potion",
+            "base": { "item": "minecraft:potion" },
             "components": {
               "minecraft:potion_contents": {
                 "potion": "minecraft:leaping"
@@ -18,7 +18,7 @@
           },
           {
             "fabric:type": "twilightforest:components",
-            "base": "minecraft:potion",
+            "base": { "item": "minecraft:potion" },
             "components": {
               "minecraft:potion_contents": {
                 "potion": "minecraft:long_leaping"
@@ -27,7 +27,7 @@
           },
           {
             "fabric:type": "twilightforest:components",
-            "base": "minecraft:potion",
+            "base": { "item": "minecraft:potion" },
             "components": {
               "minecraft:potion_contents": {
                 "potion": "minecraft:strong_leaping"

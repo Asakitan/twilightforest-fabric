@@ -19,7 +19,7 @@
       "twilightforest.data.CodexTwilightDataGenerators"
     ],
     "jade": [
-      "twilightforest.compat.jade.JadeCompat"
+      "twilightforest.compat.jade.JadeCommonPlugin"
     ],
     "rei_common": [
       "twilightforest.compat.rei.TFREIServerPlugin"
