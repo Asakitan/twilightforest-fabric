@@ -2,9 +2,9 @@
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "base": "twilightforest:entity/brazier/brazier",
-    "lit": "twilightforest:entity/brazier/brazier_lit",
-    "overlay": "twilightforest:entity/brazier/brazier_overlay",
+    "base": "twilightforest:block/entity/brazier/brazier",
+    "lit": "twilightforest:block/entity/brazier/brazier_lit",
+    "overlay": "twilightforest:block/entity/brazier/brazier_overlay",
     "particle": "#base"
   },
   "elements": [

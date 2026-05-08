@@ -1,7 +1,7 @@
 {
   "ambientocclusion": false,
   "textures": {
-    "bug": "twilightforest:model/cicada-model",
+    "bug": "twilightforest:block/model/cicada-model",
     "particle": "twilightforest:block/cicada"
   },
   "elements": [

@@ -1,7 +1,7 @@
 {
   "ambientocclusion": false,
   "textures": {
-    "bug": "twilightforest:model/firefly-tiny",
+    "bug": "twilightforest:block/model/firefly-tiny",
     "particle": "twilightforest:block/firefly"
   },
   "elements": [

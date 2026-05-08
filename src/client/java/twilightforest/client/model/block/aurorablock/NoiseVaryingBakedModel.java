@@ -75,7 +75,8 @@ public class NoiseVaryingBakedModel implements BakedModel, FabricBakedModel {
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-		return this.primary.getQuads(state, side, rand);
+		List<BakedQuad> quads = this.primary.getQuads(state, side, rand);
+		return quads != null ? quads : List.of();
 	}
 
 	@Override

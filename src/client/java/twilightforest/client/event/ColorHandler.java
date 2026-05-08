@@ -7,6 +7,7 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.Block;
@@ -32,12 +33,11 @@ public final class ColorHandler {
 	}
 
 	private static void registerBlockColors() {
-		BlockColors blockColors = net.minecraft.client.Minecraft.getInstance().getBlockColors();
 		ColorProviderRegistry.BLOCK.register((state, getter, pos, tintIndex) ->
 				0xFF000000 | ColorUtil.hsvToRGB(getter == null ? 0.45F : SimplexNoiseHelper.rippleFractalNoise(2, 128.0F, pos != null ? pos.above(128) : new BlockPos(0, 0, 0), 0.37F, 0.67F, 1.5F), 1.0F, 1.0F),
 				TFBlocks.AURORA_BLOCK.get());
 		ColorProviderRegistry.BLOCK.register((state, getter, pos, tintIndex) -> {
-			int normalColor = blockColors.getColor(TFBlocks.AURORA_BLOCK.get().defaultBlockState(), getter, pos, tintIndex);
+			int normalColor = blockColor(TFBlocks.AURORA_BLOCK.get(), getter, pos, tintIndex);
 			int red = (normalColor >> 16) & 255;
 			int green = (normalColor >> 8) & 255;
 			int blue = normalColor & 255;
@@ -45,7 +45,7 @@ public final class ColorHandler {
 			return 0xFF000000 | ColorUtil.hsvToRGB(hsb[0], hsb[1] * 0.5F, Math.min(hsb[2] + 0.4F, 0.9F));
 		}, TFBlocks.AURORA_PILLAR.get(), TFBlocks.AURORA_SLAB.get(), TFBlocks.AURORALIZED_GLASS.get());
 		ColorProviderRegistry.BLOCK.register((state, getter, pos, tintIndex) ->
-				blockColors.getColor(Blocks.SHORT_GRASS.defaultBlockState(), getter, pos, tintIndex),
+				blockColor(Blocks.SHORT_GRASS, getter, pos, tintIndex),
 				TFBlocks.SMOKER.get(), TFBlocks.FIRE_JET.get());
 		ColorProviderRegistry.BLOCK.register((state, getter, pos, tintIndex) ->
 				getter != null && pos != null ? 0xFF000000 | 2129968 : 0xFF000000 | 7455580,
@@ -97,10 +97,14 @@ public final class ColorHandler {
 	}
 
 	private static void registerItemColors() {
-		BlockColors blockColors = net.minecraft.client.Minecraft.getInstance().getBlockColors();
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) ->
-				stack.getItem() instanceof BlockItem blockItem ? blockColors.getColor(blockItem.getBlock().defaultBlockState(), null, null, tintIndex) : -1,
+				stack.getItem() instanceof BlockItem blockItem ? blockColor(blockItem.getBlock(), null, null, tintIndex) : -1,
 				itemTintBlocks());
+	}
+
+	private static int blockColor(Block block, BlockAndTintGetter getter, BlockPos pos, int tintIndex) {
+		BlockColors blockColors = net.minecraft.client.Minecraft.getInstance().getBlockColors();
+		return blockColors != null ? blockColors.getColor(block.defaultBlockState(), getter, pos, tintIndex) : -1;
 	}
 
 	private static int seasonal(BlockPos pos, int sr, int sg, int sb, int fr, int fg, int fb, int mx, int my, int mz) {

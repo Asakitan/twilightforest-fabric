@@ -74,7 +74,7 @@ public abstract class TFTreeFeature<T extends TFTreeFeatureConfig> extends Featu
 	protected abstract boolean generate(WorldGenLevel world, RandomSource random, BlockPos pos, BiConsumer<BlockPos, BlockState> trunkPlacer, BiConsumer<BlockPos, BlockState> leavesPlacer, RootPlacer decorationPlacer, T config);
 
 	private static void placeIfChunkLoaded(WorldGenLevel world, Set<BlockPos> placed, BlockPos pos, BlockState state) {
-		if (!world.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
+		if (!world.ensureCanWrite(pos)) {
 			return;
 		}
 		placed.add(pos.immutable());

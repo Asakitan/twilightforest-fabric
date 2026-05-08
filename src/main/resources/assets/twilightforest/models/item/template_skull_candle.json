@@ -2,7 +2,7 @@
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "skull": "twilightforest:entity/casket/skull_chest",
+    "skull": "twilightforest:block/entity/casket/skull_chest",
     "candle": "minecraft:block/candle",
     "flame": "minecraft:block/fire_0",
     "particle": "#skull"

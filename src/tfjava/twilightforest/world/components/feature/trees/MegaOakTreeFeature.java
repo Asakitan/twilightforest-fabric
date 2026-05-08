@@ -100,9 +100,9 @@ public class MegaOakTreeFeature extends CanopyTreeFeature {
 					BlockPos.MutableBlockPos bugPos = new BlockPos.MutableBlockPos();
 					bugPos.set(pos.offset(direction == Direction.EAST ? 1 : 0, rand.nextInt(treeHeight), direction == Direction.SOUTH ? 1 : 0));
 					bugPos.move(direction).move(axis == Direction.Axis.Z ? rand.nextInt(2) : 0, 0, axis == Direction.Axis.X ? rand.nextInt(2) : 0);
-					if (!world.getBlockState(bugPos).isSolidRender(world, bugPos)) {
+					if (FeaturePlacers.canWrite(world, bugPos) && !world.getBlockState(bugPos).isSolidRender(world, bugPos)) {
 						BlockState bugState = TFBlockStateHelper.setFacingIfPossible(TFBlocks.FIREFLY.get().defaultBlockState(), direction);
-						this.setBlock(world, bugPos, bugState);
+						trunkPlacer.accept(bugPos.immutable(), bugState);
 					}
 				}
 			}
@@ -132,6 +132,9 @@ public class MegaOakTreeFeature extends CanopyTreeFeature {
 		}
 		if ((dest.getZ() - pos.getZ()) > limit) {
 			dest = new BlockPos(dest.getX(), dest.getY(), pos.getZ() + limit);
+		}
+		if (!FeaturePlacers.canWrite(world, dest)) {
+			return;
 		}
 
 		if (trunk) {

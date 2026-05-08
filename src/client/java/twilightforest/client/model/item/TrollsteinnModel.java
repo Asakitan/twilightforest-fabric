@@ -35,7 +35,8 @@ public class TrollsteinnModel implements BakedModel {
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource random) {
-		return this.originalModel.getQuads(state, side, random);
+		List<BakedQuad> quads = this.originalModel.getQuads(state, side, random);
+		return quads != null ? quads : List.of();
 	}
 
 	@Override

@@ -22,7 +22,8 @@ public class ConditionalMippedModel implements BakedModel {
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-		return this.originalModel.getQuads(state, side, rand);
+		List<BakedQuad> quads = this.originalModel.getQuads(state, side, rand);
+		return quads != null ? quads : List.of();
 	}
 
 	public boolean useMippedLayer() {

@@ -37,6 +37,10 @@ import java.util.function.BiFunction;
 public final class FeaturePlacers {
 	public static final BiFunction<LevelSimulatedReader, BlockPos, Boolean> VALID_TREE_POS = TreeFeature::validTreePos;
 
+	public static boolean canWrite(LevelSimulatedReader world, BlockPos pos) {
+		return !(world instanceof WorldGenLevel worldGenLevel) || worldGenLevel.ensureCanWrite(pos);
+	}
+
 	public static <T extends Mob> void placeEntity(EntityType<T> entityType, BlockPos pos, ServerLevelAccessor levelAccessor) {
 		Mob mob = entityType.create(levelAccessor.getLevel());
 
@@ -85,11 +89,11 @@ public final class FeaturePlacers {
 	}
 
 	public static void placeProvidedBlock(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> worldPlacer, BiFunction<LevelSimulatedReader, BlockPos, Boolean> predicate, BlockPos pos, BlockStateProvider config, RandomSource random) {
-		if (predicate.apply(world, pos)) worldPlacer.accept(pos, config.getState(random, pos));
+		if (canWrite(world, pos) && predicate.apply(world, pos)) worldPlacer.accept(pos, config.getState(random, pos));
 	}
 
 	public static void placeLeaf(LevelSimulatedReader world, FoliagePlacer.FoliageSetter setter, BiFunction<LevelSimulatedReader, BlockPos, Boolean> predicate, BlockPos pos, BlockStateProvider config, RandomSource random) {
-		if (predicate.apply(world, pos)) setter.set(pos, config.getState(random, pos));
+		if (canWrite(world, pos) && predicate.apply(world, pos)) setter.set(pos, config.getState(random, pos));
 	}
 
 	public static void placeCircleOdd(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> placer, BiFunction<LevelSimulatedReader, BlockPos, Boolean> predicate, RandomSource random, BlockPos centerPos, float radius, BlockStateProvider config) {
@@ -256,7 +260,7 @@ public final class FeaturePlacers {
 	// [VanillaCopy] TrunkPlacer.placeLog - Swapped TreeConfiguration for BlockStateProvider
 	// If possible, use TrunkPlacer.placeLog instead
 	public static boolean placeIfValidTreePos(LevelSimulatedReader world, BiConsumer<BlockPos, BlockState> placer, RandomSource random, BlockPos pos, BlockStateProvider config) {
-		if (validTreePos(world, pos)) {
+		if (canWrite(world, pos) && validTreePos(world, pos)) {
 			placer.accept(pos, config.getState(random, pos));
 			return true;
 		} else {
@@ -265,7 +269,7 @@ public final class FeaturePlacers {
 	}
 
 	public static boolean placeIfValidRootPos(LevelSimulatedReader world, RootPlacer placer, RandomSource random, BlockPos pos, BlockStateProvider config) {
-		if (!FeatureUtil.anyBelowMatch(pos, placer.getRootPenetrability() - 1, (blockPos -> !FeatureLogic.canRootGrowIn(world, blockPos)))) {
+		if (canWrite(world, pos) && !FeatureUtil.anyBelowMatch(pos, placer.getRootPenetrability() - 1, (blockPos -> !FeatureLogic.canRootGrowIn(world, blockPos)))) {
 			placer.getPlacer().accept(pos, config.getState(random, pos));
 			return true;
 		} else {
@@ -297,7 +301,7 @@ public final class FeaturePlacers {
 	}
 
 	private static void setIfEmpty(LevelAccessor world, BlockPos pos, BlockState state) {
-		if (world.isEmptyBlock(pos)) {
+		if (canWrite(world, pos) && world.isEmptyBlock(pos)) {
 			world.setBlock(pos, state, Block.UPDATE_ALL);
 		}
 	}

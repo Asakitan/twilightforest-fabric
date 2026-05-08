@@ -27,7 +27,8 @@ public class ReactorDebrisModel implements BakedModel {
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource random) {
-		return this.defaultModel.getQuads(state, side, random);
+		List<BakedQuad> quads = this.defaultModel.getQuads(state, side, random);
+		return quads != null ? quads : List.of();
 	}
 
 	public TextureAtlasSprite getParticleIcon(BlockAndTintGetter level, BlockPos pos) {

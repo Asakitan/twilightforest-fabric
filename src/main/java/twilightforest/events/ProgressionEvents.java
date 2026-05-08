@@ -165,7 +165,7 @@ public final class ProgressionEvents {
 		for (ItemEntity entityItem : itemList) {
 			if (entityItem.getItem().is(ItemTagGenerator.PORTAL_ACTIVATOR)
 				&& portalBlock.canFormPortal(world.getBlockState(entityItem.blockPosition()))
-				&& Objects.equals(entityItem.getOwner(), player.getUUID())) {
+				&& Objects.equals(entityItem.getOwner(), player)) {
 				qualified = entityItem;
 				break;
 			}

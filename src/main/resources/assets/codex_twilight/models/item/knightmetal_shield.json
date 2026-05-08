@@ -1,8 +1,8 @@
-﻿{
+{
   "parent": "twilightforest:item/knightmetal_shield_base",
   "gui_light": "front",
   "textures": {
-    "shield": "twilightforest:model/knightmetal_shield",
+    "shield": "twilightforest:block/model/knightmetal_shield",
     "edge": "codex_twilight:block/knightmetal_block",
     "particle": "#edge"
   },

@@ -1,7 +1,7 @@
 {
   "ambientocclusion": false,
   "textures": {
-    "worm": "twilightforest:model/moonworm",
+    "worm": "twilightforest:block/model/moonworm",
     "particle": "twilightforest:block/moonworm"
   },
   "elements": [
