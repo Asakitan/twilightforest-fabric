@@ -7,6 +7,12 @@
 [![Codex Fork](https://img.shields.io/badge/Codex%20fork-1.21.1-4c6fff?style=flat-square)](https://github.com/Asakitan/twilightforest-fabric-1.21.1/tree/1.21.1)
 [![Loader](https://img.shields.io/badge/loader-Fabric%20%2F%20Arclight-f5a623?style=flat-square)](https://fabricmc.net/)
 
+<p align="center">
+	<img src="docs/images/fabric-100-percent-port.png" alt="Twilight Forest Fabric 100% port screenshot">
+</p>
+
+<p align="center"><strong>Finally, 100% ported to Fabric!</strong></p>
+
 This is the Codex 1.21.1 fork of Twilight Forest Fabric for a Fabric/Arclight Minecraft server and paired Fabric client.
 
 The upstream Twilight Forest project remains the original mod and creative/code base. This fork keeps the Twilight Forest ids, data, assets, and gameplay surface while providing the current Fabric/Arclight implementation used by the Codex server profile.
