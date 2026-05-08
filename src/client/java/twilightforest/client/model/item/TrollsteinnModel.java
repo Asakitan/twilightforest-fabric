@@ -9,6 +9,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,28 +22,12 @@ import twilightforest.block.TrollsteinnBlock;
 import java.util.List;
 
 public class TrollsteinnModel implements BakedModel {
-	public static final ModelResourceLocation LIT_TROLLSTEINN = ModelResourceLocation.standalone(TwilightForestMod.prefix("item/trollsteinn_light"));
+	public static final ResourceLocation LIT_TROLLSTEINN_ID = TwilightForestMod.prefix("item/trollsteinn_light");
+	public static final ModelResourceLocation LIT_TROLLSTEINN = new ModelResourceLocation(LIT_TROLLSTEINN_ID, "standalone");
 
 	@Nullable
 	private BakedModel litTrollsteinnModel;
 	private final BakedModel originalModel;
-	private final ItemOverrides overrides = new ItemOverrides() {
-		@Override
-		public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
-			if (TrollsteinnModel.this.litTrollsteinnModel == null) {
-				TrollsteinnModel.this.litTrollsteinnModel = Minecraft.getInstance().getModelManager().getModel(LIT_TROLLSTEINN);
-			}
-
-			Entity itemEntity = entity == null ? stack.getEntityRepresentation() : entity;
-			if (level == null || itemEntity == null) {
-				return TrollsteinnModel.this.originalModel.getOverrides().resolve(TrollsteinnModel.this.originalModel, stack, level, entity, seed);
-			}
-
-			int brightness = level.getMaxLocalRawBrightness(itemEntity.blockPosition(), TrollsteinnBlock.calculateServerSkyDarken(level));
-			BakedModel selected = brightness > TrollsteinnBlock.LIGHT_THRESHOLD ? TrollsteinnModel.this.litTrollsteinnModel : TrollsteinnModel.this.originalModel;
-			return selected.getOverrides().resolve(selected, stack, level, entity, seed);
-		}
-	};
 
 	public TrollsteinnModel(BakedModel originalModel) {
 		this.originalModel = originalModel;
@@ -85,6 +70,6 @@ public class TrollsteinnModel implements BakedModel {
 
 	@Override
 	public ItemOverrides getOverrides() {
-		return this.overrides;
+		return this.originalModel.getOverrides();
 	}
 }

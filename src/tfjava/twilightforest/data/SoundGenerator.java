@@ -285,18 +285,18 @@ public class SoundGenerator extends TFSoundProvider {
 		this.generateNewSoundWithSubtitle(TFSounds.YETI_THROW, "mob/alpha_yeti/throw", 1, "Yeti throws");
 
 
-		this.generateParrotSound(TFSounds.ALPHA_YETI_PARROT, TFSounds.ALPHA_YETI_GROWL.get(), "Parrot coldly growls");
-		this.generateParrotSound(TFSounds.CARMINITE_GOLEM_PARROT, TFSounds.CARMINITE_GOLEM_HURT.get(), "Parrot thunks");
-		this.generateParrotSound(TFSounds.DEATH_TOME_PARROT, TFSounds.DEATH_TOME_AMBIENT.get(), "Parrot makes book noises");
-		this.generateParrotSound(TFSounds.HOSTILE_WOLF_PARROT, TFSounds.HOSTILE_WOLF_AMBIENT.get(), "Parrot growls");
-		this.generateParrotSound(TFSounds.HYDRA_PARROT, TFSounds.HYDRA_GROWL.get(), "Parrot roars");
-		this.generateParrotSound(TFSounds.ICE_CORE_PARROT, TFSounds.ICE_CORE_AMBIENT.get(), "Parrot crackles");
-		this.generateParrotSound(TFSounds.KOBOLD_PARROT, TFSounds.KOBOLD_AMBIENT.get(), "Parrot grumbles");
-		this.generateParrotSound(TFSounds.MINOTAUR_PARROT, TFSounds.MINOTAUR_AMBIENT.get(), "Parrot moos angrily");
-		this.generateParrotSound(TFSounds.MOSQUITO_PARROT, TFSounds.MOSQUITO.get(), "Parrot buzzes");
-		this.generateParrotSound(TFSounds.NAGA_PARROT, TFSounds.NAGA_HISS.get(), "Parrot rattles");
-		this.generateParrotSound(TFSounds.REDCAP_PARROT, TFSounds.REDCAP_AMBIENT.get(), "Parrot chuckles");
-		this.generateParrotSound(TFSounds.WRAITH_PARROT, TFSounds.WRAITH_AMBIENT.get(), "Parrot gasps");
+		this.generateParrotSound(TFSounds.ALPHA_YETI_PARROT, TFSounds.ALPHA_YETI_GROWL, "Parrot coldly growls");
+		this.generateParrotSound(TFSounds.CARMINITE_GOLEM_PARROT, TFSounds.CARMINITE_GOLEM_HURT, "Parrot thunks");
+		this.generateParrotSound(TFSounds.DEATH_TOME_PARROT, TFSounds.DEATH_TOME_AMBIENT, "Parrot makes book noises");
+		this.generateParrotSound(TFSounds.HOSTILE_WOLF_PARROT, TFSounds.HOSTILE_WOLF_AMBIENT, "Parrot growls");
+		this.generateParrotSound(TFSounds.HYDRA_PARROT, TFSounds.HYDRA_GROWL, "Parrot roars");
+		this.generateParrotSound(TFSounds.ICE_CORE_PARROT, TFSounds.ICE_CORE_AMBIENT, "Parrot crackles");
+		this.generateParrotSound(TFSounds.KOBOLD_PARROT, TFSounds.KOBOLD_AMBIENT, "Parrot grumbles");
+		this.generateParrotSound(TFSounds.MINOTAUR_PARROT, TFSounds.MINOTAUR_AMBIENT, "Parrot moos angrily");
+		this.generateParrotSound(TFSounds.MOSQUITO_PARROT, TFSounds.MOSQUITO, "Parrot buzzes");
+		this.generateParrotSound(TFSounds.NAGA_PARROT, TFSounds.NAGA_HISS, "Parrot rattles");
+		this.generateParrotSound(TFSounds.REDCAP_PARROT, TFSounds.REDCAP_AMBIENT, "Parrot chuckles");
+		this.generateParrotSound(TFSounds.WRAITH_PARROT, TFSounds.WRAITH_AMBIENT, "Parrot gasps");
 
 
 		this.generateNewSoundWithSubtitle(TFSounds.BEANSTALK_GROWTH, "random/beanstalk_grow", 1, "Ground rumbles");

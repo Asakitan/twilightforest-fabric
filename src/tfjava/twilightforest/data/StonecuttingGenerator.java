@@ -169,7 +169,7 @@ public class StonecuttingGenerator {
 		return prefix(path);
 	}
 
-	protected static Criterion<InventoryChangeTrigger.TriggerInstance> has(ItemLike item) {
+	public static Criterion<InventoryChangeTrigger.TriggerInstance> has(ItemLike item) {
 		return CriteriaTriggers.INVENTORY_CHANGED.createCriterion(new InventoryChangeTrigger.TriggerInstance(Optional.empty(), InventoryChangeTrigger.TriggerInstance.Slots.ANY, Collections.singletonList(ItemPredicate.Builder.item().of(item).build())));
 	}
 }

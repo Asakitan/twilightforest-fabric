@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class StalactiteReloadListener {
+    public static final String STALACTITE_DIRECTORY = "twilight/stalactites";
     public static final Map<String, SpeleothemVarietyConfig> HILL_CONFIGS = new HashMap<>();
     public static final Map<String, List<Stalactite>> STALACTITES_PER_HILL = new HashMap<>();
     public static final Map<String, List<Stalactite>> ORE_STALACTITES_PER_HILL = new HashMap<>();

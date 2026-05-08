@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import twilightforest.TwilightForestMod;
 import twilightforest.data.custom.*;
+import twilightforest.data.helpers.ComponentShapedRecipeBuilder;
 import twilightforest.data.helpers.CraftingDataHelper;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFBlocks;
@@ -50,7 +51,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 	}
 
 	@Override
-	protected void buildRecipes(RecipeOutput output) {
+	public void buildRecipes(RecipeOutput output) {
 		StonecuttingGenerator.buildRecipes(output);
 		UncraftingGenerator.buildRecipes(output);
 
@@ -189,7 +190,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 			.define('#', Blocks.CRAFTING_TABLE)
 			.define('X', TFItems.MAZE_MAP_FOCUS.get())
 			.unlockedBy("has_uncrafting_table", has(TFBlocks.UNCRAFTING_TABLE.get()))
-			.save(output.withConditions(UncraftingTableCondition.INSTANCE), TwilightForestMod.prefix("uncrafting_table"));
+			.save(output, TwilightForestMod.prefix("uncrafting_table"));
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, TFItems.MOSS_SOUP.get())
 			.requires(TFBlocks.MOSS_PATCH.get())
@@ -310,7 +311,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 			.pattern("ttt")
 			.pattern("t t")
 			.pattern("ttt")
-			.define('t', Ingredient.of(TFItems.CROWN_SPLINTER))
+			.define('t', Ingredient.of(TFItems.CROWN_SPLINTER.get()))
 			.unlockedBy("has_item", has(TFItems.CROWN_SPLINTER.get()))
 			.save(output);
 
@@ -496,7 +497,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 			.group("fiery_sword")
 			.save(output, locEquip(itemName(TFItems.FIERY_SWORD)));
 
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(TFItems.NAGA_CHESTPLATE.get(), 1, this.buildEnchants(provider, Pair.of(Enchantments.FIRE_PROTECTION, 3)).build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(TFItems.NAGA_CHESTPLATE, this.buildEnchants(provider, Pair.of(Enchantments.FIRE_PROTECTION, 3))))
 			.pattern("# #")
 			.pattern("###")
 			.pattern("###")
@@ -504,7 +505,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 			.unlockedBy("has_item", has(TFItems.NAGA_SCALE.get()))
 			.save(output, locEquip(itemName(TFItems.NAGA_CHESTPLATE)));
 
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(TFItems.NAGA_LEGGINGS.get(), 1, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 3)).build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(TFItems.NAGA_LEGGINGS, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 3))))
 			.pattern("###")
 			.pattern("# #")
 			.pattern("# #")
@@ -512,14 +513,14 @@ public class CraftingGenerator extends CraftingDataHelper {
 			.unlockedBy("has_item", has(TFItems.NAGA_SCALE.get()))
 			.save(output, locEquip(itemName(TFItems.NAGA_LEGGINGS)));
 
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(TFItems.YETI_HELMET.get(), 1, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2)).build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(TFItems.YETI_HELMET, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2))))
 			.pattern("###")
 			.pattern("# #")
 			.define('#', TFItems.ALPHA_YETI_FUR.get())
 			.unlockedBy("has_item", has(TFItems.ALPHA_YETI_FUR.get()))
 			.save(output, locEquip(itemName(TFItems.YETI_HELMET)));
 
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(TFItems.YETI_CHESTPLATE.get(), 1, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2)).build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(TFItems.YETI_CHESTPLATE, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2))))
 			.pattern("# #")
 			.pattern("###")
 			.pattern("###")
@@ -527,7 +528,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 			.unlockedBy("has_item", has(TFItems.ALPHA_YETI_FUR.get()))
 			.save(output, locEquip(itemName(TFItems.YETI_CHESTPLATE)));
 
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(TFItems.YETI_LEGGINGS.get(), 1, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2)).build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(TFItems.YETI_LEGGINGS, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2))))
 			.pattern("###")
 			.pattern("# #")
 			.pattern("# #")
@@ -535,7 +536,7 @@ public class CraftingGenerator extends CraftingDataHelper {
 			.unlockedBy("has_item", has(TFItems.ALPHA_YETI_FUR.get()))
 			.save(output, locEquip(itemName(TFItems.YETI_LEGGINGS)));
 
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(TFItems.YETI_BOOTS.get(), 1, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2), Pair.of(Enchantments.FEATHER_FALLING, 4)).build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(TFItems.YETI_BOOTS, this.buildEnchants(provider, Pair.of(Enchantments.PROTECTION, 2), Pair.of(Enchantments.FEATHER_FALLING, 4))))
 			.pattern("# #")
 			.pattern("# #")
 			.define('#', TFItems.ALPHA_YETI_FUR.get())

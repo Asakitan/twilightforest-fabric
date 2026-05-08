@@ -74,6 +74,7 @@ import twilightforest.client.model.entity.UpperGoblinKnightModel;
 import twilightforest.client.model.entity.WraithModel;
 import twilightforest.client.model.entity.YetiModel;
 import twilightforest.client.renderer.block.SkullChestRenderer;
+import twilightforest.compat.curios.model.CharmOfLifeNecklaceModel;
 
 /**
  * F2.1b — central registry of {@link ModelLayerLocation}s used by codex-twilight
@@ -409,6 +410,10 @@ public final class CodexModelLayers {
             ResourceLocation.fromNamespaceAndPath("twilightforest", "knightmetal_shield"),
             "main");
 
+    public static final ModelLayerLocation CHARM_OF_LIFE = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "charm_of_life"),
+            "main");
+
     public static final ModelLayerLocation ARCTIC_ARMOR_INNER = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath("twilightforest", "arctic_armor"),
             "inner");
@@ -562,6 +567,7 @@ public final class CodexModelLayers {
                                                                                                                               EntityModelLayerRegistry.registerModelLayer(KEEPSAKE_CASKET, () -> SkullChestRenderer.create(true));
                                                                                                                               EntityModelLayerRegistry.registerModelLayer(RED_THREAD, RedThreadModel::create);
                                                                                                                               EntityModelLayerRegistry.registerModelLayer(KNIGHTMETAL_SHIELD, KnightmetalShieldModel::create);
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(CHARM_OF_LIFE, CharmOfLifeNecklaceModel::create);
                                                                                                                               EntityModelLayerRegistry.registerModelLayer(ARCTIC_ARMOR_INNER, () -> LayerDefinition.create(ArcticArmorModel.addPieces(new CubeDeformation(0.25F)), 64, 32));
                                                                                                                               EntityModelLayerRegistry.registerModelLayer(ARCTIC_ARMOR_OUTER, () -> LayerDefinition.create(ArcticArmorModel.addPieces(new CubeDeformation(0.5F)), 64, 32));
                                                                                                                               EntityModelLayerRegistry.registerModelLayer(FIERY_ARMOR_INNER, () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.25F), 0.0F), 64, 32));

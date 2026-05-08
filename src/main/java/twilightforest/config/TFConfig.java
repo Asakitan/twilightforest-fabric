@@ -24,6 +24,7 @@ import java.util.UUID;
  * so server owners can change the same gameplay toggles without recompiling.
  */
 public final class TFConfig {
+    public static final String CONFIG_ID = "config.twilightforest.";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG_FILE = "codex-twilight.json";
 
@@ -63,6 +64,7 @@ public final class TFConfig {
     public static boolean prettifyOreMeterGui = true;
     public static boolean spawnCharmAnimationAsTotem = false;
     public static boolean manualTravellersWingsGradualGlide = true;
+    public static boolean manualTravellersWingsGradualGlideDefault = true;
     public static boolean firstPersonGloveOverlay = true;
     public static int itemDisplayScreenOffsetX = 4;
     public static int itemDisplayScreenOffsetY = 4;
@@ -125,6 +127,10 @@ public final class TFConfig {
     public static int shieldParryTicks = 40;
 
     private TFConfig() {
+    }
+
+    public static int getClientCloudBlockPrecipitationDistance() {
+        return clientCloudBlockPrecipitationDistance > 0 ? clientCloudBlockPrecipitationDistance : commonCloudBlockPrecipitationDistance;
     }
 
     public static ResourceLocation getPortalLockingAdvancement(Player player) {

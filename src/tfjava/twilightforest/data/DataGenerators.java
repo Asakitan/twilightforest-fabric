@@ -27,10 +27,10 @@ public final class DataGenerators {
 	}
 
 	public static void addToPack(FabricDataGenerator.Pack pack) {
-		pack.addProvider(BlockstateGenerator::new);
-		pack.addProvider(ItemModelGenerator::new);
-		pack.addProvider(output -> new ParticleGenerator(output, null));
-		pack.addProvider(output -> new SoundGenerator(output, null));
+		pack.addProvider((FabricDataGenerator.Pack.Factory<BlockstateGenerator>) BlockstateGenerator::new);
+		pack.addProvider((FabricDataGenerator.Pack.Factory<ItemModelGenerator>) ItemModelGenerator::new);
+		pack.addProvider((FabricDataGenerator.Pack.Factory<ParticleGenerator>) output -> new ParticleGenerator(output, null));
+		pack.addProvider((FabricDataGenerator.Pack.Factory<SoundGenerator>) output -> new SoundGenerator(output, null));
 
 		pack.addProvider(RegistryDataGenerator::new);
 		pack.addProvider(TFAdvancementProvider::new);
@@ -49,7 +49,7 @@ public final class DataGenerators {
 		pack.addProvider(LangGenerator::new);
 		pack.addProvider((output, registries) -> new QuestGenerator(output));
 
-		pack.addProvider(DataGenerators::packMetadata);
+		pack.addProvider((FabricDataGenerator.Pack.Factory<PackMetadataGenerator>) DataGenerators::packMetadata);
 
 		ModdedBlockTagGenerator moddedBlockTags = pack.addProvider((output, registries) -> new ModdedBlockTagGenerator(output, registries, null));
 		pack.addProvider((output, registries) -> new ModdedItemTagGenerator(output, registries, moddedBlockTags.contentsGetter(), null));

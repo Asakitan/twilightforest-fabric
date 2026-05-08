@@ -56,10 +56,10 @@ public class RecipeViewerConstants {
 						TFConfig.flipUncraftingModIdList == TFConfig.blacklistedUncraftingModIds.contains(recipe.id().getNamespace())) //remove blacklisted mod ids
 				.collect(Collectors.toList());
 			recipes.removeIf(recipe -> (recipe.value() instanceof ShapelessRecipe && !TFConfig.allowShapelessUncrafting));
-			recipes.addAll(manager.getAllRecipesFor(TFRecipes.UNCRAFTING_RECIPE.get()));
+			recipes.addAll(manager.getAllRecipesFor(TFRecipes.UNCRAFTING_RECIPE));
 			return recipes;
 		} else {
-			return new ArrayList<>(manager.getAllRecipesFor(TFRecipes.UNCRAFTING_RECIPE.get()));
+			return new ArrayList<>(manager.getAllRecipesFor(TFRecipes.UNCRAFTING_RECIPE));
 		}
 	}
 

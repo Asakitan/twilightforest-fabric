@@ -8,6 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EntityType;
@@ -332,7 +333,7 @@ public class TFAdvancementGenerator implements AdvancementSubProvider {
 			.save(consumer, "twilightforest:craft_travellers_gear");
 
 		Advancement.Builder.advancement().parent(gear).display(
-				new ItemStack(TFItems.TRAVELLERS_BOOTS, 1, DataComponentPatch.builder().set(TFDataComponents.WATER_WALK.get(), Unit.INSTANCE).build()),
+				new ItemStack(TFItems.TRAVELLERS_BOOTS.get().builtInRegistryHolder(), 1, DataComponentPatch.builder().set(TFDataComponents.WATER_WALK, Unit.INSTANCE).build()),
 				Component.translatable("advancement.twilightforest.modify_travellers_gear"),
 				Component.translatable("advancement.twilightforest.modify_travellers_gear.desc"),
 				null, AdvancementType.TASK, true, true, false)
@@ -420,17 +421,17 @@ public class TFAdvancementGenerator implements AdvancementSubProvider {
 				Component.translatable("advancement.twilightforest.twilight_dining"),
 				Component.translatable("advancement.twilightforest.twilight_dining.desc"),
 				null, AdvancementType.CHALLENGE, true, true, false)
-			.addCriterion("venison", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RAW_VENISON, TFItems.COOKED_VENISON)))
-			.addCriterion("meef", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RAW_MEEF, TFItems.COOKED_MEEF)))
-			.addCriterion("meef_stroganoff", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MEEF_STROGANOFF))
-			.addCriterion("hydra_chop", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.HYDRA_CHOP))
-			.addCriterion("maze_wafer", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MAZE_WAFER))
-			.addCriterion("experiment_115", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.EXPERIMENT_115))
+			.addCriterion("venison", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RAW_VENISON.get(), TFItems.COOKED_VENISON.get())))
+			.addCriterion("meef", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RAW_MEEF.get(), TFItems.COOKED_MEEF.get())))
+			.addCriterion("meef_stroganoff", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MEEF_STROGANOFF.get()))
+			.addCriterion("hydra_chop", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.HYDRA_CHOP.get()))
+			.addCriterion("maze_wafer", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MAZE_WAFER.get()))
+			.addCriterion("experiment_115", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.EXPERIMENT_115.get()))
 			.addCriterion("jerky", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(ItemTagGenerator.FOODS_JERKY)))
-			.addCriterion("berry", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RASPBERRY, TFItems.BLACKBERRY, TFItems.BLUEBERRY, TFItems.MALOBERRY)))
-			.addCriterion("slime_drop", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.GELATINOUS_SLIME_DROP, TFItems.GELATINOUS_MAZE_SLIME_DROP)))
-			.addCriterion("berry_medley", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.BERRY_MEDLEY))
-			.addCriterion("moss_soup", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MOSS_SOUP))
+			.addCriterion("berry", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.RASPBERRY.get(), TFItems.BLACKBERRY.get(), TFItems.BLUEBERRY.get(), TFItems.MALOBERRY.get())))
+			.addCriterion("slime_drop", ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(TFItems.GELATINOUS_SLIME_DROP.get(), TFItems.GELATINOUS_MAZE_SLIME_DROP.get())))
+			.addCriterion("berry_medley", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.BERRY_MEDLEY.get()))
+			.addCriterion("moss_soup", ConsumeItemTrigger.TriggerInstance.usedItem(TFItems.MOSS_SOUP.get()))
 
 			.rewards(AdvancementRewards.Builder.experience(75))
 			.save(consumer, "twilightforest:twilight_dinner");
@@ -447,7 +448,7 @@ public class TFAdvancementGenerator implements AdvancementSubProvider {
 					.vehicle(EntityPredicate.Builder.entity().of(EntityType.CHICKEN)),
 				DamageSourcePredicate.Builder.damageType().direct(EntityPredicate.Builder.entity()
 					.equipment(EntityEquipmentPredicate.Builder.equipment()
-						.mainhand(ItemPredicate.Builder.item().of(TFItems.CHICKEN_JERKY))))))
+						.mainhand(ItemPredicate.Builder.item().of(TFItems.CHICKEN_JERKY.get()))))))
 			.save(consumer, "twilightforest:chicken_jerky");
 
 		Advancement.Builder.advancement().parent(naga).display(
@@ -530,7 +531,7 @@ public class TFAdvancementGenerator implements AdvancementSubProvider {
 				Component.translatable("advancement.twilightforest.experiment_115_3"),
 				Component.translatable("advancement.twilightforest.experiment_115_3.desc"),
 				null, AdvancementType.CHALLENGE, true, true, true)
-			.addCriterion("eat_115_e115", PlayerTrigger.TriggerInstance.located(Optional.of(EntityPredicate.Builder.entity().subPredicate(PlayerPredicate.Builder.player().addStat(Stats.CUSTOM, registries.lookupOrThrow(Registries.CUSTOM_STAT).getOrThrow(TFStats.E115_SLICES_EATEN.getKey()), MinMaxBounds.Ints.atLeast(115)).build()).build())))
+			.addCriterion("eat_115_e115", PlayerTrigger.TriggerInstance.located(Optional.of(EntityPredicate.Builder.entity().subPredicate(PlayerPredicate.Builder.player().addStat(Stats.CUSTOM, registries.lookupOrThrow(Registries.CUSTOM_STAT).getOrThrow(ResourceKey.create(Registries.CUSTOM_STAT, TFStats.E115_SLICES_EATEN)), MinMaxBounds.Ints.atLeast(115)).build()).build())))
 			.save(consumer, "twilightforest:experiment_115_115");
 
 		Advancement.Builder.advancement().parent(e115).display(
@@ -546,10 +547,10 @@ public class TFAdvancementGenerator implements AdvancementSubProvider {
 				Component.translatable("advancement.twilightforest.arctic_dyed"),
 				Component.translatable("advancement.twilightforest.arctic_dyed.desc"),
 				null, AdvancementType.TASK, true, true, false)
-			.addCriterion("helmet", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_HELMET.get()).withSubPredicate(TFItemSubPredicates.COLOR.get(), ItemColorPredicate.anyColor()).build()))
-			.addCriterion("chestplate", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_CHESTPLATE.get()).withSubPredicate(TFItemSubPredicates.COLOR.get(), ItemColorPredicate.anyColor()).build()))
-			.addCriterion("leggings", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_LEGGINGS.get()).withSubPredicate(TFItemSubPredicates.COLOR.get(), ItemColorPredicate.anyColor()).build()))
-			.addCriterion("boots", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_BOOTS.get()).withSubPredicate(TFItemSubPredicates.COLOR.get(), ItemColorPredicate.anyColor()).build()))
+			.addCriterion("helmet", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_HELMET.get()).withSubPredicate(TFItemSubPredicates.COLOR, ItemColorPredicate.anyColor()).build()))
+			.addCriterion("chestplate", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_CHESTPLATE.get()).withSubPredicate(TFItemSubPredicates.COLOR, ItemColorPredicate.anyColor()).build()))
+			.addCriterion("leggings", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_LEGGINGS.get()).withSubPredicate(TFItemSubPredicates.COLOR, ItemColorPredicate.anyColor()).build()))
+			.addCriterion("boots", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(TFItems.ARCTIC_BOOTS.get()).withSubPredicate(TFItemSubPredicates.COLOR, ItemColorPredicate.anyColor()).build()))
 			.rewards(AdvancementRewards.Builder.experience(25))
 			.save(consumer, "twilightforest:arctic_armor_dyed");
 

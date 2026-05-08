@@ -606,7 +606,7 @@ public record ChestLootTables(HolderLookup.Provider registries) implements LootT
 					.add(LootItem.lootTableItem(Items.DIAMOND))
 					.add(LootItem.lootTableItem(Items.WRITABLE_BOOK).setWeight(2))
 					.add(LootItem.lootTableItem(Items.BOOK).apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries(), UniformGenerator.between(20, 30))).setWeight(2))
-					.add(LootItem.lootTableItem(Items.BOOK).apply(new SetEnchantmentsFunction.Builder().withEnchantment(this.registries.holderOrThrow(TFEnchantments.RENEWAL), ConstantValue.exactly(1.0F))))));
+					.add(LootItem.lootTableItem(Items.BOOK).apply(new SetEnchantmentsFunction.Builder().withEnchantment(lookup.getOrThrow(TFEnchantments.RENEWAL), ConstantValue.exactly(1.0F))))));
 
 		register.accept(TFLootTables.TOWER_ROOM,
 			LootTable.lootTable()

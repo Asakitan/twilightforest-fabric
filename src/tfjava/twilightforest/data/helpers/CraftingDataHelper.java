@@ -24,7 +24,6 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ChestBlock;
 import twilightforest.TwilightForestMod;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.init.TFBlocks;
@@ -107,7 +106,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void helmetItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(result, component))
 			.pattern("###")
 			.pattern("# #")
 			.define('#', material)
@@ -120,7 +119,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void chestplateItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(result, component))
 			.pattern("# #")
 			.pattern("###")
 			.pattern("###")
@@ -134,7 +133,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void leggingsItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(result, component))
 			.pattern("###")
 			.pattern("# #")
 			.pattern("# #")
@@ -148,7 +147,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void bootsItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(result, component))
 			.pattern("# #")
 			.pattern("# #")
 			.define('#', material)
@@ -161,7 +160,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void pickaxeItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, TagKey<Item> handle, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, stackWithComponents(result, component))
 			.pattern("###")
 			.pattern(" X ")
 			.pattern(" X ")
@@ -176,7 +175,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void swordItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, TagKey<Item> handle, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, stackWithComponents(result, component))
 			.pattern("#")
 			.pattern("#")
 			.pattern("X")
@@ -191,7 +190,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void axeItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, TagKey<Item> handle, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, stackWithComponents(result, component))
 			.pattern("##")
 			.pattern("#X")
 			.pattern(" X")
@@ -202,7 +201,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void shovelItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, TagKey<Item> handle, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, stackWithComponents(result, component))
 			.pattern("#")
 			.pattern("X")
 			.pattern("X")
@@ -213,7 +212,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 	}
 
 	protected final void hoeItem(RecipeOutput output, TFRegistryObject<? extends Item> result, TagKey<Item> material, TagKey<Item> handle, DataComponentPatch.Builder component) {
-		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, new ItemStack(result.get(), 1, component.build()))
+		ComponentShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, stackWithComponents(result, component))
 			.pattern("##")
 			.pattern(" X")
 			.pattern(" X")
@@ -231,6 +230,10 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 			itemEnchants.set(lookup.getOrThrow(pair.getFirst()), pair.getSecond());
 		}
 		return DataComponentPatch.builder().set(DataComponents.ENCHANTMENTS, itemEnchants.toImmutable());
+	}
+
+	protected final ItemStack stackWithComponents(TFRegistryObject<? extends Item> result, DataComponentPatch.Builder component) {
+		return new ItemStack(result.get().builtInRegistryHolder(), 1, component.build());
 	}
 
 	protected final void buttonBlock(RecipeOutput output, String name, TFRegistryObject<? extends Block> result, TFRegistryObject<? extends Block> material) {
@@ -397,7 +400,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 			.save(output, locWood(name + "_drying_rack"));
 	}
 
-	protected final void chestBlock(RecipeOutput output, String name, TFRegistryObject<? extends ChestBlock> chest, TFRegistryObject<? extends ChestBlock> trapped, TFRegistryObject<? extends Block> material) {
+	protected final void chestBlock(RecipeOutput output, String name, TFRegistryObject<? extends Block> chest, TFRegistryObject<? extends Block> trapped, TFRegistryObject<? extends Block> material) {
 		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, chest.get(), 2)
 			.pattern("###")
 			.pattern("#C#")
@@ -461,7 +464,7 @@ public abstract class CraftingDataHelper extends RecipeProvider {
 		return TwilightForestMod.prefix("wood/" + name);
 	}
 
-	protected static Criterion<InventoryChangeTrigger.TriggerInstance> has(TagKey<Item> tag) {
+	public static Criterion<InventoryChangeTrigger.TriggerInstance> has(TagKey<Item> tag) {
 		return inventoryTrigger(ItemPredicate.Builder.item().of(tag).build());
 	}
 }

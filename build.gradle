@@ -12,6 +12,12 @@ base {
 
 repositories {
     maven { url = 'https://mvn.devos.one/snapshots/' }
+    maven { url = 'https://maven.shedaniel.me' }
+    maven { url = 'https://maven.k-4u.nl' }
+    maven { url = 'https://maven.terraformersmc.com/releases/' }
+    maven { url = 'https://maven.ladysnake.org/releases' }
+    maven { url = 'https://api.modrinth.com/maven' }
+    maven { url = 'https://maven.blamejared.com' }
 }
 
 def serverRoot = projectDir.parentFile.parentFile
@@ -19,7 +25,12 @@ def minecraftVersion = '1.21.1'
 def fabricLoaderVersion = '0.18.1'
 def fabricApiVersion = '0.116.4+1.21.1'
 def portingLibVersion = '3.1.0-beta.85+1.21.1'
-def localClientModsDir = file('E:/MC/.minecraft/versions/Lets go cobblemon master [5.0 Asaki modified]/mods')
+def reiVersion = '16.0.799'
+def emiVersion = '1.1.22+1.21.1'
+def jadeVersion = '15.10.5+fabric'
+def jeiVersion = '19.27.0.340'
+def topVersion = '1.21_neo-12.0.3-5'
+def trinketsVersion = '3.10.0'
 
 java {
     toolchain {
@@ -88,7 +99,14 @@ dependencies {
     include fabricApi.module('fabric-model-loading-api-v1', fabricApiVersion)
     compileOnly 'org.jetbrains:annotations:24.1.0'
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-    compileOnly fileTree(dir: localClientModsDir, include: ['*emi*.jar', '*jei*.jar', '*Jade*.jar', '*trinkets*.jar'])
+    modImplementation "dev.emi:trinkets:${trinketsVersion}"
+    modCompileOnly "dev.emi:emi-fabric:${emiVersion}"
+    modCompileOnly "maven.modrinth:jade:${jadeVersion}"
+    modCompileOnly("mezz.jei:jei-1.21.1-fabric:${jeiVersion}") {
+        transitive = false
+    }
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${reiVersion}"
+    compileOnly "mcjty.theoneprobe:theoneprobe:${topVersion}"
     // Manningham Mills (shedaniel's fork) — bundled inside aether-1.21.1-1.5.11-fabric.jar at
     // META-INF/jars/mm-2.4.1.jar. We use ClassTinkerers.enumBuilder to graft custom
     // BiomeSpecialEffects$GrassColorModifier values for Twilight Forest before MC class init.

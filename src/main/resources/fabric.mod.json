@@ -18,6 +18,15 @@
     "fabric-datagen": [
       "twilightforest.data.CodexTwilightDataGenerators"
     ],
+    "jade": [
+      "twilightforest.compat.jade.JadeCompat"
+    ],
+    "rei_common": [
+      "twilightforest.compat.rei.TFREIServerPlugin"
+    ],
+    "rei_client": [
+      "twilightforest.compat.rei.TFREIClientPlugin"
+    ],
     "mm_shedaniel:early_risers": [
       "twilightforest.asm.CodexGrassColorEarlyRiser"
     ],
@@ -32,9 +41,12 @@
   "depends": {
     "fabric-api-base": "*",
     "fabricloader": ">=0.16.0",
-    "minecraft": "1.21.1"
+    "minecraft": "1.21.1",
+    "trinkets": ">=3.10.0"
   },
   "suggests": {
+    "roughlyenoughitems": "*",
+    "theoneprobe": "*",
     "mythicmobs": "*",
     "mm_shedaniel": "*"
   }

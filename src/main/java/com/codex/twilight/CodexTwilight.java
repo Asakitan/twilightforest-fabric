@@ -110,6 +110,7 @@ public final class CodexTwilight implements ModInitializer {
         TFMapDecorations.AURORA_PALACE.value();
         TFSounds.bootstrap();
         twilightforest.init.TFItems.bootstrap();
+        twilightforest.compat.curios.CuriosCompat.bootstrap();
         twilightforest.init.TFCreativeTabs.bootstrap();
         twilightforest.events.RegistrationEvents.bootstrap();
         twilightforest.init.TFPOITypes.bootstrap();

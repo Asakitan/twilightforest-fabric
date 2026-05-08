@@ -50,7 +50,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 	}
 
 	@Override
-	protected void generate() {
+	public void generate() {
 		HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
 
 		dropSelf(TFBlocks.TOWERWOOD.get());
@@ -167,7 +167,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 									.include(DataComponents.CONTAINER)
 									.include(DataComponents.LOCK)
 									.include(DataComponents.CONTAINER_LOOT)
-									.include(TFDataComponents.JAR_LID.get())
+									.include(TFDataComponents.JAR_LID)
 							)
 					)
 			)
@@ -182,7 +182,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 						LootItem.lootTableItem(TFBlocks.FIREFLY_JAR.get())
 							.apply(
 								CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-									.include(TFDataComponents.JAR_LID.get())
+									.include(TFDataComponents.JAR_LID)
 							)
 					)
 			)
@@ -197,7 +197,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 						LootItem.lootTableItem(TFBlocks.CICADA_JAR.get())
 							.apply(
 								CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-									.include(TFDataComponents.JAR_LID.get())
+									.include(TFDataComponents.JAR_LID)
 							)
 					)
 			)
@@ -771,20 +771,21 @@ public class BlockLootTables extends BlockLootSubProvider {
 					.apply(SetItemCountFunction.setCount(ConstantValue.exactly(layer)))).when(HAS_SHEARS))));
 	}
 
-	protected void ominousCandle(TFRegistryObject<OminousCandleBlock> block) {
-		this.add(block.get(), LootTable.lootTable()
+	protected void ominousCandle(TFRegistryObject<? extends Block> block) {
+		OminousCandleBlock ominousBlock = (OminousCandleBlock) block.get();
+		this.add(ominousBlock, LootTable.lootTable()
 			.withPool(
 				LootPool.lootPool()
 					.setRolls(ConstantValue.exactly(1.0F))
 					.add(
 						this.applyExplosionDecay(
-							block.get(),
-							LootItem.lootTableItem(block.get().candle)
+							ominousBlock,
+							LootItem.lootTableItem(ominousBlock.candle)
 								.apply(
 									List.of(2, 3, 4),
 									value -> SetItemCountFunction.setCount(ConstantValue.exactly((float) value))
 										.when(
-											LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get())
+											LootItemBlockStatePropertyCondition.hasBlockStateProperties(ominousBlock)
 												.setProperties(
 													StatePropertiesPredicate.Builder.properties().hasProperty(OminousCandleBlock.CANDLES, value)
 												)

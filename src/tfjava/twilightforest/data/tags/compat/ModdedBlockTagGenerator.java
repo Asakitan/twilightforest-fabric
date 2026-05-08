@@ -5,7 +5,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import twilightforest.data.tags.BlockTagGenerator;
@@ -60,6 +59,6 @@ public class ModdedBlockTagGenerator extends IntrinsicHolderTagsProvider<Block> 
 	}
 
 	private static TagKey<Block> createTagFor(String modid, String tagName) {
-		return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modid, tagName));
+		return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(modid, tagName));
 	}
 }

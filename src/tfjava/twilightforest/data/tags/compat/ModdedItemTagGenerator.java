@@ -1,10 +1,10 @@
 package twilightforest.data.tags.compat;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -21,6 +21,8 @@ public class ModdedItemTagGenerator extends ItemTagsProvider {
 
 	public static final TagKey<Item> CURIOS_CHARM = createTagFor("curios", "charm");
 	public static final TagKey<Item> CURIOS_HEAD = createTagFor("curios", "head");
+	public static final TagKey<Item> TRINKETS_NECKLACE = createTagFor("trinkets", "chest/necklace");
+	public static final TagKey<Item> TRINKETS_HAT = createTagFor("trinkets", "head/hat");
 
 	public static final TagKey<Item> CA_PLANTS = createTagFor("createaddition", "plants");
 	public static final TagKey<Item> CA_PLANT_FOODS = createTagFor("createaddition", "plant_foods");
@@ -61,8 +63,31 @@ public class ModdedItemTagGenerator extends ItemTagsProvider {
 			TFItems.CHARM_OF_LIFE_1.get(), TFItems.CHARM_OF_LIFE_2.get(),
 			TFItems.CHARM_OF_KEEPING_1.get(), TFItems.CHARM_OF_KEEPING_2.get(), TFItems.CHARM_OF_KEEPING_3.get()
 		);
+		tag(TRINKETS_NECKLACE).add(
+			TFItems.CHARM_OF_LIFE_1.get(), TFItems.CHARM_OF_LIFE_2.get(),
+			TFItems.CHARM_OF_KEEPING_1.get(), TFItems.CHARM_OF_KEEPING_2.get(), TFItems.CHARM_OF_KEEPING_3.get()
+		);
 
 		tag(CURIOS_HEAD).add(
+			TFBlocks.NAGA_TROPHY.get().asItem(),
+			TFBlocks.LICH_TROPHY.get().asItem(),
+			TFBlocks.MINOSHROOM_TROPHY.get().asItem(),
+			TFBlocks.HYDRA_TROPHY.get().asItem(),
+			TFBlocks.KNIGHT_PHANTOM_TROPHY.get().asItem(),
+			TFBlocks.UR_GHAST_TROPHY.get().asItem(),
+			TFBlocks.ALPHA_YETI_TROPHY.get().asItem(),
+			TFBlocks.SNOW_QUEEN_TROPHY.get().asItem(),
+			TFBlocks.QUEST_RAM_TROPHY.get().asItem(),
+			TFBlocks.CICADA.get().asItem(),
+			TFBlocks.FIREFLY.get().asItem(),
+			TFBlocks.MOONWORM.get().asItem(),
+			TFBlocks.CREEPER_SKULL_CANDLE.get().asItem(),
+			TFBlocks.PIGLIN_SKULL_CANDLE.get().asItem(),
+			TFBlocks.PLAYER_SKULL_CANDLE.get().asItem(),
+			TFBlocks.SKELETON_SKULL_CANDLE.get().asItem(),
+			TFBlocks.WITHER_SKELETON_SKULL_CANDLE.get().asItem(),
+			TFBlocks.ZOMBIE_SKULL_CANDLE.get().asItem());
+		tag(TRINKETS_HAT).add(
 			TFBlocks.NAGA_TROPHY.get().asItem(),
 			TFBlocks.LICH_TROPHY.get().asItem(),
 			TFBlocks.MINOSHROOM_TROPHY.get().asItem(),
@@ -114,6 +139,6 @@ public class ModdedItemTagGenerator extends ItemTagsProvider {
 	}
 
 	private static TagKey<Item> createTagFor(String modid, String tagName) {
-		return ItemTags.create(ResourceLocation.fromNamespaceAndPath(modid, tagName));
+		return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(modid, tagName));
 	}
 }

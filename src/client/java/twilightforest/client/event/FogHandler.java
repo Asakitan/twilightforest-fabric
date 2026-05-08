@@ -10,7 +10,7 @@ public final class FogHandler {
 	}
 
 	public static void bootstrap() {
-		ClientWorldEvents.UNLOAD.register((client, level) -> unloadFog());
+		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, level) -> unloadFog());
 	}
 
 	public static void unloadFog() {

@@ -34,7 +34,7 @@ public final class TravellersClientEvents {
 		}
 		while (TFKeyBinds.RED_THREAD_VISION_KEY.consumeClick()) {
 			if (TravellersModifiersManager.isModifierActive(player, TravellersModifiersManager.RED_THREAD_VISION_MODIFIER)) {
-				player.setData(TFDataAttachments.TRAVELLERS_GOGGLES_RED_THREAD_VISION, !player.getData(TFDataAttachments.TRAVELLERS_GOGGLES_RED_THREAD_VISION));
+				TFDataAttachments.set(player, TFDataAttachments.TRAVELLERS_GOGGLES_RED_THREAD_VISION, !TFDataAttachments.get(player, TFDataAttachments.TRAVELLERS_GOGGLES_RED_THREAD_VISION));
 			}
 		}
 		updateZoom(player);
@@ -45,16 +45,16 @@ public final class TravellersClientEvents {
 		ItemStack headStack = player.getItemBySlot(EquipmentSlot.HEAD);
 		Float zoomModifier = headStack.get(twilightforest.init.TFDataComponents.ZOOM_ABILITY_MODIFIER);
 		boolean usingZoom = TFKeyBinds.ZOOM_KEY.isDown() && !player.isScoping() && zoomModifier != null && TravellersModifiersManager.isModifierActive(player, headStack, TravellersModifiersManager.ZOOM_ABILITY);
-		if (usingZoom != player.getData(TFDataAttachments.IS_USING_GOGGLES_ZOOM_MODIFIER)) {
-			player.setData(TFDataAttachments.IS_USING_GOGGLES_ZOOM_MODIFIER, usingZoom);
+		if (usingZoom != TFDataAttachments.get(player, TFDataAttachments.IS_USING_GOGGLES_ZOOM_MODIFIER)) {
+			TFDataAttachments.set(player, TFDataAttachments.IS_USING_GOGGLES_ZOOM_MODIFIER, usingZoom);
 			ClientPlayNetworking.send(new GogglesZoomPacket(usingZoom, player.getUUID()));
 		}
 	}
 
 	private static void updateGradualGlide(LocalPlayer player) {
 		boolean gradual = twilightforest.config.TFConfig.manualTravellersWingsGradualGlideDefault == player.isShiftKeyDown() && player.getKnownMovement().y() < 0.0D && !player.onGround();
-		if (gradual != player.getData(TFDataAttachments.IS_GRADUALLY_GLIDING)) {
-			player.setData(TFDataAttachments.IS_GRADUALLY_GLIDING, gradual);
+		if (gradual != TFDataAttachments.get(player, TFDataAttachments.IS_GRADUALLY_GLIDING)) {
+			TFDataAttachments.set(player, TFDataAttachments.IS_GRADUALLY_GLIDING, gradual);
 			ClientPlayNetworking.send(new GradualGlidePacket(gradual, player.getUUID()));
 		}
 	}

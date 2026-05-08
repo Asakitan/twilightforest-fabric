@@ -1,12 +1,8 @@
 package twilightforest.data;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.WritableRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.util.ProblemReporter;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import twilightforest.loot.TFLootTables;
 
@@ -21,10 +17,5 @@ public class LootGenerator extends LootTableProvider {
 			new LootTableProvider.SubProviderEntry(EntityLootTables::new, LootContextParamSets.ENTITY),
 			new LootTableProvider.SubProviderEntry(SpecialLootTables::new, LootContextParamSets.EMPTY)
 		), provider);
-	}
-
-	@Override
-	protected void validate(WritableRegistry<LootTable> writableregistry, ValidationContext validationcontext, ProblemReporter.Collector problemreporter$collector) {
-
 	}
 }

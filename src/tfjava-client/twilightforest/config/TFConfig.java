@@ -29,7 +29,14 @@ public final class TFConfig {
     public static int itemDisplayScreenOffsetY = 4;
     public static double itemDisplayScreenScale = 1.0D;
     public static boolean twentyFourHourFormat = false;
+    public static int clientCloudBlockPrecipitationDistance = -1;
+    public static int commonCloudBlockPrecipitationDistance = 32;
+    public static boolean manualTravellersWingsGradualGlideDefault = true;
 
     private TFConfig() {
+    }
+
+    public static int getClientCloudBlockPrecipitationDistance() {
+        return clientCloudBlockPrecipitationDistance > 0 ? clientCloudBlockPrecipitationDistance : commonCloudBlockPrecipitationDistance;
     }
 }

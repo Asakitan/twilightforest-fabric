@@ -19,6 +19,8 @@ public final class ItemTagGenerator {
     public static final TagKey<Item> UNCRAFTING_IGNORES_COST = create("uncrafting_ignores_cost");
     public static final TagKey<Item> IMMUNE_TO_THORNS = create("immune_to_thorns");
     public static final TagKey<Item> SCEPTERS = create("scepters");
+    public static final TagKey<Item> BANISTERS = create("banisters");
+    public static final TagKey<Item> BLOCK_AND_CHAIN_ENCHANTABLE = create("block_and_chain_enchantable");
     public static final TagKey<Item> KOBOLD_PACIFICATION_BREADS = create("kobold_pacification_breads");
     public static final TagKey<Item> FIERY_VIAL = create("fiery_vial");
     public static final TagKey<Item> TWILIGHT_OAK_LOGS = create("twilight_oak_logs");
@@ -43,6 +45,10 @@ public final class ItemTagGenerator {
     public static final TagKey<Item> STORAGE_BLOCKS_IRONWOOD = common("storage_blocks/ironwood");
     public static final TagKey<Item> STORAGE_BLOCKS_KNIGHTMETAL = common("storage_blocks/knightmetal");
     public static final TagKey<Item> STORAGE_BLOCKS_STEELEAF = common("storage_blocks/steeleaf");
+    public static final TagKey<Item> STORAGE_BLOCKS_ARCTIC_FUR = common("storage_blocks/arctic_fur");
+    public static final TagKey<Item> STORAGE_BLOCKS_CARMINITE = common("storage_blocks/carminite");
+    public static final TagKey<Item> RAW_MATERIALS_IRONWOOD = common("raw_materials/ironwood");
+    public static final TagKey<Item> RAW_MATERIALS_KNIGHTMETAL = common("raw_materials/knightmetal");
     public static final TagKey<Item> WIP = create("wip");
     public static final TagKey<Item> REPAIRS_IRONWOOD_TOOLS = create("repairs_ironwood_tools");
     public static final TagKey<Item> REPAIRS_STEELEAF_TOOLS = create("repairs_steeleaf_tools");
@@ -55,6 +61,8 @@ public final class ItemTagGenerator {
     public static final TagKey<Item> KEPT_ON_DEATH = create("kept_on_death");
     public static final TagKey<Item> PORTAL_ACTIVATOR = create("portal/activator");
     public static final TagKey<Item> RENDER_LOWER_ON_DRYING_RACK = create("lower_on_drying_rack");
+    public static final TagKey<Item> TWILIGHT_LOGS = create("logs");
+    public static final TagKey<Item> FOODS_JERKY = common("foods/jerky");
     public static final TagKey<Item> TOOLS_SHIELD = common("tools/shield");
     public static final TagKey<Item> RODS_WOODEN = common("rods/wooden");
     public static final TagKey<Item> RODS_BLAZE = common("rods/blaze");

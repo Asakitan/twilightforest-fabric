@@ -24,8 +24,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.TFRegistries;
 import twilightforest.TwilightForestMod;
 import twilightforest.config.TFConfig;
 import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
@@ -129,12 +131,24 @@ public abstract class TFLangProvider implements DataProvider {
 		this.add(block.get().asItem().getDescriptionId(), name);
 	}
 
+	public void add(Block block, String name) {
+		this.add(block.asItem().getDescriptionId(), name);
+	}
+
 	public void addItem(Supplier<? extends Item> item, String name) {
 		this.add(item.get().getDescriptionId(), name);
 	}
 
+	public void add(Item item, String name) {
+		this.add(item.getDescriptionId(), name);
+	}
+
 	public void addEntityType(Supplier<? extends EntityType<?>> entity, String name) {
 		this.add(entity.get().getDescriptionId(), name);
+	}
+
+	public void add(EntityType<?> entity, String name) {
+		this.add(entity.getDescriptionId(), name);
 	}
 
 	public void addStoneVariants(String blockKey, String blockName) {
@@ -225,11 +239,11 @@ public abstract class TFLangProvider implements DataProvider {
 	}
 
 	public void addTravellersModifier(HolderLookup.Provider registries, ResourceKey<TravellersModifier> modifier, String name) {
-		this.add(modifier.location().toLanguageKey(registries.holderOrThrow(modifier).value().getPrefix()), name);
+		this.add(modifier.location().toLanguageKey(registries.lookupOrThrow(TFRegistries.Keys.TRAVELLERS_MODIFIERS).getOrThrow(modifier).value().getPrefix()), name);
 	}
 
 	public void addTravellersDescription(HolderLookup.Provider registries, ResourceKey<TravellersModifier> modifier, String description) {
-		this.add(modifier.location().toLanguageKey(registries.holderOrThrow(modifier).value().getPrefix(), "description"), description);
+		this.add(modifier.location().toLanguageKey(registries.lookupOrThrow(TFRegistries.Keys.TRAVELLERS_MODIFIERS).getOrThrow(modifier).value().getPrefix(), "description"), description);
 	}
 
 	public void createTip(String key, String translation) {

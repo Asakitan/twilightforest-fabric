@@ -132,6 +132,7 @@ import twilightforest.client.renderer.item.KnightmetalShieldItemRenderer;
 import twilightforest.client.renderer.tooltip.ItemDisplayTooltipComponent;
 import twilightforest.client.renderer.tooltip.PotionFlaskTooltipComponent;
 import twilightforest.client.renderer.tooltip.TravellersBeltTooltipComponent;
+import twilightforest.compat.curios.CuriosClientCompat;
 import twilightforest.TwilightForestMod;
 import twilightforest.block.entity.MasonJarBlockEntity;
 import twilightforest.components.entity.TravellersWingsAttachment;
@@ -202,6 +203,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
         twilightforest.client.event.OverlayHandler.bootstrap();
         twilightforest.client.event.TravellersClientEvents.bootstrap();
         CodexModelLayers.bootstrap();
+        CuriosClientCompat.bootstrap();
         KnightmetalShieldItemRenderer.bootstrap();
         TFArmorRenderer.bootstrap();
         registerTooltipComponents();
@@ -685,7 +687,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
                 createTravellersGearModels();
 
         ModelLoadingPlugin.register(plugin -> {
-            plugin.addModels(twilightforest.client.model.item.TrollsteinnModel.LIT_TROLLSTEINN);
+            plugin.addModels(twilightforest.client.model.item.TrollsteinnModel.LIT_TROLLSTEINN_ID);
             plugin.resolveModel().register(context -> {
                 net.minecraft.resources.ResourceLocation id = context.id();
                 if (id.equals(auroraBlockModel) || id.equals(auroraBlockModelCodex)) {
@@ -730,7 +732,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
                 return null;
             });
             plugin.modifyModelAfterBake().register((model, context) -> {
-                if (context.id().equals(net.minecraft.client.resources.model.ModelResourceLocation.inventory(TwilightForestMod.prefix("trollsteinn")))) {
+                if (context.topLevelId() != null && context.topLevelId().equals(net.minecraft.client.resources.model.ModelResourceLocation.inventory(TwilightForestMod.prefix("trollsteinn")))) {
                     return new twilightforest.client.model.item.TrollsteinnModel(model);
                 }
                 return model;

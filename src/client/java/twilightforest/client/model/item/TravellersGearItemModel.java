@@ -104,7 +104,7 @@ public class TravellersGearItemModel implements UnbakedModel {
 		}
 
 		TextureAtlasSprite particle = baseSprite != null ? baseSprite : spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation()));
-		return new SimpleBakedModel(quads, Map.of(), false, false, false, particle, net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS, new Overrides(ItemOverrides.EMPTY, this, baker, spriteGetter));
+		return new SimpleBakedModel(quads, Map.of(), false, false, false, particle, net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS, ItemOverrides.EMPTY);
 	}
 
 	@Nullable
@@ -162,50 +162,4 @@ public class TravellersGearItemModel implements UnbakedModel {
 		}
 	}
 
-	private static final class Overrides extends ItemOverrides {
-		private final Map<String, BakedModel> possibleCombos = Maps.newHashMap();
-		private final ItemOverrides nested;
-		private final TravellersGearItemModel parent;
-		private final ModelBaker baker;
-		private final Function<Material, TextureAtlasSprite> spriteGetter;
-
-		private Overrides(ItemOverrides nested, TravellersGearItemModel parent, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter) {
-			this.nested = nested;
-			this.parent = parent;
-			this.baker = baker;
-			this.spriteGetter = spriteGetter;
-		}
-
-		@Nullable
-		@Override
-		public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
-			BakedModel overridden = this.nested.resolve(originalModel, stack, level, entity, seed);
-			if (overridden != originalModel) {
-				return overridden;
-			}
-			if (level == null) {
-				level = Minecraft.getInstance().level;
-			}
-			if (level == null) {
-				return originalModel;
-			}
-
-			List<Holder.Reference<TravellersModifier>> modifiers = TravellersModifiersManager.findAllInsertableModifiers(level.registryAccess(), stack);
-			boolean broken = TravellersArmorItem.isTravellersArmorAndBroken(stack);
-			boolean gloves = stack.has(TFDataComponents.TRAVELLERS_HAS_GLOVES);
-			String key = BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath() + this.getModifiersSuffix(modifiers, broken, gloves);
-
-			return this.possibleCombos.computeIfAbsent(key, ignored -> this.parent.withModifiers(modifiers, broken, gloves).bake(this.baker, this.spriteGetter, BlockModelRotation.X0_Y0));
-		}
-
-		private String getModifiersSuffix(List<Holder.Reference<TravellersModifier>> modifiers, boolean broken, boolean gloves) {
-			StringBuilder ret = new StringBuilder();
-			if (gloves) ret.append("_gloves");
-			if (broken) ret.append("_broken");
-			for (Holder.Reference<TravellersModifier> mod : modifiers) {
-				ret.append("_").append(mod.key().location().toLanguageKey());
-			}
-			return ret.toString();
-		}
-	}
 }

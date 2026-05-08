@@ -34,6 +34,7 @@ import twilightforest.TwilightForestMod;
 import twilightforest.block.KeepsakeCasketBlock;
 import twilightforest.block.entity.SkullChestBlockEntity;
 import twilightforest.config.TFConfig;
+import twilightforest.compat.curios.CuriosCompat;
 import twilightforest.data.tags.ItemTagGenerator;
 import twilightforest.enums.BlockLoggingEnum;
 import twilightforest.init.TFBlocks;
@@ -144,6 +145,12 @@ public final class CharmEvents {
 		int bestTier = 0;
 		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
 			ItemStack stack = player.getInventory().getItem(slot);
+			if (stack.getItem() instanceof CharmOfLifeItem charm && charm.charmTier() > bestTier) {
+				best = stack;
+				bestTier = charm.charmTier();
+			}
+		}
+		for (ItemStack stack : CuriosCompat.findEquippedStacks(player, equipped -> equipped.getItem() instanceof CharmOfLifeItem)) {
 			if (stack.getItem() instanceof CharmOfLifeItem charm && charm.charmTier() > bestTier) {
 				best = stack;
 				bestTier = charm.charmTier();
@@ -413,7 +420,7 @@ public final class CharmEvents {
 				return consumed;
 			}
 		}
-		return ItemStack.EMPTY;
+		return CuriosCompat.consumeCurio(item, player, saveConsumed);
 	}
 
 	public static CompoundTag getPlayerData(Player player) {
