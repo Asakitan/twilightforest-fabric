@@ -59,6 +59,11 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
 	}
 
 	private void renderPainting(PoseStack stack, VertexConsumer vertex, MagicPainting painting, MagicPaintingVariant variant, float partialTicks) {
+		MagicPaintingTextureManager textureManager = MagicPaintingTextureManager.instance;
+		if (textureManager == null) {
+			return;
+		}
+
 		ResourceLocation textureLocation = MagicPaintingVariant.getVariantResourceLocation(painting.level().registryAccess(), variant);
 
 		int width = variant.width();
@@ -102,7 +107,7 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
 			double heightDiff = parallax != null ? (heightFactor - layerHeightFactor) * (double) heightAsBlock * 0.5D : 0.0D;
 			double heightOffset = heightDiff != 0.0D ? this.getHeightOffset(parallax, painting, heightDiff, partialTicks) : 0.0D;
 
-			TextureAtlasSprite layerTexture = MagicPaintingTextureManager.instance.getLayerSprite(textureLocation, layer);
+			TextureAtlasSprite layerTexture = textureManager.getLayerSprite(textureLocation, layer);
 
 			for (int k = 0; k < widthAsBlock; ++k) {
 				for (int l = 0; l < heightAsBlock; ++l) {
@@ -129,7 +134,7 @@ public class MagicPaintingRenderer extends EntityRenderer<MagicPainting> {
 			}
 		}
 
-		TextureAtlasSprite backSprite = MagicPaintingTextureManager.instance.getBackSprite(variant);
+		TextureAtlasSprite backSprite = textureManager.getBackSprite(variant);
 
 		for (int w = 0; w < widthAsBlock; ++w) {
 			boolean leftBorder = w == 0;

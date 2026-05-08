@@ -16,15 +16,18 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twilightforest.TwilightForestMod;
 import twilightforest.compat.curios.model.CharmOfLifeNecklaceModel;
 
 public class CharmOfLifeNecklaceRenderer implements TrinketRenderer {
-	private final CharmOfLifeNecklaceModel model;
+	private static final Logger LOGGER = LoggerFactory.getLogger("CodexTwilight/CharmOfLifeNecklaceRenderer");
+	private CharmOfLifeNecklaceModel model;
+	private boolean warnedMissingModel;
 	private final int necklaceColor;
 
 	public CharmOfLifeNecklaceRenderer(int necklaceColor) {
-		this.model = new CharmOfLifeNecklaceModel(Minecraft.getInstance().getEntityModels().bakeLayer(CodexModelLayers.CHARM_OF_LIFE));
 		this.necklaceColor = necklaceColor;
 	}
 
@@ -42,10 +45,30 @@ public class CharmOfLifeNecklaceRenderer implements TrinketRenderer {
 			renderer.renderItem(entity, item, ItemDisplayContext.FIXED, false, stack, buffer, light);
 			stack.popPose();
 		}
-		this.model.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		this.model.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
-		TrinketRenderer.followBodyRotations(entity, this.model);
+		CharmOfLifeNecklaceModel necklaceModel = this.model();
+		if (necklaceModel == null) {
+			return;
+		}
+		necklaceModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+		necklaceModel.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTicks);
+		TrinketRenderer.followBodyRotations(entity, necklaceModel);
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutout(TwilightForestMod.getModelTexture("charm_of_life_necklace.png")));
-		this.model.renderToBuffer(stack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, this.necklaceColor);
+		necklaceModel.renderToBuffer(stack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, this.necklaceColor);
+	}
+
+	private CharmOfLifeNecklaceModel model() {
+		if (this.model != null) {
+			return this.model;
+		}
+		try {
+			this.model = new CharmOfLifeNecklaceModel(Minecraft.getInstance().getEntityModels().bakeLayer(CodexModelLayers.CHARM_OF_LIFE));
+			return this.model;
+		} catch (IllegalArgumentException exception) {
+			if (!this.warnedMissingModel) {
+				this.warnedMissingModel = true;
+				LOGGER.warn("Charm of Life necklace model layer {} is not ready; necklace rendering will retry after the model set is available.", CodexModelLayers.CHARM_OF_LIFE, exception);
+			}
+			return null;
+		}
 	}
 }

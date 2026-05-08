@@ -8,6 +8,7 @@ import com.codex.twilight.network.CodexGogglesSurveyPayload;
 import com.codex.twilight.network.CodexHitFlashPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
@@ -185,11 +186,11 @@ public final class CodexTwilightClient implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Codex Twilight client init (F2.4 — batch renderer registration for TF mob roster).");
         MenuScreens.register(TFMenuTypes.UNCRAFTING, twilightforest.client.UncraftingScreen::new);
+        CodexModelLayers.bootstrap();
         // F2.1b — Kobold pilot keeps its dedicated renderer with explicit armor layers.
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(JappaPackReloadListener.INSTANCE);
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(TextureGeneratorReloadListener.INSTANCE);
-        MagicPaintingTextureManager.instance = new MagicPaintingTextureManager(Minecraft.getInstance().getTextureManager());
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(MagicPaintingTextureManager.instance);
+        ClientLifecycleEvents.CLIENT_STARTED.register(CodexTwilightClient::bootstrapMagicPaintingTextures);
         JappaPackReloadListener.clientSetup();
         twilightforest.init.TFKeyBinds.bootstrap();
         TFShaders.bootstrap();
@@ -202,9 +203,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
         twilightforest.client.event.LockedBiomeToastHandler.bootstrap();
         twilightforest.client.event.OverlayHandler.bootstrap();
         twilightforest.client.event.TravellersClientEvents.bootstrap();
-        CodexModelLayers.bootstrap();
-        CuriosClientCompat.bootstrap();
-        KnightmetalShieldItemRenderer.bootstrap();
+        ClientLifecycleEvents.CLIENT_STARTED.register(CodexTwilightClient::bootstrapModelDependentClientRenderers);
         TFArmorRenderer.bootstrap();
         registerTooltipComponents();
         registerBlockRenderLayers();
@@ -604,6 +603,23 @@ public final class CodexTwilightClient implements ClientModInitializer {
             });
         });
 
+    }
+
+    private static void bootstrapMagicPaintingTextures(Minecraft client) {
+        if (MagicPaintingTextureManager.instance != null) {
+            return;
+        }
+
+        MagicPaintingTextureManager.instance = new MagicPaintingTextureManager(client.getTextureManager());
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(MagicPaintingTextureManager.instance);
+        client.reloadResourcePacks();
+        LOGGER.info("Magic Painting texture atlas deferred until CLIENT_STARTED to avoid early OpenGL access.");
+    }
+
+    private static void bootstrapModelDependentClientRenderers(Minecraft client) {
+        CuriosClientCompat.bootstrap();
+        KnightmetalShieldItemRenderer.bootstrap();
+        LOGGER.info("Model-dependent item/trinket renderers deferred until CLIENT_STARTED.");
     }
 
     private static void registerTooltipComponents() {

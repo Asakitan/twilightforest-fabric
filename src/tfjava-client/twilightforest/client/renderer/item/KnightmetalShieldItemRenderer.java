@@ -11,15 +11,18 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twilightforest.TwilightForestMod;
 import twilightforest.client.model.entity.KnightmetalShieldModel;
 import twilightforest.init.TFItems;
 
 public final class KnightmetalShieldItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
-	private final KnightmetalShieldModel shield;
+	private static final Logger LOGGER = LoggerFactory.getLogger("CodexTwilight/KnightmetalShieldItemRenderer");
+	private KnightmetalShieldModel shield;
+	private boolean warnedMissingModel;
 
 	private KnightmetalShieldItemRenderer() {
-		this.shield = new KnightmetalShieldModel(Minecraft.getInstance().getEntityModels().bakeLayer(CodexModelLayers.KNIGHTMETAL_SHIELD));
 	}
 
 	public static void bootstrap() {
@@ -28,11 +31,31 @@ public final class KnightmetalShieldItemRenderer implements BuiltinItemRendererR
 
 	@Override
 	public void render(ItemStack stack, ItemDisplayContext context, PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay) {
+		KnightmetalShieldModel shieldModel = this.shield();
+		if (shieldModel == null) {
+			return;
+		}
 		poseStack.pushPose();
 		poseStack.scale(1.0F, -1.0F, -1.0F);
 		Material material = new Material(Sheets.SHIELD_SHEET, TwilightForestMod.prefix("entity/knightmetal_shield"));
-		VertexConsumer consumer = material.sprite().wrap(ItemRenderer.getFoilBufferDirect(bufferSource, this.shield.renderType(material.atlasLocation()), true, stack.hasFoil()));
-		this.shield.renderToBuffer(poseStack, consumer, light, overlay);
+		VertexConsumer consumer = material.sprite().wrap(ItemRenderer.getFoilBufferDirect(bufferSource, shieldModel.renderType(material.atlasLocation()), true, stack.hasFoil()));
+		shieldModel.renderToBuffer(poseStack, consumer, light, overlay);
 		poseStack.popPose();
+	}
+
+	private KnightmetalShieldModel shield() {
+		if (this.shield != null) {
+			return this.shield;
+		}
+		try {
+			this.shield = new KnightmetalShieldModel(Minecraft.getInstance().getEntityModels().bakeLayer(CodexModelLayers.KNIGHTMETAL_SHIELD));
+			return this.shield;
+		} catch (IllegalArgumentException exception) {
+			if (!this.warnedMissingModel) {
+				this.warnedMissingModel = true;
+				LOGGER.warn("Knightmetal shield model layer {} is not ready; item rendering will retry after the model set is available.", CodexModelLayers.KNIGHTMETAL_SHIELD, exception);
+			}
+			return null;
+		}
 	}
 }
