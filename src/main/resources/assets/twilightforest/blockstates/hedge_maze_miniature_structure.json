@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "twilightforest:block/hedge_maze_miniature_structure"
+      }
+    }
+  ]
+}

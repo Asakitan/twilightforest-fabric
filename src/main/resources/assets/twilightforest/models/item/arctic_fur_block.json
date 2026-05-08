@@ -1,3 +1,7 @@
 {
-  "parent": "twilightforest:block/arctic_fur_block"
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "twilightforest:block/arctic_fur_block",
+    "particle": "twilightforest:block/arctic_fur_block"
+  }
 }

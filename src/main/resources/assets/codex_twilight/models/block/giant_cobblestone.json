@@ -1,6 +1,5 @@
-﻿{
+{
   "parent": "minecraft:block/block",
-  "loader": "codex_twilight:giant_block",
   "parent_block": "minecraft:cobblestone",
   "textures": {
     "all": "minecraft:block/cobblestone",

@@ -1,6 +1,5 @@
-﻿{
+{
   "parent": "minecraft:item/handheld",
-  "loader": "neoforge:item_layers",
   "neoforge_data": {
     "layers": {
       "0": {

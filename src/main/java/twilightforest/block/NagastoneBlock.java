@@ -5,11 +5,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import twilightforest.enums.NagastoneVariant;
+import twilightforest.block.TFHorizontalBlock;
 import twilightforest.init.TFBlocks;
 
 public class NagastoneBlock extends Block {
@@ -36,7 +36,7 @@ public class NagastoneBlock extends Block {
         Direction[] facings = new Direction[2];
         for (Direction side : Direction.values()) {
             BlockState neighborState = accessor.getBlockState(pos.relative(side));
-            if (neighborState.getBlock() == this || (neighborState.is(TFBlocks.NAGASTONE_HEAD.get()) && neighborState.hasProperty(DirectionalBlock.FACING) && side == neighborState.getValue(DirectionalBlock.FACING))) {
+            if (neighborState.getBlock() == this || (neighborState.is(TFBlocks.NAGASTONE_HEAD.get()) && neighborState.hasProperty(TFHorizontalBlock.FACING) && side == neighborState.getValue(TFHorizontalBlock.FACING))) {
                 facings[connectionCount++] = side;
                 if (connectionCount >= 2) {
                     break;

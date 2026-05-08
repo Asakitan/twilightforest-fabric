@@ -217,7 +217,12 @@ public final class TFBlockEntities {
                     TFBlocks.WARPED_DRYING_RACK.get(),
                     TFBlocks.TWILIGHT_OAK_DRYING_RACK.get(),
                     TFBlocks.CANOPY_DRYING_RACK.get(),
-                    TFBlocks.DARK_DRYING_RACK.get())
+                    TFBlocks.DARK_DRYING_RACK.get(),
+                    TFBlocks.MINING_DRYING_RACK.get(),
+                    TFBlocks.TIME_DRYING_RACK.get(),
+                    TFBlocks.TRANSFORMATION_DRYING_RACK.get(),
+                    TFBlocks.SORTING_DRYING_RACK.get(),
+                    TFBlocks.VANGROVE_DRYING_RACK.get())
                     .build());
 
     public static final BlockEntityType<ChiseledCanopyShelfBlockEntity> CHISELED_CANOPY_BOOKSHELF = Registry.register(

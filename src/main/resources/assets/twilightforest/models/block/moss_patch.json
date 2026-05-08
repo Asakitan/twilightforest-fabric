@@ -1,5 +1,9 @@
 {
-  "loader": "twilightforest:patch",
   "texture": "twilightforest:block/mosspatch",
-  "shaggify": true
+  "shaggify": true,
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "twilightforest:block/mosspatch",
+    "particle": "twilightforest:block/mosspatch"
+  }
 }

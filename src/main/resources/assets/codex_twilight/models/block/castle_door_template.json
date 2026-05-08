@@ -1,6 +1,5 @@
-﻿{
-  "loader": "neoforge:composite",
-  "parent": "block/block",
+{
+  "parent": "codex_twilight:block/castle_door",
   "children": {
     "main": {
       "parent": "codex_twilight:block/castle_door"

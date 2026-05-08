@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "twilightforest:block/mushroom_tower_miniature_structure"
+      }
+    }
+  ]
+}

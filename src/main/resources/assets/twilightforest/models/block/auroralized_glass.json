@@ -7,7 +7,6 @@
     "render_disabled_faces": true,
     "tint_index": 0
   },
-  "loader": "twilightforest:connected_texture_block",
   "render_type": "minecraft:translucent",
   "textures": {
     "overlay_connected": "twilightforest:block/auroralized_glass_ct",

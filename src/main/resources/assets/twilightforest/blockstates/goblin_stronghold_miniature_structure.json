@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "twilightforest:block/goblin_stronghold_miniature_structure"
+      }
+    }
+  ]
+}

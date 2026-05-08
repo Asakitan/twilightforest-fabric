@@ -1,5 +1,8 @@
-﻿{
-  "loader": "codex_twilight:patch",
-  "texture": "codex_twilight:block/cloverpatch"
+{
+  "texture": "codex_twilight:block/cloverpatch",
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "codex_twilight:block/cloverpatch",
+    "particle": "codex_twilight:block/cloverpatch"
+  }
 }
-

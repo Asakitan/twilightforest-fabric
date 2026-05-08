@@ -260,13 +260,13 @@ public final class TFEntities {
     }
 
     private static <T extends Mob> TFRegistryObject<EntityType<T>> entity(String path, EntityType.Builder<T> builder) {
-        EntityType<T> type = Registry.register(BuiltInRegistries.ENTITY_TYPE, TwilightForestMod.prefix(path), builder.build(TwilightForestMod.ID + ":" + path));
+        EntityType<T> type = Registry.register(BuiltInRegistries.ENTITY_TYPE, TwilightForestMod.prefix(path), builder.build(null));
         markServerOnly(type);
         return new TFRegistryObject<>(type);
     }
 
     private static <T extends net.minecraft.world.entity.Entity> TFRegistryObject<EntityType<T>> projectile(String path, EntityType.Builder<T> builder) {
-        EntityType<T> type = Registry.register(BuiltInRegistries.ENTITY_TYPE, TwilightForestMod.prefix(path), builder.build(TwilightForestMod.ID + ":" + path));
+        EntityType<T> type = Registry.register(BuiltInRegistries.ENTITY_TYPE, TwilightForestMod.prefix(path), builder.build(null));
         markServerOnly(type);
         return new TFRegistryObject<>(type);
     }

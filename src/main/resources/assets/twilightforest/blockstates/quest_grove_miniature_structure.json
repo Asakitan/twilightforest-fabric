@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "twilightforest:block/quest_grove_miniature_structure"
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "twilightforest:block/naga_courtyard_terracotta"
+      }
+    }
+  ]
+}

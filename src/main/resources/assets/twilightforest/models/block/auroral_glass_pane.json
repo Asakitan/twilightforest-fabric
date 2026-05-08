@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "all": "twilightforest:block/auroralized_glass",
+    "particle": "twilightforest:block/auroralized_glass"
+  }
+}

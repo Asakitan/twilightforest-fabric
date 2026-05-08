@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/block",
+  "parent": "minecraft:block/cube_all",
   "children": {
     "brick": {
       "parent": "minecraft:block/cube_all",
@@ -96,7 +96,6 @@
     "brick",
     "runes"
   ],
-  "loader": "neoforge:composite",
   "textures": {
     "particle": "twilightforest:block/castle_brick"
   }

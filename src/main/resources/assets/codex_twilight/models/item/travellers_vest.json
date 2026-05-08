@@ -1,10 +1,10 @@
-﻿{
+{
   "parent": "minecraft:item/generated",
   "broken_modifier_directory": "travellers_modifiers/vest/broken/",
-  "loader": "codex_twilight:travellers_gear",
   "modifier_directory": "travellers_modifiers/vest/",
   "textures": {
     "base": "codex_twilight:item/travellers_vest",
-    "broken": "codex_twilight:item/travellers_vest_broken"
+    "broken": "codex_twilight:item/travellers_vest_broken",
+    "layer0": "codex_twilight:item/travellers_vest"
   }
 }

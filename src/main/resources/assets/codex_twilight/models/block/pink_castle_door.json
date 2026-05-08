@@ -1,4 +1,4 @@
-﻿{
+{
   "parent": "minecraft:block/block",
   "connectable_blocks": [
     "codex_twilight:pink_castle_door",
@@ -11,7 +11,6 @@
     "render_disabled_faces": true,
     "tint_index": 0
   },
-  "loader": "codex_twilight:connected_texture_block",
   "render_type": "minecraft:cutout",
   "textures": {
     "base_texture": "codex_twilight:block/castle_door",

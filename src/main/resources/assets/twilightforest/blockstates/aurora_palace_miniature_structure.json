@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "twilightforest:block/aurora_palace_miniature_structure"
+      }
+    }
+  ]
+}

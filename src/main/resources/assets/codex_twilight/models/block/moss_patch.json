@@ -1,6 +1,9 @@
-﻿{
-  "loader": "codex_twilight:patch",
+{
   "texture": "codex_twilight:block/mosspatch",
-  "shaggify": true
+  "shaggify": true,
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "codex_twilight:block/mosspatch",
+    "particle": "codex_twilight:block/mosspatch"
+  }
 }
-

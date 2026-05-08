@@ -612,8 +612,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
 
         MagicPaintingTextureManager.instance = new MagicPaintingTextureManager(client.getTextureManager());
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(MagicPaintingTextureManager.instance);
-        client.reloadResourcePacks();
-        LOGGER.info("Magic Painting texture atlas deferred until CLIENT_STARTED to avoid early OpenGL access.");
+        LOGGER.info("Magic Painting texture atlas listener registered after CLIENT_STARTED without forcing a full resource-pack reload.");
     }
 
     private static void bootstrapModelDependentClientRenderers(Minecraft client) {

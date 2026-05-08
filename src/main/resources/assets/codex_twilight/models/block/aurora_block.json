@@ -1,6 +1,5 @@
-﻿{
-  "parent": "minecraft:block/block",
-  "loader": "codex_twilight:noise_varying",
+{
+  "parent": "codex_twilight:block/aurora_block_0",
   "variants": [
     "codex_twilight:block/aurora_block_0",
     "codex_twilight:block/aurora_block_1",

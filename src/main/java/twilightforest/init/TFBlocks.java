@@ -358,10 +358,10 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> TWILIGHT_OAK_DRYING_RACK = dryingRackBlock("twilight_oak_drying_rack", Blocks.OAK_FENCE);
     public static final TFRegistryObject<Block> CANOPY_DRYING_RACK = dryingRackBlock("canopy_drying_rack", Blocks.DARK_OAK_FENCE);
     public static final TFRegistryObject<Block> DARK_DRYING_RACK = dryingRackBlock("dark_drying_rack", Blocks.DARK_OAK_FENCE);
-    public static final TFRegistryObject<Block> MINING_DRYING_RACK = directionalBlock("mining_drying_rack", Blocks.BIRCH_FENCE);
-    public static final TFRegistryObject<Block> TIME_DRYING_RACK = directionalBlock("time_drying_rack", Blocks.SPRUCE_FENCE);
-    public static final TFRegistryObject<Block> TRANSFORMATION_DRYING_RACK = directionalBlock("transformation_drying_rack", Blocks.JUNGLE_FENCE);
-    public static final TFRegistryObject<Block> SORTING_DRYING_RACK = directionalBlock("sorting_drying_rack", Blocks.CHERRY_FENCE);
+    public static final TFRegistryObject<Block> MINING_DRYING_RACK = dryingRackBlock("mining_drying_rack", Blocks.BIRCH_FENCE);
+    public static final TFRegistryObject<Block> TIME_DRYING_RACK = dryingRackBlock("time_drying_rack", Blocks.SPRUCE_FENCE);
+    public static final TFRegistryObject<Block> TRANSFORMATION_DRYING_RACK = dryingRackBlock("transformation_drying_rack", Blocks.JUNGLE_FENCE);
+    public static final TFRegistryObject<Block> SORTING_DRYING_RACK = dryingRackBlock("sorting_drying_rack", Blocks.CHERRY_FENCE);
 
     // -- TF wood chests (extending vanilla chest family) — uses chestBlock helper
     public static final TFRegistryObject<Block> CANOPY_CHEST = chestBlock("canopy_chest", Blocks.CHEST);
@@ -550,8 +550,8 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> MAZE_SLIME_BLOCK = mazeSlimeBlock("maze_slime_block", Blocks.SLIME_BLOCK);
     public static final TFRegistryObject<Block> MALOBERRY_BUSH = berryBushBlock("maloberry_bush", Blocks.SWEET_BERRY_BUSH);
     public static final TFRegistryObject<Block> ESSENCE_OREBERRY = oreBerryBlock("essence_oreberry", Blocks.AMETHYST_BLOCK);
-    public static final TFRegistryObject<Block> VANGROVE_BANISTER = fenceBlock("vangrove_banister", Blocks.MANGROVE_FENCE);
-    public static final TFRegistryObject<Block> VANGROVE_DRYING_RACK = directionalBlock("vangrove_drying_rack", Blocks.MANGROVE_FENCE);
+    public static final TFRegistryObject<Block> VANGROVE_BANISTER = banisterBlock("vangrove_banister", Blocks.MANGROVE_FENCE);
+    public static final TFRegistryObject<Block> VANGROVE_DRYING_RACK = dryingRackBlock("vangrove_drying_rack", Blocks.MANGROVE_FENCE);
     public static final TFRegistryObject<Block> FINAL_BOSS_BOSS_SPAWNER = bossSpawnerBlock("final_boss_boss_spawner", twilightforest.enums.BossVariant.FINAL_BOSS);
     public static final TFRegistryObject<Block> FIREFLY_PARTICLE_SPAWNER = particleSpawnerBlock("firefly_particle_spawner");
     public static final TFRegistryObject<Block> FIREFLY_SPAWNER = FIREFLY_PARTICLE_SPAWNER;
@@ -686,7 +686,7 @@ public final class TFBlocks {
 
     // -- Naga / nagastone family
     public static final TFRegistryObject<Block> NAGASTONE = nagastoneBlock("nagastone", Blocks.STONE_BRICKS);
-    public static final TFRegistryObject<Block> NAGASTONE_HEAD = etchedNagastoneBlock("nagastone_head", Blocks.CHISELED_STONE_BRICKS);
+    public static final TFRegistryObject<Block> NAGASTONE_HEAD = tfHorizontalBlock("nagastone_head", Blocks.CHISELED_STONE_BRICKS);
     public static final TFRegistryObject<Block> NAGASTONE_PILLAR_MOSSY = nagastonePillarBlock("nagastone_pillar_mossy", Blocks.MOSSY_STONE_BRICKS);
     public static final TFRegistryObject<Block> NAGASTONE_PILLAR_WEATHERED = nagastonePillarBlock("nagastone_pillar_weathered", Blocks.CRACKED_STONE_BRICKS);
     public static final TFRegistryObject<Block> ETCHED_NAGASTONE_STAIRS = stairBlock("etched_nagastone_stairs", Blocks.STONE_BRICK_STAIRS);
@@ -1013,6 +1013,14 @@ public final class TFBlocks {
 
     private static TFRegistryObject<Block> transLogCoreBlock(String path, Block fallback) {
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new twilightforest.block.TransLogCoreBlock(BlockBehaviour.Properties.ofFullCopy(fallback).randomTicks()));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    /** 1:1 upstream {@link twilightforest.block.TFHorizontalBlock} (horizontal FACING). */
+    private static TFRegistryObject<Block> tfHorizontalBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.TFHorizontalBlock(BlockBehaviour.Properties.ofFullCopy(fallback)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }

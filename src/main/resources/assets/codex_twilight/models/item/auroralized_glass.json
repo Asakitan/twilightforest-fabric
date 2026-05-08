@@ -1,3 +1,8 @@
 ﻿{
-  "parent": "codex_twilight:block/auroralized_glass"
+  "parent": "minecraft:block/cube_all",
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "all": "codex_twilight:block/auroralized_glass",
+    "particle": "codex_twilight:block/auroralized_glass"
+  }
 }

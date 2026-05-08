@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "twilightforest:block/castle_pillar_encased"
+      }
+    }
+  ]
+}
