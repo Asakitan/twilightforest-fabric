@@ -128,7 +128,7 @@ public final class TFEnumExtensions {
 		}
 		return switch (idx) {
 			case 0 -> castRegistry(type, planks);
-			case 1 -> cast(type, prefix(name));
+			case 1 -> cast(type, name);
 			case 2 -> castRegistry(type, boat);
 			case 3 -> castRegistry(type, chestBoat);
 			case 4 -> castSupplier(type, (Supplier<Item>) () -> Items.STICK);
