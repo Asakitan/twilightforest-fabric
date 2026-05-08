@@ -50,7 +50,6 @@ import twilightforest.world.components.feature.trollcave.TrollHugeRedMushroomFea
  * dark canopy, anywhere/large_winter trees) are deferred — see AGENTS.md.
  */
 public final class TFFeatures {
-    // ===== Phase 2.5: underground plants + wood roots =====
     public static final TFRegistryObject<Feature<BlockStateConfiguration>> UNDERGROUND_PLANTS =
             register("underground_plants", new UndergroundPlantFeature(BlockStateConfiguration.CODEC));
     public static final TFRegistryObject<Feature<BlockStateConfiguration>> UNDERGROUND_PLANTS_IN_STRUCTURE =
@@ -60,7 +59,6 @@ public final class TFFeatures {
     public static final TFRegistryObject<Feature<RootConfig>> WOOD_ROOTS =
             register("wood_roots", new WoodRootFeature(RootConfig.CODEC));
 
-    // ===== Phase Q1: 16 simple decoration features =====
     public static final TFRegistryObject<Feature<BerryBushConfig>> BERRY_BUSH =
             register("berry_bush", new BerryBushFeature(BerryBushConfig.CODEC));
     public static final TFRegistryObject<Feature<BlockStateConfiguration>> OREBERRY_BUSHES =
@@ -110,7 +108,6 @@ public final class TFFeatures {
     public static final TFRegistryObject<Feature<DiskConfiguration>> MYCELIUM_BLOB =
             register("mycelium_blob", new CheckAbovePatchFeature(DiskConfiguration.CODEC));
 
-    // ===== Phase Q2: medium-impact placement features =====
     public static final TFRegistryObject<Feature<NoneFeatureConfiguration>> MONOLITH =
             register("monolith", new MonolithFeature(NoneFeatureConfiguration.CODEC));
     public static final TFRegistryObject<Feature<TFSmallLakeFeature.Configuration>> SMALL_LAKE =
@@ -136,7 +133,6 @@ public final class TFFeatures {
     public static final TFRegistryObject<Feature<NoneFeatureConfiguration>> GRAVEYARD =
             register("graveyard", new twilightforest.world.components.feature.templates.GraveyardFeature(NoneFeatureConfiguration.CODEC));
 
-    // ===== Phase Q3: mega tree features =====
     public static final TFRegistryObject<Feature<twilightforest.world.components.feature.config.TFTreeFeatureConfig>> MEGA_OAK =
             register("mega_oak", new twilightforest.world.components.feature.trees.MegaOakTreeFeature(twilightforest.world.components.feature.config.TFTreeFeatureConfig.codecTFTreeConfig));
     public static final TFRegistryObject<Feature<twilightforest.world.components.feature.config.TFTreeFeatureConfig>> MEGA_CANOPY =

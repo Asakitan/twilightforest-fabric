@@ -283,7 +283,6 @@ public final class TFSounds {
     public static final SoundEvent MUSIC_TWILIGHT_FOREST = register("music.twilightforest.twilight_forest");
     public static final SoundEvent MUSIC = MUSIC_TWILIGHT_FOREST;
 
-    // ====== Q20 batch: Item-behaviour sounds (used by Q17/Q22/Q23 ports) ======
     public static final SoundEvent BEANSTALK_GROWTH = register("block.twilightforest.beanstalk.grow");
     public static final SoundEvent TWILIGHT_SCEPTER_USE = register("item.twilightforest.twilight_scepter.use");
     public static final SoundEvent TWILIGHT_SCEPTER_HIT = register("item.twilightforest.twilight_scepter.pearl_hit");

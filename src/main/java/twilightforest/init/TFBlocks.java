@@ -182,7 +182,6 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> YELLOW_CASTLE_DOOR = castleDoorBlock("yellow_castle_door", Blocks.YELLOW_STAINED_GLASS_PANE);
     public static final TFRegistryObject<Block> YELLOW_CASTLE_RUNE_BRICK = solidBlock("yellow_castle_rune_brick", Blocks.YELLOW_GLAZED_TERRACOTTA);
 
-    // ====== Q9 batch: previously missing blocks (loot-table refs) ======
     // Jars: client-fallback approximates the lit-light look; full block-entity port deferred.
     // Q33: jars now have BlockEntity / random-tick behaviour — see AmbientJarBlock + MasonJarBlock.
     public static final TFRegistryObject<Block> MASON_JAR = masonJarBlock("mason_jar", Blocks.HONEY_BLOCK);
@@ -193,7 +192,6 @@ public final class TFBlocks {
     // Experiment 115: edible cake-style block.
     public static final TFRegistryObject<Block> EXPERIMENT_115 = experiment115Block("experiment_115");
 
-    // ====== Q10 batch: boss trophies (standing + wall) ======
     // TrophyItem binds each standing trophy to its wall trophy, matching upstream's
     // one-item/two-placement behavior while paired clients supply the official models.
     public static final TFRegistryObject<Block> NAGA_TROPHY = trophyBlock("naga_trophy", twilightforest.enums.BossVariant.NAGA, 5);
@@ -215,7 +213,6 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> QUEST_RAM_TROPHY = trophyBlock("quest_ram_trophy", twilightforest.enums.BossVariant.QUEST_RAM, 1);
     public static final TFRegistryObject<Block> QUEST_RAM_WALL_TROPHY = trophyWallBlock("quest_ram_wall_trophy", twilightforest.enums.BossVariant.QUEST_RAM, QUEST_RAM_TROPHY);
 
-    // ====== Q11 batch: 8 TF wood families × 11 blocks each (sentinels) ======
     // Each family mirrors a vanilla wood family stat-wise; paired-client RP supplies
     // the official TF model. Skipping signs/buttons/pressure_plates/banisters in this
     // batch — those need additional helpers (block-entity wiring for signs, button face
@@ -325,7 +322,6 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> SORTING_LEAVES = leavesBlock("sorting_leaves", Blocks.CHERRY_LEAVES);
     public static final TFRegistryObject<Block> SORTING_SAPLING = saplingBlock("sorting_sapling", Blocks.CHERRY_SAPLING, TFTreeGrowers.SORTING);
 
-    // ====== Q12 batch: banisters + drying racks + wood chests + decoration ======
 
     // -- Banisters (TF custom; vanilla fence-shaped fallback per wood type)
     public static final TFRegistryObject<Block> OAK_BANISTER = banisterBlock("oak_banister", Blocks.OAK_FENCE);
@@ -415,7 +411,6 @@ public final class TFBlocks {
     // Burnt thorns
     public static final TFRegistryObject<Block> BURNT_THORNS = burntThornsBlock("burnt_thorns", Blocks.BLACK_STAINED_GLASS);
 
-    // ====== Q13 batch: hollow logs, miniatures, trapped chests, potted saplings, candles, misc ======
 
     // -- Hollow log variants: 16 wood types × 3 orientations (climbable/horizontal/vertical) = 48 blocks
     // All use pillarBlock with the matching vanilla log fallback to preserve AXIS state.
@@ -569,7 +564,6 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> TRANSFORMATION_BUTTON = buttonBlock("transformation_button", Blocks.JUNGLE_BUTTON, net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE);
     public static final TFRegistryObject<Block> TRANSFORMATION_PRESSURE_PLATE = pressurePlateBlock("transformation_pressure_plate", Blocks.JUNGLE_PRESSURE_PLATE, net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE);
 
-    // ====== Q18 batch: TF wood-family sign block-entities (preserve text) ======
     public static final TFRegistryObject<Block> TWILIGHT_OAK_SIGN = standingSignBlock("twilight_oak_sign", Blocks.OAK_SIGN, net.minecraft.world.level.block.state.properties.WoodType.OAK);
     public static final TFRegistryObject<Block> TWILIGHT_WALL_SIGN = wallSignBlock("twilight_wall_sign", Blocks.OAK_WALL_SIGN, net.minecraft.world.level.block.state.properties.WoodType.OAK);
     public static final TFRegistryObject<Block> TWILIGHT_OAK_HANGING_SIGN = ceilingHangingSignBlock("twilight_oak_hanging_sign", Blocks.OAK_HANGING_SIGN, net.minecraft.world.level.block.state.properties.WoodType.OAK);
@@ -610,7 +604,6 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> SORTING_HANGING_SIGN = ceilingHangingSignBlock("sorting_hanging_sign", Blocks.CHERRY_HANGING_SIGN, net.minecraft.world.level.block.state.properties.WoodType.CHERRY);
     public static final TFRegistryObject<Block> SORTING_WALL_HANGING_SIGN = wallHangingSignBlock("sorting_wall_hanging_sign", Blocks.CHERRY_WALL_HANGING_SIGN, net.minecraft.world.level.block.state.properties.WoodType.CHERRY);
 
-    // ====== Q19 batch: remaining decoration / "ingot block" variants ======
     public static final TFRegistryObject<Block> FIERY_BLOCK = fieryBlock("fiery_block", Blocks.NETHERITE_BLOCK);
     public static final TFRegistryObject<Block> IRONWOOD_BLOCK = solidBlock("ironwood_block", Blocks.GOLD_BLOCK);
     public static final TFRegistryObject<Block> KNIGHTMETAL_BLOCK = knightmetalBlock("knightmetal_block", Blocks.IRON_BLOCK);
@@ -629,7 +622,6 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> SNOW_CLOUD = cloudBlock("snow_cloud", Blocks.WHITE_CONCRETE_POWDER, Biome.Precipitation.SNOW);
     public static final TFRegistryObject<Block> LICH_WALL = solidBlock("lich_wall", Blocks.STONE_BRICK_WALL);
 
-    // ====== Q21 batch: substitution → native paired-client fidelity upgrades ======
 
     // -- Wood-family doors (TF original) — all use vanilla door textures via fallback
     public static final TFRegistryObject<Block> TWILIGHT_OAK_DOOR = doorBlock("twilight_oak_door", Blocks.OAK_DOOR, net.minecraft.world.level.block.state.properties.BlockSetType.OAK);

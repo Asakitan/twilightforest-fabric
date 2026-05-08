@@ -291,7 +291,6 @@ public final class TFItems {
     public static final TFRegistryObject<Item> MAZEBREAKER_PICKAXE = mazebreakerPickItem("mazebreaker_pickaxe", Tiers.DIAMOND, 1.0F, -2.8F,
             Items.DIAMOND_PICKAXE, -1);
 
-    // ====== Q9 batch: boss-tier sentinel items (no behaviour ports yet) ======
     // Snow/Ice queen drops
     public static final TFRegistryObject<Item> ICE_BOMB = iceBombItem("ice_bomb",
             new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(16), Items.SNOWBALL);
@@ -323,7 +322,6 @@ public final class TFItems {
     public static final TFRegistryObject<Item> GIANT_PICKAXE = giantPick("giant_pickaxe", TFToolMaterials.GIANT, 1, -2.8F);
     public static final TFRegistryObject<Item> GIANT_SWORD = giantSword("giant_sword", TFToolMaterials.GIANT, 3, -2.4F);
 
-    // ====== Q9/Q32 batch: Travellers armor — passive worn-effect ports ======
     public static final TFRegistryObject<Item> TRAVELLERS_GOGGLES = travellersGogglesItem("travellers_goggles", TravellersArmorItem.gogglesProperties(new Item.Properties().rarity(Rarity.COMMON)));
     public static final TFRegistryObject<Item> TRAVELLERS_VEST = travellersArmorItem("travellers_vest", ArmorItem.Type.CHESTPLATE, TravellersArmorItem.chestProperties(new Item.Properties().rarity(Rarity.COMMON)), 4, 12, false);
     public static final TFRegistryObject<Item> TRAVELLERS_GLOVES = travellersArmorItem("travellers_gloves", ArmorItem.Type.CHESTPLATE, TravellersArmorItem.glovesProperties(new Item.Properties().rarity(Rarity.COMMON)), 4, 12, false);
@@ -331,13 +329,11 @@ public final class TFItems {
     public static final TFRegistryObject<Item> TRAVELLERS_BELT = travellersArmorItem("travellers_belt", ArmorItem.Type.LEGGINGS, TravellersArmorBeltItem.beltProperties(new Item.Properties().rarity(Rarity.COMMON)), 4, 12, true);
     public static final TFRegistryObject<Item> TRAVELLERS_BOOTS = travellersArmorItem("travellers_boots", ArmorItem.Type.BOOTS, TravellersArmorItem.bootsProperties(new Item.Properties().rarity(Rarity.COMMON)), 4, 12, false);
 
-    // ====== Q9/Q32 batch: Magic painting + misc ======
     public static final TFRegistryObject<Item> MAGIC_PAINTING = magicPaintingItem("magic_painting",
             new Item.Properties(), Items.PAINTING);
     public static final TFRegistryObject<Item> RAW_FORTIFICATION_FRUIT = tfItem("raw_fortification_fruit",
             new Item.Properties(), Items.SWEET_BERRIES);
 
-    // ====== Q10 batch: boss banner pattern items ======
     public static final TFRegistryObject<Item> NAGA_BANNER_PATTERN = bannerPatternItem("naga_banner_pattern",
             CustomTagGenerator.BannerPatternTagGenerator.NAGA_BANNER_PATTERN);
     public static final TFRegistryObject<Item> LICH_BANNER_PATTERN = bannerPatternItem("lich_banner_pattern",
@@ -357,12 +353,10 @@ public final class TFItems {
     public static final TFRegistryObject<Item> QUEST_RAM_BANNER_PATTERN = bannerPatternItem("quest_ram_banner_pattern",
             CustomTagGenerator.BannerPatternTagGenerator.QUEST_RAM_BANNER_PATTERN);
 
-    // ====== Q10 batch: filled map variants (sentinels — drawing logic deferred) ======
     public static final TFRegistryObject<Item> FILLED_MAGIC_MAP = filledMagicMapItem("filled_magic_map", new Item.Properties());
     public static final TFRegistryObject<Item> FILLED_MAZE_MAP = filledMazeMapItem("filled_maze_map", false, new Item.Properties());
     public static final TFRegistryObject<Item> FILLED_ORE_MAP = filledMazeMapItem("filled_ore_map", true, new Item.Properties());
 
-    // ====== Q14 batch: TF wood boats + chest_boats ======
     public static final TFRegistryObject<Item> TWILIGHT_OAK_BOAT = tfItem("twilight_oak_boat", new Item.Properties().stacksTo(1), Items.OAK_BOAT);
     public static final TFRegistryObject<Item> TWILIGHT_OAK_CHEST_BOAT = tfItem("twilight_oak_chest_boat", new Item.Properties().stacksTo(1), Items.OAK_CHEST_BOAT);
     public static final TFRegistryObject<Item> CANOPY_BOAT = tfItem("canopy_boat", new Item.Properties().stacksTo(1), Items.DARK_OAK_BOAT);
@@ -380,7 +374,6 @@ public final class TFItems {
     public static final TFRegistryObject<Item> SORTING_BOAT = tfItem("sorting_boat", new Item.Properties().stacksTo(1), Items.CHERRY_BOAT);
     public static final TFRegistryObject<Item> SORTING_CHEST_BOAT = tfItem("sorting_chest_boat", new Item.Properties().stacksTo(1), Items.CHERRY_CHEST_BOAT);
 
-    // ====== Q14 batch: berries (food) ======
     public static final TFRegistryObject<Item> BLACKBERRY = stackableBerryItem("blackberry");
     public static final TFRegistryObject<Item> BLUEBERRY = stackableBerryItem("blueberry");
     public static final TFRegistryObject<Item> RASPBERRY = stackableBerryItem("raspberry");
@@ -400,7 +393,6 @@ public final class TFItems {
             new StackableEffectInstance(MobEffects.DIG_SLOWDOWN, 10, 0.75F));
     public static final TFRegistryObject<Item> BERRY_MEDLEY = tfItem("berry_medley", food(6, 0.5F, false).stacksTo(16), Items.BREAD);
 
-    // ====== Q14 batch: jerky variants ======
     public static final TFRegistryObject<Item> BEEF_JERKY = tfItem("beef_jerky", food(6, 0.6F, false), Items.COOKED_BEEF);
     public static final TFRegistryObject<Item> PORK_JERKY = tfItem("pork_jerky", food(6, 0.6F, false), Items.COOKED_PORKCHOP);
     public static final TFRegistryObject<Item> CHICKEN_JERKY = tfItem("chicken_jerky", food(4, 0.5F, false), Items.COOKED_CHICKEN);
@@ -418,23 +410,19 @@ public final class TFItems {
             TFDamageTypes.STALE_SANDWICH, Tiers.WOOD, new Item.Properties().stacksTo(1).attributes(SwordItem.createAttributes(Tiers.WOOD, 3, -2.4F).withTooltip(false)));
     public static final TFRegistryObject<Item> MOSS_SOUP = tfItem("moss_soup", food(8, 0.6F, false).stacksTo(1), Items.MUSHROOM_STEW);
 
-    // ====== Q14 batch: Arctic armor (yeti fur set) ======
     public static final TFRegistryObject<Item> ARCTIC_HELMET = arcticArmor("arctic_helmet", ArmorMaterials.LEATHER, ArmorItem.Type.HELMET, 12, Rarity.UNCOMMON);
     public static final TFRegistryObject<Item> ARCTIC_CHESTPLATE = arcticArmor("arctic_chestplate", ArmorMaterials.LEATHER, ArmorItem.Type.CHESTPLATE, 12, Rarity.UNCOMMON);
     public static final TFRegistryObject<Item> ARCTIC_LEGGINGS = arcticArmor("arctic_leggings", ArmorMaterials.LEATHER, ArmorItem.Type.LEGGINGS, 12, Rarity.UNCOMMON);
     public static final TFRegistryObject<Item> ARCTIC_BOOTS = arcticArmor("arctic_boots", ArmorMaterials.LEATHER, ArmorItem.Type.BOOTS, 12, Rarity.UNCOMMON);
 
-    // ====== Q14 batch: Yeti armor (alpha yeti fur set) ======
     public static final TFRegistryObject<Item> YETI_HELMET = yetiArmor("yeti_helmet", ArmorMaterials.IRON, ArmorItem.Type.HELMET, 25, Rarity.RARE);
     public static final TFRegistryObject<Item> YETI_CHESTPLATE = yetiArmor("yeti_chestplate", ArmorMaterials.IRON, ArmorItem.Type.CHESTPLATE, 25, Rarity.RARE);
     public static final TFRegistryObject<Item> YETI_LEGGINGS = yetiArmor("yeti_leggings", ArmorMaterials.IRON, ArmorItem.Type.LEGGINGS, 25, Rarity.RARE);
     public static final TFRegistryObject<Item> YETI_BOOTS = yetiArmor("yeti_boots", ArmorMaterials.IRON, ArmorItem.Type.BOOTS, 25, Rarity.RARE);
 
-    // ====== Q14 batch: Phantom armor (Knight Phantom drop) ======
     public static final TFRegistryObject<Item> PHANTOM_HELMET = phantomArmor("phantom_helmet", ArmorMaterials.IRON, ArmorItem.Type.HELMET, 30, Rarity.RARE);
     public static final TFRegistryObject<Item> PHANTOM_CHESTPLATE = phantomArmor("phantom_chestplate", ArmorMaterials.IRON, ArmorItem.Type.CHESTPLATE, 30, Rarity.RARE);
 
-    // ====== Q14 batch: Music discs ======
     public static final TFRegistryObject<Item> MUSIC_DISC_FINDINGS = tfItem("music_disc_findings", new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(TFJukeboxSongs.FINDINGS), Items.MUSIC_DISC_13);
     public static final TFRegistryObject<Item> MUSIC_DISC_HOME = tfItem("music_disc_home", new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(TFJukeboxSongs.HOME), Items.MUSIC_DISC_CAT);
     public static final TFRegistryObject<Item> MUSIC_DISC_MAKER = tfItem("music_disc_maker", new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(TFJukeboxSongs.MAKER), Items.MUSIC_DISC_BLOCKS);
@@ -445,7 +433,6 @@ public final class TFItems {
     public static final TFRegistryObject<Item> MUSIC_DISC_THREAD = tfItem("music_disc_thread", new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(TFJukeboxSongs.THREAD), Items.MUSIC_DISC_STAL);
     public static final TFRegistryObject<Item> MUSIC_DISC_WAYFARER = tfItem("music_disc_wayfarer", new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(TFJukeboxSongs.WAYFARER), Items.MUSIC_DISC_STRAD);
 
-    // ====== Q14 batch: misc TF items ======
         public static final TFRegistryObject<Item> CUBE_OF_ANNIHILATION = cubeOfAnnihilationItem("cube_of_annihilation", new Item.Properties().rarity(Rarity.RARE).stacksTo(1).durability(99));
     public static final TFRegistryObject<Item> CUBE_TALISMAN = tfItem("cube_talisman", new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1), Items.AMETHYST_SHARD);
     public static final TFRegistryObject<Item> CROWN_SPLINTER = tfItem("crown_splinter", new Item.Properties().rarity(Rarity.UNCOMMON), Items.GOLD_NUGGET);
@@ -461,7 +448,6 @@ public final class TFItems {
     public static final TFRegistryObject<Item> TANNED_LEATHER = tfItem("tanned_leather", new Item.Properties(), Items.LEATHER);
     public static final TFRegistryObject<Item> TREATED_LEATHER = tfItem("treated_leather", rarity(Rarity.UNCOMMON), Items.LEATHER);
 
-    // ====== Q14.5 batch: hollow log items (one per wood; block has 3 orientations) ======
     public static final TFRegistryObject<Item> HOLLOW_OAK_LOG_ITEM = hollowLogItem("hollow_oak_log", TFBlocks.HOLLOW_OAK_LOG_HORIZONTAL, TFBlocks.HOLLOW_OAK_LOG_VERTICAL, TFBlocks.HOLLOW_OAK_LOG_CLIMBABLE);
     public static final TFRegistryObject<Item> HOLLOW_SPRUCE_LOG_ITEM = hollowLogItem("hollow_spruce_log", TFBlocks.HOLLOW_SPRUCE_LOG_HORIZONTAL, TFBlocks.HOLLOW_SPRUCE_LOG_VERTICAL, TFBlocks.HOLLOW_SPRUCE_LOG_CLIMBABLE);
     public static final TFRegistryObject<Item> HOLLOW_BIRCH_LOG_ITEM = hollowLogItem("hollow_birch_log", TFBlocks.HOLLOW_BIRCH_LOG_HORIZONTAL, TFBlocks.HOLLOW_BIRCH_LOG_VERTICAL, TFBlocks.HOLLOW_BIRCH_LOG_CLIMBABLE);
@@ -481,7 +467,6 @@ public final class TFItems {
     public static final TFRegistryObject<Item> HOLLOW_SORTING_LOG_ITEM = hollowLogItem("hollow_sorting_log", TFBlocks.HOLLOW_SORTING_LOG_HORIZONTAL, TFBlocks.HOLLOW_SORTING_LOG_VERTICAL, TFBlocks.HOLLOW_SORTING_LOG_CLIMBABLE);
     public static final TFRegistryObject<Item> HOLLOW_VANGROVE_LOG_ITEM = hollowLogItem("hollow_vangrove_log", TFBlocks.HOLLOW_VANGROVE_LOG_HORIZONTAL, TFBlocks.HOLLOW_VANGROVE_LOG_VERTICAL, TFBlocks.HOLLOW_VANGROVE_LOG_CLIMBABLE);
 
-    // ====== Q14.5 batch: TF wood sign + hanging sign items ======
     public static final TFRegistryObject<Item> TWILIGHT_OAK_SIGN_ITEM = signItem("twilight_oak_sign", TFBlocks.TWILIGHT_OAK_SIGN, TFBlocks.TWILIGHT_WALL_SIGN);
     public static final TFRegistryObject<Item> TWILIGHT_OAK_HANGING_SIGN_ITEM = hangingSignItem("twilight_oak_hanging_sign", TFBlocks.TWILIGHT_OAK_HANGING_SIGN, TFBlocks.TWILIGHT_OAK_WALL_HANGING_SIGN);
     public static final TFRegistryObject<Item> CANOPY_SIGN_ITEM = signItem("canopy_sign", TFBlocks.CANOPY_SIGN, TFBlocks.CANOPY_WALL_SIGN);
