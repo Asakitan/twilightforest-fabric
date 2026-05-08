@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import twilightforest.TwilightForestMod;
 
 import java.util.ArrayList;
@@ -77,10 +76,4 @@ public abstract class CodecResourceReloadListener<T> extends SimpleJsonResourceR
 
 	protected abstract void forLocation(ResourceManager manager, ResourceLocation location, T element);
 
-	/**
-	 * Intentionally not subscribed, it is on the subclasses to opt into subscription
-	 */
-	public void registerListener(AddReloadListenerEvent event) {
-		event.addListener(this);
-	}
 }

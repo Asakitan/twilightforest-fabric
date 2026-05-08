@@ -19,6 +19,7 @@ def minecraftVersion = '1.21.1'
 def fabricLoaderVersion = '0.18.1'
 def fabricApiVersion = '0.116.4+1.21.1'
 def portingLibVersion = '3.1.0-beta.85+1.21.1'
+def localClientModsDir = file('E:/MC/.minecraft/versions/Lets go cobblemon master [5.0 Asaki modified]/mods')
 
 java {
     toolchain {
@@ -40,6 +41,8 @@ dependencies {
     include fabricApi.module('fabric-object-builder-api-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-api-lookup-api-v1', fabricApiVersion)
     include fabricApi.module('fabric-api-lookup-api-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-recipe-api-v1', fabricApiVersion)
+    include fabricApi.module('fabric-recipe-api-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-transfer-api-v1', fabricApiVersion)
     include fabricApi.module('fabric-transfer-api-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-events-interaction-v0', fabricApiVersion)
@@ -58,6 +61,8 @@ dependencies {
     // fabric-rendering-v1 itself is `environment: client` so it only loads on Fabric clients.
     modImplementation fabricApi.module('fabric-rendering-v1', fabricApiVersion)
     include fabricApi.module('fabric-rendering-v1', fabricApiVersion)
+    modImplementation fabricApi.module('fabric-blockrenderlayer-v1', fabricApiVersion)
+    include fabricApi.module('fabric-blockrenderlayer-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-renderer-api-v1', fabricApiVersion)
     include fabricApi.module('fabric-renderer-api-v1', fabricApiVersion)
     modImplementation fabricApi.module('fabric-resource-loader-v0', fabricApiVersion)
@@ -83,6 +88,7 @@ dependencies {
     include fabricApi.module('fabric-model-loading-api-v1', fabricApiVersion)
     compileOnly 'org.jetbrains:annotations:24.1.0'
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly fileTree(dir: localClientModsDir, include: ['*emi*.jar', '*jei*.jar', '*Jade*.jar', '*trinkets*.jar'])
     // Manningham Mills (shedaniel's fork) — bundled inside aether-1.21.1-1.5.11-fabric.jar at
     // META-INF/jars/mm-2.4.1.jar. We use ClassTinkerers.enumBuilder to graft custom
     // BiomeSpecialEffects$GrassColorModifier values for Twilight Forest before MC class init.

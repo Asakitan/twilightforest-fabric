@@ -1,7 +1,5 @@
 package com.codex.twilight;
 
-import net.minecraft.server.level.ServerPlayer;
-
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -62,6 +60,8 @@ public final class CodexTwilight implements ModInitializer {
             twilightforest.world.components.structures.util.TemplateMarkerHandlerList.CODEC);
         DynamicRegistries.register(TFRegistries.Keys.WOOD_PALETTES,
             twilightforest.util.WoodPalette.CODEC);
+        DynamicRegistries.registerSynced(TFRegistries.Keys.TRAVELLERS_MODIFIERS,
+            twilightforest.item.travellers_gear.modifiers.TravellersModifier.CODEC);
         // TINY_BIRD_VARIANT and DWARF_RABBIT_VARIANT are referenced by TFDataSerializers via
         // ByteBufCodecs.holderRegistry(...) in entity SynchedEntityData. The registry must therefore
         // exist on the client too — register them as SYNCED so fabric-registry-sync ships the registry
@@ -73,6 +73,8 @@ public final class CodexTwilight implements ModInitializer {
         TFDataSerializers.bootstrap();
         twilightforest.config.TFConfig.load(net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir());
         twilightforest.config.ConfigSetup.loadConfigs();
+        twilightforest.util.TFRemapper.addRegistryAliases();
+        twilightforest.network.ModUpdateURLInterceptor.bootstrap();
         twilightforest.init.TFGameRules.register();
         twilightforest.init.custom.ChunkBlanketProcessors.bootstrapTypes();
         twilightforest.init.custom.TemplateMarkerHandlers.bootstrapTypes();
@@ -89,6 +91,13 @@ public final class CodexTwilight implements ModInitializer {
         twilightforest.init.custom.ItemDisplays.bootstrap();
         twilightforest.init.TFMenuTypes.bootstrap();
         twilightforest.events.CapabilityEvents.bootstrap();
+        twilightforest.events.CharmEvents.bootstrap();
+        twilightforest.events.HostileMountEvents.bootstrap();
+        twilightforest.events.MiscEvents.bootstrap();
+        twilightforest.events.ProgressionEvents.bootstrap();
+        twilightforest.events.TravellersGearEvents.bootstrap();
+        twilightforest.events.ToolEvents.bootstrap();
+        twilightforest.events.EntityEvents.bootstrap();
         twilightforest.init.TFAdvancements.bootstrap();
         twilightforest.init.TFStats.bootstrap();
         twilightforest.init.TFItemSubPredicates.bootstrap();
@@ -102,6 +111,7 @@ public final class CodexTwilight implements ModInitializer {
         TFSounds.bootstrap();
         twilightforest.init.TFItems.bootstrap();
         twilightforest.init.TFCreativeTabs.bootstrap();
+        twilightforest.events.RegistrationEvents.bootstrap();
         twilightforest.init.TFPOITypes.bootstrap();
         twilightforest.init.TFBlockEntities.bootstrap();
         twilightforest.dispenser.TFDispenserBehaviors.init();
@@ -126,42 +136,6 @@ public final class CodexTwilight implements ModInitializer {
                 twilightforest.world.components.layer.BiomeDensitySource.CODEC);
         // ===== END LANE_A_BOOTSTRAP =====
 
-        // ===== Q22 charm event hooks =====
-        // CharmOfLife: revive player on death; CharmOfKeeping: preserve inventory.
-        // Registered globally; charm presence is checked per death.
-        net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents.ALLOW_DEATH.register(
-                (entity, source, amount) -> {
-                    if (source.is(twilightforest.init.TFDamageTypes.OMINOUS_FIRE)) {
-                        if (entity instanceof ServerPlayer player) {
-                            net.minecraft.world.entity.monster.Zombie zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(player.level());
-                            if (zombie != null) {
-                                twilightforest.init.TFDataAttachments.set(zombie,
-                                        twilightforest.init.TFDataAttachments.ZOMBIFIED_PLAYER,
-                                        player.getGameProfile());
-                                zombie.setCustomName(player.getName());
-                                zombie.copyPosition(player);
-                                zombie.setCanPickUpLoot(true);
-                                zombie.setBaby(false);
-                                zombie.finalizeSpawn(player.serverLevel(),
-                                        player.level().getCurrentDifficultyAt(player.blockPosition()),
-                                        net.minecraft.world.entity.MobSpawnType.CONVERSION,
-                                        null);
-                                player.level().addFreshEntity(zombie);
-                            }
-                        } else {
-                            twilightforest.util.datamaps.EntityTransformation transformation =
-                                    twilightforest.init.TFDataMaps.getOminousFire(entity.getType());
-                            if (transformation != null && entity instanceof net.minecraft.world.entity.LivingEntity living) {
-                                twilightforest.util.entities.EntityUtil.convertEntity(living, transformation.result());
-                            }
-                        }
-                    }
-                    if (!(entity instanceof net.minecraft.world.entity.player.Player player)) return true;
-                    net.minecraft.world.item.ItemStack charm = twilightforest.item.CharmOfLifeItem.findCharm(player);
-                    if (charm.isEmpty()) return true;
-                    return !twilightforest.item.CharmOfLifeItem.tryRevive(player, source, charm);
-                });
-
         // ===== LANE_B_BOOTSTRAP (Copilot — entities + paired-client renderers) =====
         // Add SpawnPlacements.register() calls and entity wiring here.
         // Owned per AGENTS.md. Do NOT modify if you are Lane A.
@@ -177,110 +151,6 @@ public final class CodexTwilight implements ModInitializer {
                 twilightforest.command.TFCommand::register);
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerLifecycleHooks.setCurrentServer(null));
 
-        // Travellers gear extra tick effects run through the component/modifier model.
-        net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (net.minecraft.server.level.ServerPlayer player : server.getPlayerList().getPlayers()) {
-                twilightforest.item.travellers_gear.TravellersGearLogic.travellersWingsSidestepCooldownSound(player);
-                twilightforest.item.travellers_gear.TravellersGearLogic.determineWingState(player);
-
-                // Per-tick: stealth (invisibility-lite), gradual glide clamp.
-                if (twilightforest.init.custom.TravellersModifiersManager.isStealthActive(player)
-                        && player.isCrouching()) {
-                    player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                            net.minecraft.world.effect.MobEffects.INVISIBILITY, 40, 0, true, false, true));
-                }
-                if (twilightforest.init.custom.TravellersModifiersManager.isGradualGlideActive(player)
-                        && !player.onGround() && !player.isInWater() && !player.onClimbable()
-                        && !player.isFallFlying() && player.getDeltaMovement().y < -0.4D) {
-                    net.minecraft.world.phys.Vec3 m = player.getDeltaMovement();
-                    player.setDeltaMovement(m.x, -0.4D, m.z);
-                    player.fallDistance = 0.0F;
-                }
-                if (twilightforest.init.custom.TravellersModifiersManager.isStraightAheadActive(player)
-                        && player.isSprinting() && player.onGround()) {
-                    player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                            net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 40, 0, true, false, true));
-                }
-
-                // water_walk — frost-walker-style: turn water under the wearer's feet to FROSTED_ICE.
-                // Throttled to every 4 ticks (~5 Hz) to keep block-state writes off the hot path.
-                if (server.getTickCount() % 4 == 0
-                        && twilightforest.init.custom.TravellersModifiersManager.isWaterWalkActive(player)
-                        && !player.isCrouching()) {
-                    net.minecraft.core.BlockPos under = player.blockPosition().below();
-                    int radius = 1;
-                    net.minecraft.world.level.block.state.BlockState frosted = net.minecraft.world.level.block.Blocks.FROSTED_ICE.defaultBlockState();
-                    net.minecraft.core.BlockPos.MutableBlockPos cursor = new net.minecraft.core.BlockPos.MutableBlockPos();
-                    for (int dx = -radius; dx <= radius; dx++) {
-                        for (int dz = -radius; dz <= radius; dz++) {
-                            cursor.set(under.getX() + dx, under.getY(), under.getZ() + dz);
-                            net.minecraft.world.level.block.state.BlockState here = player.serverLevel().getBlockState(cursor);
-                            if (here.getFluidState().is(net.minecraft.tags.FluidTags.WATER)
-                                    && here.getBlock() == net.minecraft.world.level.block.Blocks.WATER
-                                    && here.getValue(net.minecraft.world.level.block.LiquidBlock.LEVEL) == 0
-                                    && frosted.canSurvive(player.serverLevel(), cursor)
-                                    && player.serverLevel().isUnobstructed(frosted, cursor, net.minecraft.world.phys.shapes.CollisionContext.empty())) {
-                                player.serverLevel().setBlockAndUpdate(cursor, frosted);
-                                player.serverLevel().scheduleTick(cursor.immutable(),
-                                        net.minecraft.world.level.block.Blocks.FROSTED_ICE,
-                                        Math.max(60, player.getRandom().nextInt(40) + 60));
-                            }
-                        }
-                    }
-                }
-
-                // Every 1 second: water-aware passives.
-                if (server.getTickCount() % 20 == 0) {
-                    if (twilightforest.init.custom.TravellersModifiersManager.isRedThreadVisionActive(player)) {
-                        net.minecraft.world.phys.Vec3 here = player.position();
-                        net.minecraft.world.phys.AABB scan = new net.minecraft.world.phys.AABB(here, here).inflate(16.0D);
-                        for (net.minecraft.world.entity.LivingEntity target : player.serverLevel().getEntitiesOfClass(
-                                net.minecraft.world.entity.LivingEntity.class, scan,
-                                e -> e != player && e.isAlive())) {
-                            target.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                                    net.minecraft.world.effect.MobEffects.GLOWING, 60, 0, true, false, false));
-                        }
-                    }
-                    if (twilightforest.init.custom.TravellersModifiersManager.isSwiftSwimActive(player)
-                            && player.isInWater()) {
-                        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                                net.minecraft.world.effect.MobEffects.DOLPHINS_GRACE, 60, 0, true, false, true));
-                    }
-                    if (twilightforest.init.custom.TravellersModifiersManager.isUnrestrainedActive(player)
-                            && player.isInWater()) {
-                        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                                net.minecraft.world.effect.MobEffects.WATER_BREATHING, 60, 0, true, false, true));
-                    }
-                }
-
-                // Every 5 seconds: auto-repair worn TF travellers gear.
-                if (server.getTickCount() % 100 == 0
-                        && twilightforest.init.custom.TravellersModifiersManager.isAutoRepairActive(player)) {
-                    for (net.minecraft.world.item.ItemStack worn : player.getArmorSlots()) {
-                        if (worn.isDamaged()
-                                && (worn.is(twilightforest.init.TFItems.TRAVELLERS_GOGGLES.get())
-                                || worn.is(twilightforest.init.TFItems.TRAVELLERS_VEST.get())
-                                || worn.is(twilightforest.init.TFItems.TRAVELLERS_GLOVES.get())
-                                || worn.is(twilightforest.init.TFItems.TRAVELLERS_WINGS.get())
-                                || worn.is(twilightforest.init.TFItems.TRAVELLERS_BELT.get())
-                                || worn.is(twilightforest.init.TFItems.TRAVELLERS_BOOTS.get()))) {
-                            worn.setDamageValue(Math.max(0, worn.getDamageValue() - 1));
-                        }
-                    }
-                }
-            }
-        });
-
-        // Q36: efficient_eater — bonus hunger on food consumption while wearing belt.
-        net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register((player, level, hand) -> {
-            net.minecraft.world.item.ItemStack stack = player.getItemInHand(hand);
-            if (!stack.has(net.minecraft.core.component.DataComponents.FOOD)) return net.minecraft.world.InteractionResultHolder.pass(stack);
-            if (level.isClientSide()) return net.minecraft.world.InteractionResultHolder.pass(stack);
-            if (twilightforest.init.custom.TravellersModifiersManager.isEfficientEaterActive(player)) {
-                player.getFoodData().eat(1, 0.4F);
-            }
-            return net.minecraft.world.InteractionResultHolder.pass(stack);
-        });
         System.out.println("[CodexTwilight] initialized (v0.1.0 scaffold)");
     }
 }

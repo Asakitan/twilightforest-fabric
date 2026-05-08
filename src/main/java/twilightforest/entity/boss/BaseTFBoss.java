@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
@@ -101,6 +102,17 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
         this.getBossBar().setProgress(0.0F);
         if (this.shouldSpawnLoot() && this.level() instanceof ServerLevel server) {
             this.postmortem(server, source);
+        }
+    }
+
+    @Override
+    public void lavaHurt() {
+        if (!this.fireImmune()) {
+            this.igniteForSeconds(5.0F);
+            if (this.hurt(this.damageSources().lava(), 4.0F)) {
+                this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + this.getRandom().nextFloat() * 0.4F);
+                EntityUtil.killLavaAround(this);
+            }
         }
     }
 
@@ -263,20 +275,12 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
     public boolean isOutsideHomeRange(net.minecraft.world.phys.Vec3 pos) {
         if (this.getRestrictionPoint() == null) return false;
         net.minecraft.core.BlockPos point = this.getRestrictionPoint().pos();
-        int radius = this.getHomeRadiusOrDefault();
+        int radius = this.getHomeRadius();
         return point.distToCenterSqr(pos) > (double) (radius * radius);
     }
 
     public int getHomeRadius() {
         return 20;
-    }
-
-    private int getHomeRadiusOrDefault() {
-        try {
-            return (int) this.getClass().getMethod("getHomeRadius").invoke(this);
-        } catch (Throwable ignored) {
-            return 20;
-        }
     }
 
     protected void addRestrictionGoals(net.minecraft.world.entity.PathfinderMob mob, net.minecraft.world.entity.ai.goal.GoalSelector selector) {

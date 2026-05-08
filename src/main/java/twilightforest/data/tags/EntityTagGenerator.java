@@ -10,6 +10,7 @@ public final class EntityTagGenerator {
 	public static final TagKey<EntityType<?>> BOSSES = create("bosses");
 	public static final TagKey<EntityType<?>> LICH_POPPABLES = create("lich_poppables");
 	public static final TagKey<EntityType<?>> LIFEDRAIN_DROPS_NO_FLESH = create("lifedrain_drops_no_flesh");
+	public static final TagKey<EntityType<?>> MULTIPLAYER_INCLUSIVE_ENTITIES = create("multiplayer_inclusive_entities");
 	public static final TagKey<EntityType<?>> RIDES_OBSTRUCT_SNATCHING = create("rides_obstruct_snatching");
 	public static final TagKey<EntityType<?>> SORTABLE_ENTITIES = create("sortable_entities");
 	/** P5.e — projectile entity types the Lich deflects (phase 2 onwards). */

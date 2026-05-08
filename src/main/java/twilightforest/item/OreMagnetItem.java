@@ -30,6 +30,9 @@ import java.util.stream.Collectors;
 
 public class OreMagnetItem extends CodexItem {
 
+    public static final HashMap<Block, Block> MAGNET_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
+    public static final HashMap<Block, Block> TREE_ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
+
     private static final int FIRING_TIME = 10;
     private static final float WIGGLE = 10.0F;
 
@@ -136,10 +139,10 @@ public class OreMagnetItem extends CodexItem {
                 if (isReplaceable(searchState)) {
                     basePos = coord;
                 }
-            } else if (foundPos == null && !searchState.isAir() && isOre(searchState.getBlock())
+            } else if (foundPos == null && !searchState.isAir() && isOre(searchState.getBlock(), sourceIsMineCore)
                     && level.getBlockEntity(coord) == null) {
                 attractedOreBlock = searchState;
-                replacementBlock = ORE_TO_BLOCK_REPLACEMENTS
+                replacementBlock = replacements(sourceIsMineCore)
                         .getOrDefault(attractedOreBlock.getBlock(), Blocks.STONE)
                         .defaultBlockState();
                 foundPos = coord;
@@ -177,8 +180,12 @@ public class OreMagnetItem extends CodexItem {
         return state.is(BlockTagGenerator.ORE_MAGNET_SAFE_REPLACE_BLOCK);
     }
 
-    private static boolean isOre(Block ore) {
-        return ORE_TO_BLOCK_REPLACEMENTS.containsKey(ore);
+    private static boolean isOre(Block ore, boolean sourceIsMineCore) {
+        return replacements(sourceIsMineCore).containsKey(ore);
+    }
+
+    private static Map<Block, Block> replacements(boolean sourceIsMineCore) {
+        return sourceIsMineCore ? TREE_ORE_TO_BLOCK_REPLACEMENTS : MAGNET_ORE_TO_BLOCK_REPLACEMENTS;
     }
 
     private static void findVein(Level level, BlockPos here, BlockState oreState, Set<BlockPos> veinBlocks) {
@@ -192,10 +199,15 @@ public class OreMagnetItem extends CodexItem {
     }
 
     private static boolean oreCacheNeedsBuild = true;
-    private static final HashMap<Block, Block> ORE_TO_BLOCK_REPLACEMENTS = new HashMap<>();
 
-    private static void initOre2BlockMap() {
-        if (!oreCacheNeedsBuild) return;
+    public static void markOreCacheDirty() {
+        oreCacheNeedsBuild = true;
+    }
+
+    public static void refreshOreCacheFromTags() {
+        MAGNET_ORE_TO_BLOCK_REPLACEMENTS.clear();
+        TREE_ORE_TO_BLOCK_REPLACEMENTS.clear();
+
         List<TagKey<Block>> tags = BuiltInRegistries.BLOCK.getTagNames()
                 .filter(t -> t.location().getNamespace().equals("c"))
                 .collect(Collectors.toList());
@@ -205,15 +217,34 @@ public class OreMagnetItem extends CodexItem {
             String ground = path.substring("ores_in_ground/".length());
             TagKey<Block> groundTag = TagKey.create(Registries.BLOCK,
                     ResourceLocation.fromNamespaceAndPath("c", "ore_bearing_ground/" + ground));
-            if (tags.stream().anyMatch(t -> t.location().equals(groundTag.location()))) {
-                BuiltInRegistries.BLOCK.getTag(groundTag).ifPresent(groundHolders ->
-                        BuiltInRegistries.BLOCK.getTag(tag).ifPresent(oreHolders ->
-                                groundHolders.forEach(groundHolder ->
-                                        oreHolders.forEach(oreHolder ->
-                                                ORE_TO_BLOCK_REPLACEMENTS.put(
-                                                        oreHolder.value(), groundHolder.value())))));
-            }
+            if (tags.stream().noneMatch(t -> t.location().equals(groundTag.location()))) continue;
+
+            BuiltInRegistries.BLOCK.getTag(groundTag).ifPresent(groundHolders ->
+                    BuiltInRegistries.BLOCK.getTag(tag).ifPresent(oreHolders ->
+                            groundHolders.forEach(groundHolder ->
+                                    oreHolders.forEach(oreHolder -> {
+                                        Block ore = oreHolder.value();
+                                        Block groundBlock = groundHolder.value();
+                                        if (!ore.defaultBlockState().is(BlockTagGenerator.ORE_MAGNET_IGNORE)) {
+                                            MAGNET_ORE_TO_BLOCK_REPLACEMENTS.put(ore, groundBlock);
+                                        }
+                                        if (!ore.defaultBlockState().is(BlockTagGenerator.MINING_CORE_EXCLUDED)) {
+                                            TREE_ORE_TO_BLOCK_REPLACEMENTS.put(ore, groundBlock);
+                                        }
+                                    }))));
+        }
+
+        if (!Blocks.ANCIENT_DEBRIS.defaultBlockState().is(BlockTagGenerator.ORE_MAGNET_IGNORE) && !MAGNET_ORE_TO_BLOCK_REPLACEMENTS.containsKey(Blocks.ANCIENT_DEBRIS)) {
+            MAGNET_ORE_TO_BLOCK_REPLACEMENTS.put(Blocks.ANCIENT_DEBRIS, Blocks.NETHERRACK);
+        }
+        if (!Blocks.ANCIENT_DEBRIS.defaultBlockState().is(BlockTagGenerator.MINING_CORE_EXCLUDED) && !TREE_ORE_TO_BLOCK_REPLACEMENTS.containsKey(Blocks.ANCIENT_DEBRIS)) {
+            TREE_ORE_TO_BLOCK_REPLACEMENTS.put(Blocks.ANCIENT_DEBRIS, Blocks.NETHERRACK);
         }
         oreCacheNeedsBuild = false;
+    }
+
+    private static void initOre2BlockMap() {
+        if (!oreCacheNeedsBuild) return;
+        refreshOreCacheFromTags();
     }
 }

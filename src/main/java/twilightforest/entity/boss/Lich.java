@@ -2,6 +2,7 @@ package twilightforest.entity.boss;
 
 import net.minecraft.server.level.ServerPlayer;
 
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.CompoundTag;
@@ -70,8 +71,10 @@ import twilightforest.init.TFAttributes;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFEntities;
 import twilightforest.init.TFItems;
+import twilightforest.init.TFParticleType;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStructures;
+import twilightforest.util.entities.EntityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,9 +87,12 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     public static final int INITIAL_MINIONS_TO_SUMMON = 9;
     public static final int MAX_ACTIVE_MINIONS = 3;
     public static final int MAX_HEALTH = 100;
-    public static final int PARTICLE_BURST_COOLDOWN = 10;
+    public static final int PARTICLE_BURST_COOLDOWN = 23;
     public static final int DEATH_ANIMATION_POINT_A = PARTICLE_BURST_COOLDOWN * 5;
     public static final int DEATH_ANIMATION_POINT_B = DEATH_ANIMATION_POINT_A + 16;
+    public static final int DEATH_ANIMATION_POINT_C = DEATH_ANIMATION_POINT_B + 32;
+    public static final int DEATH_ANIMATION_DURATION = DEATH_ANIMATION_POINT_C + 132;
+    private static final ItemParticleOption BONE_PARTICLE = new ItemParticleOption(ParticleTypes.ITEM, Items.BONE.getDefaultInstance());
     private static final EntityDataAccessor<Optional<UUID>> MASTER_LICH = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<Integer> SHIELD_STRENGTH = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MINIONS_LEFT = SynchedEntityData.defineId(Lich.class, EntityDataSerializers.INT);
@@ -807,6 +813,136 @@ public class Lich extends BaseTFBoss implements RangedAttackMob {
     @Override
     protected boolean shouldSpawnLoot() {
         return !this.isShadowClone() && super.shouldSpawnLoot();
+    }
+
+    @Override
+    public boolean isDeathAnimationFinished() {
+        return this.isShadowClone() || this.deathTime >= DEATH_ANIMATION_DURATION;
+    }
+
+    @Override
+    public void tickDeathAnimation() {
+        if (this.isShadowClone()) {
+            return;
+        }
+
+        if (this.deathTime <= DEATH_ANIMATION_POINT_A) {
+            boolean done = this.deathTime == DEATH_ANIMATION_POINT_A;
+            boolean burst = this.deathTime % PARTICLE_BURST_COOLDOWN == 0;
+            if (done) {
+                SoundEvent sound = this.getDeathSound();
+                if (sound != null) {
+                    this.level().playLocalSound(this, sound, SoundSource.HOSTILE, this.getSoundVolume(), this.getVoicePitch());
+                }
+            } else if (burst) {
+                SoundEvent sound = this.getHurtSound(this.damageSources().generic());
+                if (sound != null) {
+                    this.level().playLocalSound(this, sound, SoundSource.HOSTILE, this.getSoundVolume(), this.getVoicePitch());
+                }
+            }
+
+            Vec3 pos = this.position();
+            for (int i = 0; i < (burst ? 12 : 3); i++) {
+                double x = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+                double y = this.getRandom().nextDouble() * this.getBbHeight();
+                double z = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+                this.level().addParticle(this.getRandom().nextBoolean() || burst ? BONE_PARTICLE : ParticleTypes.SMOKE, pos.x() + x, pos.y() + y, pos.z() + z, 0.0D, 0.0D, 0.0D);
+            }
+
+            if (burst) {
+                double x = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+                double y = this.getRandom().nextDouble() * this.getBbHeight();
+                double z = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+                for (int i = 0; i < 7; i++) {
+                    double x1 = x + (this.getRandom().nextDouble() - 0.5D) * 0.1D;
+                    double y1 = y + (this.getRandom().nextDouble() - 0.5D) * 0.1D;
+                    double z1 = z + (this.getRandom().nextDouble() - 0.5D) * 0.1D;
+                    this.level().addParticle(this.getRandom().nextBoolean() ? BONE_PARTICLE : ParticleTypes.CLOUD, pos.x() + x1, pos.y() + y1, pos.z() + z1, 0.0D, 0.0D, 0.0D);
+                }
+
+                Vec3 center = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+                for (int i = 0; i < (done ? 18 : 6); i++) {
+                    double x1 = this.getX(this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D));
+                    double y1 = this.getY(this.random.nextDouble());
+                    double z1 = this.getZ(this.random.nextDouble() * this.random.nextDouble() * (this.random.nextBoolean() ? 1.0D : -1.0D));
+                    this.level().addParticle(ParticleTypes.SMOKE, x1, y1, z1, (x1 - center.x()) * 0.0125D, (y1 - center.y()) * 0.0125D, (z1 - center.z()) * 0.0125D);
+                }
+            }
+
+            if (done) {
+                for (int i = 0; i < 32; i++) {
+                    double x = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+                    double y = this.getRandom().nextDouble() * this.getBbHeight();
+                    double z = (this.getRandom().nextDouble() - 0.5D) * 0.7D;
+                    this.level().addParticle(this.getRandom().nextBoolean() ? BONE_PARTICLE : ParticleTypes.CLOUD, pos.x() + x, pos.y() + y, pos.z() + z, 0.0D, 0.0D, 0.0D);
+                }
+            }
+        } else if (this.deathTime == DEATH_ANIMATION_POINT_B) {
+            Vec3 pos = this.position();
+            for (int i = 0; i < 3; i++) {
+                double x = (this.getRandom().nextDouble() - 0.5D) * 0.75D;
+                double z = (this.getRandom().nextDouble() - 0.5D) * 0.75D;
+                this.level().addParticle(ParticleTypes.CLOUD, pos.x() + x, pos.y(), pos.z() + z, 0.0D, 0.0D, 0.0D);
+            }
+        } else if (this.deathTime > DEATH_ANIMATION_POINT_C) {
+            Vec3 start = this.position().add(0.0D, 0.45F, 0.0D);
+            Vec3 end = Vec3.atCenterOf(EntityUtil.bossChestLocation(this));
+            int localDeathTime = this.deathTime - DEATH_ANIMATION_POINT_C;
+            double factor = localDeathTime / (double) (DEATH_ANIMATION_DURATION - DEATH_ANIMATION_POINT_C);
+            double spiral = factor * factor * 2.0D;
+            double expand = (Math.cos((factor + 0.5D) * Math.PI * 2.0D) + 1.0D) * 0.5D;
+            Vec3 particlePos = start.add(end.subtract(start).scale(Math.min(factor * 2.0D, 1.0D)));
+            for (double offset = 0.0D; offset < 1.0D; offset += 0.2D) {
+                double x = Math.sin((spiral + offset) * Math.PI * 2.0D) * expand * 1.75D;
+                double z = Math.cos((spiral + offset) * Math.PI * 2.0D) * expand * 1.75D;
+                this.level().addParticle(TFParticleType.OMINOUS_FLAME, particlePos.x() + x, particlePos.y() - 0.25D, particlePos.z() + z, 0.0D, 0.0D, 0.0D);
+            }
+        }
+
+        if (this.deathTime > DEATH_ANIMATION_POINT_B && this.random.nextFloat() <= 0.33F) {
+            Vec3 start = this.position().add(0.0D, 0.15F, 0.0D);
+            double x = (this.getRandom().nextDouble() - 0.5D) * 0.25D;
+            double y = this.getRandom().nextDouble() * this.getBbHeight() * 0.1D;
+            double z = (this.getRandom().nextDouble() - 0.5D) * 0.25D;
+            this.level().addParticle(ParticleTypes.SMOKE, start.x() + x, start.y() + y, start.z() + z, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
+    @Override
+    protected void tickDeath() {
+        super.tickDeath();
+        if (this.deathTime >= DEATH_ANIMATION_POINT_A) {
+            this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        } else if (this.lookAtUponDeath() instanceof LivingEntity living) {
+            double deltaX = living.getX() - this.getX();
+            double deltaZ = living.getZ() - this.getZ();
+            float targetYaw = (float) (Mth.atan2(deltaZ, deltaX) * Mth.RAD_TO_DEG) - 90.0F;
+            this.setYHeadRot(this.limitedRotLerp(this.getYHeadRot(), targetYaw));
+            this.setXRot(0.0F);
+        }
+    }
+
+    private float limitedRotLerp(float angle, float targetAngle) {
+        float diff = Mth.wrapDegrees(targetAngle - angle);
+        if (diff > 30.0F) {
+            diff = 30.0F;
+        }
+        if (diff < -30.0F) {
+            diff = -30.0F;
+        }
+        return angle + diff;
+    }
+
+    @Nullable
+    @Override
+    protected Entity lookAtUponDeath() {
+        if (this.getTarget() != null) {
+            return this.getTarget();
+        }
+        if (this.getLastHurtByMob() != null) {
+            return this.getLastHurtByMob();
+        }
+        return this.level().getNearestPlayer(this, 20.0D);
     }
 
 }

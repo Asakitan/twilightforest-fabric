@@ -11,6 +11,13 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.resources.ResourceLocation;
 import twilightforest.client.model.block.BrazierModel;
+import twilightforest.client.model.armor.ArcticArmorModel;
+import twilightforest.client.model.armor.FieryArmorModel;
+import twilightforest.client.model.armor.KnightmetalArmorModel;
+import twilightforest.client.model.armor.PhantomArmorModel;
+import twilightforest.client.model.armor.TravellersGearModels;
+import twilightforest.client.model.armor.TravellersWingsModel;
+import twilightforest.client.model.armor.YetiArmorModel;
 import twilightforest.client.model.entity.AlphaYetiModel;
 import twilightforest.client.model.entity.BighornModel;
 import twilightforest.client.model.entity.BoarModel;
@@ -20,7 +27,9 @@ import twilightforest.client.model.entity.ChainModel;
 import twilightforest.client.model.entity.AdherentModel;
 import twilightforest.client.model.entity.DeerModel;
 import twilightforest.client.model.entity.DeathTomeModel;
+import twilightforest.client.model.entity.CicadaModel;
 import twilightforest.client.model.entity.FireBeetleModel;
+import twilightforest.client.model.entity.FireflyModel;
 import twilightforest.client.model.entity.CubeOfAnnihilationModel;
 import twilightforest.client.model.entity.CarminiteGolemModel;
 import twilightforest.client.model.entity.HarbingerCubeModel;
@@ -30,6 +39,7 @@ import twilightforest.client.model.entity.HydraModel;
 import twilightforest.client.model.entity.HydraMortarModel;
 import twilightforest.client.model.entity.HydraNeckModel;
 import twilightforest.client.model.entity.IceCrystalModel;
+import twilightforest.client.model.entity.KnightmetalShieldModel;
 import twilightforest.client.model.entity.KoboldModel;
 import twilightforest.client.model.entity.KnightPhantomModel;
 import twilightforest.client.model.entity.LichModel;
@@ -43,8 +53,10 @@ import twilightforest.client.model.entity.MoonwormModel;
 import twilightforest.client.model.entity.NagaModel;
 import twilightforest.client.model.entity.PenguinModel;
 import twilightforest.client.model.entity.PinchBeetleModel;
+import twilightforest.client.model.entity.ProtectionBoxModel;
 import twilightforest.client.model.entity.QuestRamModel;
 import twilightforest.client.model.entity.RavenModel;
+import twilightforest.client.model.entity.RedThreadModel;
 import twilightforest.client.model.entity.RedcapModel;
 import twilightforest.client.model.entity.RisingZombieModel;
 import twilightforest.client.model.entity.SkeletonDruidModel;
@@ -61,6 +73,7 @@ import twilightforest.client.model.entity.UnstableIceCoreModel;
 import twilightforest.client.model.entity.UpperGoblinKnightModel;
 import twilightforest.client.model.entity.WraithModel;
 import twilightforest.client.model.entity.YetiModel;
+import twilightforest.client.renderer.block.SkullChestRenderer;
 
 /**
  * F2.1b — central registry of {@link ModelLayerLocation}s used by codex-twilight
@@ -188,6 +201,10 @@ public final class CodexModelLayers {
             ResourceLocation.fromNamespaceAndPath("twilightforest", "noop"),
             "main");
 
+    public static final ModelLayerLocation PROTECTION_BOX = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "protection_box"),
+            "main");
+
     public static final ModelLayerLocation MOSQUITO_SWARM = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath("twilightforest", "mosquito_swarm"),
             "main");
@@ -292,6 +309,14 @@ public final class CodexModelLayers {
             ResourceLocation.fromNamespaceAndPath("twilightforest", "moonworm"),
             "main");
 
+    public static final ModelLayerLocation CICADA = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "cicada"),
+            "main");
+
+    public static final ModelLayerLocation FIREFLY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "firefly"),
+            "main");
+
     public static final ModelLayerLocation UR_GHAST = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath("twilightforest", "ur_ghast"),
             "main");
@@ -332,6 +357,118 @@ public final class CodexModelLayers {
             ResourceLocation.fromNamespaceAndPath("twilightforest", "brazier"),
             "main");
 
+    public static final ModelLayerLocation NAGA_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "naga_trophy"),
+            "main");
+
+    public static final ModelLayerLocation LICH_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "lich_trophy"),
+            "main");
+
+    public static final ModelLayerLocation MINOSHROOM_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "minoshroom_trophy"),
+            "main");
+
+    public static final ModelLayerLocation HYDRA_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "hydra_trophy"),
+            "main");
+
+    public static final ModelLayerLocation KNIGHT_PHANTOM_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "knight_phantom_trophy"),
+            "main");
+
+    public static final ModelLayerLocation UR_GHAST_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "ur_ghast_trophy"),
+            "main");
+
+    public static final ModelLayerLocation ALPHA_YETI_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "alpha_yeti_trophy"),
+            "main");
+
+    public static final ModelLayerLocation SNOW_QUEEN_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "snow_queen_trophy"),
+            "main");
+
+    public static final ModelLayerLocation QUEST_RAM_TROPHY = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "quest_ram_trophy"),
+            "main");
+
+    public static final ModelLayerLocation SKULL_CHEST = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "skull_chest"),
+            "main");
+
+    public static final ModelLayerLocation KEEPSAKE_CASKET = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "keepsake_casket"),
+            "main");
+
+    public static final ModelLayerLocation RED_THREAD = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "red_thread"),
+            "main");
+
+    public static final ModelLayerLocation KNIGHTMETAL_SHIELD = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "knightmetal_shield"),
+            "main");
+
+    public static final ModelLayerLocation ARCTIC_ARMOR_INNER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "arctic_armor"),
+            "inner");
+
+    public static final ModelLayerLocation ARCTIC_ARMOR_OUTER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "arctic_armor"),
+            "outer");
+
+    public static final ModelLayerLocation FIERY_ARMOR_INNER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "fiery_armor"),
+            "inner");
+
+    public static final ModelLayerLocation FIERY_ARMOR_OUTER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "fiery_armor"),
+            "outer");
+
+    public static final ModelLayerLocation KNIGHTMETAL_ARMOR_INNER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "knightmetal_armor"),
+            "inner");
+
+    public static final ModelLayerLocation KNIGHTMETAL_ARMOR_OUTER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "knightmetal_armor"),
+            "outer");
+
+    public static final ModelLayerLocation PHANTOM_ARMOR_INNER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "phantom_armor"),
+            "inner");
+
+    public static final ModelLayerLocation PHANTOM_ARMOR_OUTER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "phantom_armor"),
+            "outer");
+
+    public static final ModelLayerLocation YETI_ARMOR_INNER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "yeti_armor"),
+            "inner");
+
+    public static final ModelLayerLocation YETI_ARMOR_OUTER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "yeti_armor"),
+            "outer");
+
+    public static final ModelLayerLocation TRAVELLERS_ARMOR_HELMET = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "travellers_armor"),
+            "helmet");
+
+    public static final ModelLayerLocation TRAVELLERS_ARMOR_CHEST_GLOVES = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "travellers_armor"),
+            "chest_gloves");
+
+    public static final ModelLayerLocation TRAVELLERS_ARMOR_CHEST_GLOVES_SLIM = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "travellers_armor"),
+            "chest_gloves_slim");
+
+    public static final ModelLayerLocation TRAVELLERS_ARMOR_LEGGINGS = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "travellers_armor"),
+            "leggings");
+
+    public static final ModelLayerLocation TRAVELLERS_ARMOR_BOOTS = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("twilightforest", "travellers_armor"),
+            "boots");
+
     private CodexModelLayers() {
     }
 
@@ -369,6 +506,8 @@ public final class CodexModelLayers {
                                 EntityModelLayerRegistry.registerModelLayer(UNSTABLE_ICE_CORE, UnstableIceCoreModel::create);
                                 EntityModelLayerRegistry.registerModelLayer(NOOP, () ->
                                         LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 0, 0));
+                                EntityModelLayerRegistry.registerModelLayer(PROTECTION_BOX, () ->
+                                        LayerDefinition.create(ProtectionBoxModel.createMesh(), 16, 16));
                                                                 EntityModelLayerRegistry.registerModelLayer(MOSQUITO_SWARM, MosquitoSwarmModel::create);
                                                                 EntityModelLayerRegistry.registerModelLayer(TOWERWOOD_BORER, SilverfishModel::createBodyLayer);
                                                                 EntityModelLayerRegistry.registerModelLayer(WRAITH, WraithModel::create);
@@ -397,6 +536,8 @@ public final class CodexModelLayers {
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(HYDRA_NECK, HydraNeckModel::checkForPack);
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(HYDRA_MORTAR, HydraMortarModel::create);
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(MOONWORM, MoonwormModel::create);
+                                                                                                                                                                                                EntityModelLayerRegistry.registerModelLayer(CICADA, CicadaModel::create);
+                                                                                                                                                                                                EntityModelLayerRegistry.registerModelLayer(FIREFLY, FireflyModel::create);
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(UR_GHAST, UrGhastModel::create);
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(TROLL, TrollModel::checkForPack);
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(LOWER_GOBLIN_KNIGHT, LowerGoblinKnightModel::checkForPack);
@@ -407,6 +548,34 @@ public final class CodexModelLayers {
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(QUEST_RAM, QuestRamModel::checkForPack);
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(RAVEN, RavenModel::checkForPack);
                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(TINY_BIRD, TinyBirdModel::checkForPack);
-                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(BRAZIER, BrazierModel::create);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(BRAZIER, BrazierModel::create);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(NAGA_TROPHY, NagaModel::checkForPack);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(LICH_TROPHY, LichModel::create);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(MINOSHROOM_TROPHY, MinoshroomModel::checkForPack);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(HYDRA_TROPHY, HydraHeadModel::checkForPack);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(KNIGHT_PHANTOM_TROPHY, KnightPhantomModel::createTrophy);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(UR_GHAST_TROPHY, UrGhastModel::create);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(ALPHA_YETI_TROPHY, AlphaYetiModel::createTrophy);
+                                                                                                                                EntityModelLayerRegistry.registerModelLayer(SNOW_QUEEN_TROPHY, SnowQueenModel::checkForPack);
+                                                                                                                               EntityModelLayerRegistry.registerModelLayer(QUEST_RAM_TROPHY, QuestRamModel::checkForPackTrophyEdition);
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(SKULL_CHEST, () -> SkullChestRenderer.create(false));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(KEEPSAKE_CASKET, () -> SkullChestRenderer.create(true));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(RED_THREAD, RedThreadModel::create);
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(KNIGHTMETAL_SHIELD, KnightmetalShieldModel::create);
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(ARCTIC_ARMOR_INNER, () -> LayerDefinition.create(ArcticArmorModel.addPieces(new CubeDeformation(0.25F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(ARCTIC_ARMOR_OUTER, () -> LayerDefinition.create(ArcticArmorModel.addPieces(new CubeDeformation(0.5F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(FIERY_ARMOR_INNER, () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.25F), 0.0F), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(FIERY_ARMOR_OUTER, () -> LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(KNIGHTMETAL_ARMOR_INNER, () -> LayerDefinition.create(KnightmetalArmorModel.addPieces(new CubeDeformation(0.25F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(KNIGHTMETAL_ARMOR_OUTER, () -> LayerDefinition.create(KnightmetalArmorModel.addPieces(new CubeDeformation(0.5F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(PHANTOM_ARMOR_INNER, () -> LayerDefinition.create(PhantomArmorModel.addPieces(new CubeDeformation(0.25F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(PHANTOM_ARMOR_OUTER, () -> LayerDefinition.create(PhantomArmorModel.addPieces(new CubeDeformation(0.5F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(YETI_ARMOR_INNER, () -> LayerDefinition.create(YetiArmorModel.addPieces(new CubeDeformation(0.25F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(YETI_ARMOR_OUTER, () -> LayerDefinition.create(YetiArmorModel.addPieces(new CubeDeformation(0.5F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(TRAVELLERS_ARMOR_HELMET, () -> LayerDefinition.create(TravellersGearModels.addGogglePieces(new CubeDeformation(0.5F)), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(TRAVELLERS_ARMOR_CHEST_GLOVES, () -> LayerDefinition.create(TravellersGearModels.addGlovePieces(new CubeDeformation(0.5F), false), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(TRAVELLERS_ARMOR_CHEST_GLOVES_SLIM, () -> LayerDefinition.create(TravellersGearModels.addGlovePieces(new CubeDeformation(0.5F), true), 64, 32));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(TRAVELLERS_ARMOR_LEGGINGS, () -> TravellersWingsModel.createLayer(0.5F));
+                                                                                                                              EntityModelLayerRegistry.registerModelLayer(TRAVELLERS_ARMOR_BOOTS, () -> LayerDefinition.create(TravellersGearModels.addBootPieces(new CubeDeformation(0.5F)), 64, 32));
     }
 }

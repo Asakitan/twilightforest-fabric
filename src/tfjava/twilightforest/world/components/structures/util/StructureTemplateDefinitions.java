@@ -15,7 +15,6 @@ import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.jetbrains.annotations.Nullable;
 import tamaized.beanification.Component;
 import twilightforest.util.jigsaw.JigsawPlaceContext;
@@ -72,13 +71,6 @@ public final class StructureTemplateDefinitions extends CodecResourceReloadListe
 		}
 
 		this.rawTemplatePools.clear();
-	}
-
-	@Override
-	public void registerListener(AddReloadListenerEvent event) {
-		this.registryAccess = event.getRegistryAccess();
-
-		super.registerListener(event);
 	}
 
 	@Override

@@ -98,6 +98,30 @@
     ],
     "subtitle": "subtitles.twilightforest.block.casket.repair"
   },
+  "block.twilightforest.castle_door.activated": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.iron_door.open"
+      }
+    ]
+  },
+  "block.twilightforest.castle_door.reappear": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.stone.place"
+      }
+    ]
+  },
+  "block.twilightforest.castle_door.vanish": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.enderman.teleport"
+      }
+    ]
+  },
   "block.twilightforest.chiseled_bookshelf.convert": {
     "sounds": [
       {
@@ -176,6 +200,30 @@
       }
     ],
     "subtitle": "subtitles.twilightforest.block.drying_rack.remove_item"
+  },
+  "block.twilightforest.fire_jet.active": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.fire.ambient"
+      }
+    ]
+  },
+  "block.twilightforest.fire_jet.pop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.firework_rocket.blast"
+      }
+    ]
+  },
+  "block.twilightforest.fire_jet.start": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.fire.extinguish"
+      }
+    ]
   },
   "block.twilightforest.generic.annihilation": {
     "sounds": [
@@ -307,6 +355,46 @@
     ],
     "subtitle": "subtitles.twilightforest.block.jet.start"
   },
+  "block.twilightforest.keepsake_casket.break": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.item.break"
+      }
+    ]
+  },
+  "block.twilightforest.keepsake_casket.close": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.chest.close"
+      }
+    ]
+  },
+  "block.twilightforest.keepsake_casket.locked": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.chest.locked"
+      }
+    ]
+  },
+  "block.twilightforest.keepsake_casket.open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.chest.open"
+      }
+    ]
+  },
+  "block.twilightforest.keepsake_casket.repair": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:item.totem.use"
+      }
+    ]
+  },
   "block.twilightforest.ominous_fire.light": {
     "sounds": [
       "twilightforest:random/candelabra/ominous"
@@ -388,6 +476,14 @@
     ],
     "subtitle": "subtitles.twilightforest.block.smoker.start"
   },
+  "block.twilightforest.time_core": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.note_block.chime"
+      }
+    ]
+  },
   "block.twilightforest.torchberry.harvest": {
     "sounds": [
       {
@@ -396,6 +492,14 @@
       }
     ],
     "subtitle": "subtitles.twilightforest.block.torchberry.harvest"
+  },
+  "block.twilightforest.transformation_core": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.beacon.activate"
+      }
+    ]
   },
   "block.twilightforest.trophy_pedestal.activate": {
     "sounds": [
@@ -609,6 +713,14 @@
       }
     ],
     "subtitle": "subtitles.block.generic.footsteps"
+  },
+  "entity.twilightforest.boss_chest_appear": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.evoker.prepare_summon"
+      }
+    ]
   },
   "entity.twilightforest.carminite_broodling.ambient": {
     "sounds": [
@@ -920,6 +1032,30 @@
     ],
     "subtitle": "subtitles.twilightforest.entity.fortification_shield.expire"
   },
+  "entity.twilightforest.goblin_knight_muffled.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.zombie.ambient"
+      }
+    ]
+  },
+  "entity.twilightforest.goblin_knight_muffled.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.zombie.death"
+      }
+    ]
+  },
+  "entity.twilightforest.goblin_knight_muffled.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.zombie.hurt"
+      }
+    ]
+  },
   "entity.twilightforest.goblin_knight.ambient": {
     "sounds": [
       "twilightforest:mob/redcap/redcap1",
@@ -1131,6 +1267,38 @@
     ],
     "subtitle": "subtitles.twilightforest.entity.hydra.warn"
   },
+  "entity.twilightforest.ice_core.ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.guardian.ambient"
+      }
+    ]
+  },
+  "entity.twilightforest.ice_core.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.guardian.death"
+      }
+    ]
+  },
+  "entity.twilightforest.ice_core.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.guardian.hurt"
+      }
+    ]
+  },
+  "entity.twilightforest.ice_core.shoot": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.guardian.attack"
+      }
+    ]
+  },
   "entity.twilightforest.ice.ambient": {
     "sounds": [
       "twilightforest:mob/ice/crackle1",
@@ -1278,6 +1446,15 @@
     ],
     "subtitle": "subtitles.twilightforest.entity.kobold.munch"
   },
+  "entity.twilightforest.lich_clone.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish"
+      }
+    ],
+    "subtitle": "subtitles.twilightforest.entity.lich_clone.hurt"
+  },
   "entity.twilightforest.lich.ambient": {
     "sounds": [
       {
@@ -1330,15 +1507,6 @@
     ],
     "subtitle": "subtitles.twilightforest.entity.lich.teleport"
   },
-  "entity.twilightforest.lich_clone.hurt": {
-    "sounds": [
-      {
-        "type": "event",
-        "name": "block.fire.extinguish"
-      }
-    ],
-    "subtitle": "subtitles.twilightforest.entity.lich_clone.hurt"
-  },
   "entity.twilightforest.loyal_zombie.ambient": {
     "sounds": [
       {
@@ -1375,33 +1543,6 @@
     ],
     "subtitle": "subtitles.block.generic.footsteps"
   },
-  "entity.twilightforest.maze_slime.death": {
-    "sounds": [
-      {
-        "type": "event",
-        "name": "entity.slime.death"
-      }
-    ],
-    "subtitle": "subtitles.twilightforest.entity.maze_slime.death"
-  },
-  "entity.twilightforest.maze_slime.hurt": {
-    "sounds": [
-      {
-        "type": "event",
-        "name": "entity.slime.hurt"
-      }
-    ],
-    "subtitle": "subtitles.twilightforest.entity.maze_slime.hurt"
-  },
-  "entity.twilightforest.maze_slime.squish": {
-    "sounds": [
-      {
-        "type": "event",
-        "name": "entity.slime.squish"
-      }
-    ],
-    "subtitle": "subtitles.twilightforest.entity.maze_slime.squish"
-  },
   "entity.twilightforest.maze_slime_small.death": {
     "sounds": [
       {
@@ -1425,6 +1566,33 @@
       {
         "type": "event",
         "name": "entity.slime.squish_small"
+      }
+    ],
+    "subtitle": "subtitles.twilightforest.entity.maze_slime.squish"
+  },
+  "entity.twilightforest.maze_slime.death": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.slime.death"
+      }
+    ],
+    "subtitle": "subtitles.twilightforest.entity.maze_slime.death"
+  },
+  "entity.twilightforest.maze_slime.hurt": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.slime.hurt"
+      }
+    ],
+    "subtitle": "subtitles.twilightforest.entity.maze_slime.hurt"
+  },
+  "entity.twilightforest.maze_slime.squish": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.slime.squish"
       }
     ],
     "subtitle": "subtitles.twilightforest.entity.maze_slime.squish"
@@ -2406,6 +2574,22 @@
     ],
     "subtitle": "subtitles.twilightforest.item.block_and_chain.hit"
   },
+  "item.twilightforest.brittle_flask.break": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.item.break"
+      }
+    ]
+  },
+  "item.twilightforest.brittle_flask.crack": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.item.break"
+      }
+    ]
+  },
   "item.twilightforest.charm.keep": {
     "sounds": [
       {
@@ -2424,6 +2608,38 @@
     ],
     "subtitle": "subtitles.twilightforest.item.charm.life"
   },
+  "item.twilightforest.charm.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:item.totem.use"
+      }
+    ]
+  },
+  "item.twilightforest.crumble_horn.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.wither.ambient"
+      }
+    ]
+  },
+  "item.twilightforest.cube_of_annihilation.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.enderman.teleport"
+      }
+    ]
+  },
+  "item.twilightforest.ender_bow.fired": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.arrow.shoot"
+      }
+    ]
+  },
   "item.twilightforest.fan.whoosh": {
     "sounds": [
       "random/breath"
@@ -2439,6 +2655,14 @@
     ],
     "subtitle": "subtitles.twilightforest.item.flask.break"
   },
+  "item.twilightforest.flask.brew": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.brewing_stand.brew"
+      }
+    ]
+  },
   "item.twilightforest.flask.crack": {
     "sounds": [
       {
@@ -2448,6 +2672,14 @@
     ],
     "subtitle": "subtitles.twilightforest.item.flask.crack"
   },
+  "item.twilightforest.flask.drink": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.player.drink"
+      }
+    ]
+  },
   "item.twilightforest.flask.fill": {
     "sounds": [
       {
@@ -2456,6 +2688,14 @@
       }
     ],
     "subtitle": "subtitles.twilightforest.item.flask.fill"
+  },
+  "item.twilightforest.fortification_scepter.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.beacon.activate"
+      }
+    ]
   },
   "item.twilightforest.glass_sword.break": {
     "sounds": [
@@ -2475,6 +2715,14 @@
     ],
     "subtitle": "subtitles.twilightforest.item.ice_bomb.fired"
   },
+  "item.twilightforest.ice_bow.fired": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.arrow.shoot"
+      }
+    ]
+  },
   "item.twilightforest.knightmetal_armor.equip": {
     "sounds": [
       {
@@ -2493,6 +2741,14 @@
     ],
     "subtitle": "subtitles.twilightforest.item.knightmetal_shield.shatter"
   },
+  "item.twilightforest.lamp_of_cinders.burn": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.fire.ambient"
+      }
+    ]
+  },
   "item.twilightforest.lamp.burn": {
     "sounds": [
       {
@@ -2510,6 +2766,14 @@
     ],
     "subtitle": "subtitles.twilightforest.item.life_scepter.drain"
   },
+  "item.twilightforest.magic_map.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:item.book.page_turn"
+      }
+    ]
+  },
   "item.twilightforest.magnet.grab": {
     "sounds": [
       {
@@ -2519,6 +2783,30 @@
     ],
     "subtitle": "subtitles.twilightforest.item.magnet.grab"
   },
+  "item.twilightforest.maze_map.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:item.book.page_turn"
+      }
+    ]
+  },
+  "item.twilightforest.moonworm.placed": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.slime.squish"
+      }
+    ]
+  },
+  "item.twilightforest.moonworm.shoot": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.slime.jump"
+      }
+    ]
+  },
   "item.twilightforest.moonworm.squish": {
     "sounds": [
       {
@@ -2527,6 +2815,22 @@
       }
     ],
     "subtitle": "subtitles.twilightforest.item.moonworm.squish"
+  },
+  "item.twilightforest.ore_magnet.grab": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.iron_golem.hurt"
+      }
+    ]
+  },
+  "item.twilightforest.ore_magnet.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.piston.extend"
+      }
+    ]
   },
   "item.twilightforest.ore_meter.clear": {
     "sounds": [
@@ -2553,6 +2857,38 @@
     ],
     "subtitle": "subtitles.twilightforest.item.ore_meter.target_block"
   },
+  "item.twilightforest.ore_meter.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.experience_orb.pickup"
+      }
+    ]
+  },
+  "item.twilightforest.peacock_fan.use": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.phantom.flap"
+      }
+    ]
+  },
+  "item.twilightforest.seeker_bow.fired": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.arrow.shoot"
+      }
+    ]
+  },
+  "item.twilightforest.shield.metal_shatter": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.iron_golem.death"
+      }
+    ]
+  },
   "item.twilightforest.shield.shatter": {
     "sounds": [
       {
@@ -2561,6 +2897,14 @@
       }
     ],
     "subtitle": "subtitles.twilightforest.item.shield.shatter"
+  },
+  "item.twilightforest.shield.wood_shatter": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:block.wood.break"
+      }
+    ]
   },
   "item.twilightforest.transformation_powder.use": {
     "sounds": [
@@ -2634,6 +2978,14 @@
     ],
     "subtitle": "subtitles.twilightforest.item.travellers_goggles.zoom_out"
   },
+  "item.twilightforest.triple_bow.fired": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "minecraft:entity.arrow.shoot"
+      }
+    ]
+  },
   "item.twilightforest.twilight_scepter.pearl_hit": {
     "sounds": [
       "twilightforest:random/scepter/twilight_hit1",
@@ -2655,55 +3007,6 @@
       "twilightforest:random/scepter/zombie"
     ],
     "subtitle": "subtitles.twilightforest.item.zombie_scepter.use"
-  },
-  "music.twilightforest.twilight_forest": {
-    "sounds": [
-      {
-        "name": "twilightforest:music/superstitious",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/steps",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/radiance",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/home",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/wayfarer",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/findings",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/maker",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/thread",
-        "stream": true,
-        "volume": 0.5
-      },
-      {
-        "name": "twilightforest:music/motion",
-        "stream": true,
-        "volume": 0.5
-      }
-    ]
   },
   "music_disc.twilightforest.findings": {
     "sounds": [
@@ -2774,6 +3077,55 @@
       {
         "name": "twilightforest:music/wayfarer",
         "stream": true
+      }
+    ]
+  },
+  "music.twilightforest.twilight_forest": {
+    "sounds": [
+      {
+        "name": "twilightforest:music/superstitious",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/steps",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/radiance",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/home",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/wayfarer",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/findings",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/maker",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/thread",
+        "stream": true,
+        "volume": 0.5
+      },
+      {
+        "name": "twilightforest:music/motion",
+        "stream": true,
+        "volume": 0.5
       }
     ]
   }

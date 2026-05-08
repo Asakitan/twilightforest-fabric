@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#codex_twilight:mazestone",
-    "#codex_twilight:castle_blocks"
+    "#twilightforest:mazestone",
+    "#twilightforest:castle_blocks"
   ]
 }

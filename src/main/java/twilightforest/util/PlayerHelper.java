@@ -3,7 +3,6 @@ package twilightforest.util;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -13,25 +12,6 @@ import java.util.List;
 
 public final class PlayerHelper {
     private PlayerHelper() {
-    }
-
-    @Deprecated
-    public static void grantAdvancement(ServerPlayer player, ResourceLocation id) {
-        PlayerAdvancements advancements = player.getAdvancements();
-        AdvancementHolder holder = player.getServer().getAdvancements().get(id);
-        if (holder != null) {
-            for (String criterion : advancements.getOrStartProgress(holder).getRemainingCriteria()) {
-                advancements.award(holder, criterion);
-            }
-        }
-    }
-
-    @Deprecated
-    public static void grantCriterion(ServerPlayer player, ResourceLocation id, String criterion) {
-        AdvancementHolder holder = player.getServer().getAdvancements().get(id);
-        if (holder != null) {
-            player.getAdvancements().award(holder, criterion);
-        }
     }
 
     @Nullable

@@ -3,6 +3,7 @@ package twilightforest.init;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import twilightforest.client.particle.data.LeafParticleData;
 
 /**
  * Shared aliases for registered Twilight particle ids.
@@ -30,7 +31,8 @@ public final class TFParticleType {
     public static final ParticleOptions FIREFLY = TFParticleTypes.FIREFLY;
     public static final ParticleOptions WANDERING_FIREFLY = TFParticleTypes.WANDERING_FIREFLY;
     public static final ParticleOptions PARTICLE_SPAWNER_FIREFLY = TFParticleTypes.PARTICLE_SPAWNER_FIREFLY;
-    public static final ParticleOptions FALLEN_LEAF = TFParticleTypes.FALLEN_LEAF;
+    public static final LeafParticleData FALLEN_LEAF = new LeafParticleData(255, 255, 255);
+    public static final ParticleType<LeafParticleData> FALLEN_LEAF_TYPE = TFParticleTypes.FALLEN_LEAF;
     public static final ParticleOptions DIM_FLAME = TFParticleTypes.DIM_FLAME;
     public static final ParticleOptions OMINOUS_FLAME = TFParticleTypes.OMINOUS_FLAME;
     public static final ParticleOptions SORTING_PARTICLE = TFParticleTypes.SORTING_PARTICLE;

@@ -19,4 +19,12 @@ public final class TwilightForestMod {
     public static ResourceLocation getModelTexture(String path) {
         return prefix("textures/entity/" + path);
     }
+
+    public static ResourceLocation getEnvTexture(String path) {
+        return prefix("textures/environment/" + path);
+    }
+
+    public static ResourceLocation getGuiTexture(String path) {
+        return prefix("textures/gui/" + path);
+    }
 }

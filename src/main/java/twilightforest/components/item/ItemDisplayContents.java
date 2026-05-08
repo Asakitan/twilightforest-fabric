@@ -12,6 +12,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import twilightforest.init.custom.ItemDisplays;
+import twilightforest.item.travellers_gear.modifiers.display.ItemDisplayType;
 import twilightforest.util.TFItemStackUtils;
 
 import java.util.ArrayList;
@@ -20,9 +22,10 @@ import java.util.OptionalInt;
 import java.util.function.BiConsumer;
 
 public class ItemDisplayContents implements TooltipComponent {
-    public static final int SIZE = 6;
-    public static final int FIRST_MAP_SLOT_INDEX = 0;
-    public static final ItemDisplayContents EMPTY = new ItemDisplayContents(SIZE, FIRST_MAP_SLOT_INDEX);
+    public static final List<ItemDisplayType> LAYOUT = List.of(ItemDisplays.MAP, ItemDisplays.MAP, ItemDisplays.MAP, ItemDisplays.COMPASS, ItemDisplays.CLOCK, ItemDisplays.MOON_DIAL);
+    public static final int SIZE = LAYOUT.size();
+    public static final int FIRST_MAP_SLOT_INDEX = LAYOUT.indexOf(ItemDisplays.MAP);
+    public static final ItemDisplayContents EMPTY = new ItemDisplayContents(LAYOUT.size(), FIRST_MAP_SLOT_INDEX);
     public static final Codec<ItemDisplayContents> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         DisplaySlot.CODEC.listOf().fieldOf("slots").forGetter(ItemDisplayContents::asSlots),
         Codec.INT.fieldOf("chosen_map_slot").forGetter(ItemDisplayContents::findActiveMapSlot)
@@ -57,7 +60,10 @@ public class ItemDisplayContents implements TooltipComponent {
 
     private static ItemDisplayContents fromSlots(List<DisplaySlot> slots, int chosenMapSlot) {
         OptionalInt max = slots.stream().mapToInt(DisplaySlot::index).max();
-        ItemDisplayContents contents = new ItemDisplayContents(Math.max(SIZE, max.orElse(-1) + 1), chosenMapSlot);
+        if (max.isEmpty()) {
+            return EMPTY;
+        }
+        ItemDisplayContents contents = new ItemDisplayContents(Math.max(LAYOUT.size(), max.getAsInt() + 1), chosenMapSlot);
         for (DisplaySlot slot : slots) {
             contents.items.set(slot.index(), slot.item());
         }
@@ -105,6 +111,24 @@ public class ItemDisplayContents implements TooltipComponent {
             return this.chosenMapSlot;
         }
 
+        private int findSwapSlot(ItemStack stack) {
+            for (int i = 0; i < LAYOUT.size(); i++) {
+                if (LAYOUT.get(i).validItems().test(stack)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private int findInsertSlot(ItemStack stack) {
+            for (int i = 0; i < LAYOUT.size(); i++) {
+                if (LAYOUT.get(i).validItems().test(stack) && this.items.get(i).isEmpty()) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         public boolean trySwap(SlotAccess source, Player player) {
             return this.trySwap(source, player, (stack, target) -> TFItemStackUtils.giveOrDrop(target, stack));
         }
@@ -115,13 +139,22 @@ public class ItemDisplayContents implements TooltipComponent {
                 return false;
             }
 
-            int slotForStack = this.findInsertSlot();
+            int slotForStack = this.findInsertSlot(slottedStack);
             if (slotForStack < 0) {
-                slotForStack = Math.max(0, this.chosenMapSlot);
+                slotForStack = this.findSwapSlot(slottedStack);
+            }
+            if (slotForStack < 0) {
+                return false;
+            }
+
+            ItemStack targetStack = this.items.get(slotForStack);
+            if (!targetStack.isEmpty() && ItemStack.isSameItemSameComponents(slottedStack, targetStack)) {
+                return false;
             }
             ItemStack insert = slottedStack.split(1);
             ItemStack replaced = this.items.set(slotForStack, insert);
             if (replaced.isEmpty()) {
+                tryResetChosenMapSlot(slotForStack);
                 return source.set(slottedStack);
             }
             boolean ret = source.set(replaced);
@@ -143,6 +176,9 @@ public class ItemDisplayContents implements TooltipComponent {
             for (int i = 0; i < this.items.size(); i++) {
                 ItemStack stack = this.items.get(i);
                 if (!stack.isEmpty() && (slot == null || slot.mayPlace(stack))) {
+                    if (i == chosenMapSlot) {
+                        cycleChosenMapSlot();
+                    }
                     return this.items.set(i, ItemStack.EMPTY);
                 }
             }
@@ -154,8 +190,29 @@ public class ItemDisplayContents implements TooltipComponent {
         }
 
         public int cycleChosenMapSlot() {
-            this.chosenMapSlot = (this.chosenMapSlot + 1) % this.items.size();
+            for (int index = this.chosenMapSlot + 1; index < this.items.size(); index++) {
+                if (LAYOUT.get(index) == ItemDisplays.MAP && !this.items.get(index).isEmpty()) {
+                    this.chosenMapSlot = index;
+                    return this.chosenMapSlot;
+                }
+            }
+            this.chosenMapSlot = -1;
             return this.chosenMapSlot;
+        }
+
+        private void tryResetChosenMapSlot(int index) {
+            if (index < LAYOUT.size() && LAYOUT.get(index) == ItemDisplays.MAP && !hasOtherMaps(index)) {
+                this.chosenMapSlot = index;
+            }
+        }
+
+        private boolean hasOtherMaps(int mapIndex) {
+            for (int i = 0; i < Math.min(items.size(), LAYOUT.size()); i++) {
+                if (!items.get(i).isEmpty() && LAYOUT.get(i) == ItemDisplays.MAP && mapIndex != i) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

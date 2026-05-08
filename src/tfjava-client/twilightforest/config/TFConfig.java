@@ -18,6 +18,17 @@ public final class TFConfig {
     public static double repairingXpCostMultiplier = 1.0D;
     public static final List<String> disableUncraftingRecipes = new ArrayList<>();
     public static final List<String> blacklistedUncraftingModIds = new ArrayList<>();
+    public static boolean silentCicadas = false;
+    public static boolean silentCicadasOnHead = false;
+    public static boolean disableLockedBiomeToasts = false;
+    public static boolean showQuestRamCrosshairIndicator = true;
+    public static boolean showFortificationShieldIndicator = true;
+    public static boolean showFortificationShieldIndicatorInCreative = false;
+    public static boolean prettifyOreMeterGui = true;
+    public static int itemDisplayScreenOffsetX = 4;
+    public static int itemDisplayScreenOffsetY = 4;
+    public static double itemDisplayScreenScale = 1.0D;
+    public static boolean twentyFourHourFormat = false;
 
     private TFConfig() {
     }

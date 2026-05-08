@@ -489,6 +489,25 @@ public final class TFItems {
     public static final TFRegistryObject<Item> SORTING_SIGN_ITEM = signItem("sorting_sign", TFBlocks.SORTING_SIGN, TFBlocks.SORTING_WALL_SIGN);
     public static final TFRegistryObject<Item> SORTING_HANGING_SIGN_ITEM = hangingSignItem("sorting_hanging_sign", TFBlocks.SORTING_HANGING_SIGN, TFBlocks.SORTING_WALL_HANGING_SIGN);
 
+    // Upstream-name aliases for full TF datagen ports.
+    public static final TFRegistryObject<Item> MASON_JAR = existingBlockItem("mason_jar", TFBlocks.MASON_JAR);
+    public static final TFRegistryObject<Item> TWILIGHT_OAK_SIGN = TWILIGHT_OAK_SIGN_ITEM;
+    public static final TFRegistryObject<Item> TWILIGHT_OAK_HANGING_SIGN = TWILIGHT_OAK_HANGING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> CANOPY_SIGN = CANOPY_SIGN_ITEM;
+    public static final TFRegistryObject<Item> CANOPY_HANGING_SIGN = CANOPY_HANGING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> MANGROVE_SIGN = MANGROVE_SIGN_ITEM;
+    public static final TFRegistryObject<Item> MANGROVE_HANGING_SIGN = MANGROVE_HANGING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> DARK_SIGN = DARK_SIGN_ITEM;
+    public static final TFRegistryObject<Item> DARK_HANGING_SIGN = DARK_HANGING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> MINING_SIGN = MINING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> MINING_HANGING_SIGN = MINING_HANGING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> TIME_SIGN = TIME_SIGN_ITEM;
+    public static final TFRegistryObject<Item> TIME_HANGING_SIGN = TIME_HANGING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> TRANSFORMATION_SIGN = TRANSFORMATION_SIGN_ITEM;
+    public static final TFRegistryObject<Item> TRANSFORMATION_HANGING_SIGN = TRANSFORMATION_HANGING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> SORTING_SIGN = SORTING_SIGN_ITEM;
+    public static final TFRegistryObject<Item> SORTING_HANGING_SIGN = SORTING_HANGING_SIGN_ITEM;
+
         public static void bootstrap() {
         }
 

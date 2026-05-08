@@ -1,6 +1,8 @@
 package twilightforest.client.model.entity;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,11 +11,16 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
 import twilightforest.client.JappaPackReloadListener;
+import twilightforest.client.renderer.entity.HydraRenderer;
 import twilightforest.entity.boss.HydraHead;
+import twilightforest.entity.boss.HydraPart;
 
-public class HydraHeadModel<T extends HydraHead> extends ListModel<T> {
+public class HydraHeadModel<T extends HydraHead> extends ListModel<T> implements TrophyBlockModel {
     private final ModelPart head;
     private final ModelPart jaw;
 
@@ -83,10 +90,41 @@ public class HydraHeadModel<T extends HydraHead> extends ListModel<T> {
 
     @Override
     public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTicks) {
-        this.head.yRot = Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) * Mth.DEG_TO_RAD;
-        this.head.xRot = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot()) * Mth.DEG_TO_RAD;
+        this.head.yRot = this.getRotationY(entity, partialTicks);
+        this.head.xRot = this.getRotationX(entity, partialTicks);
         float mouthOpen = Mth.lerp(partialTicks, entity.getMouthOpenLast(), entity.getMouthOpen());
         this.head.xRot -= mouthOpen * (Mth.PI / 12.0F);
         this.jaw.xRot = mouthOpen * (Mth.PI / 3.0F);
+    }
+
+    public float getRotationY(HydraPart whichHead, float time) {
+        float yaw = whichHead.yRotO + (whichHead.getYRot() - whichHead.yRotO) * time;
+        return yaw * Mth.DEG_TO_RAD;
+    }
+
+    public float getRotationX(HydraPart whichHead, float time) {
+        return (whichHead.xRotO + (whichHead.getXRot() - whichHead.xRotO) * time) * Mth.DEG_TO_RAD;
+    }
+
+    @Override
+    public void setupRotationsForTrophy(float x, float y, float z, float mouthAngle) {
+        this.head.yRot = y * Mth.DEG_TO_RAD;
+        this.head.xRot = z * Mth.DEG_TO_RAD;
+        this.jaw.xRot = mouthAngle * (Mth.PI / 3.0F);
+    }
+
+    @Override
+    public void renderTrophy(PoseStack stack, MultiBufferSource buffer, int light, int overlay, int color, ItemDisplayContext context) {
+        boolean itemForm = context != ItemDisplayContext.NONE;
+        stack.scale(0.25F, 0.25F, 0.25F);
+        if (itemForm) {
+            stack.scale(0.9F, 0.9F, 0.9F);
+        }
+        if (context == ItemDisplayContext.GUI) {
+            stack.translate(0.0F, 0.0F, 0.75F);
+        }
+        stack.translate(0.0F, -1.0F, itemForm && !JappaPackReloadListener.INSTANCE.isJappaPackLoaded() ? -1.0F : 0.0F);
+        VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(HydraRenderer.TEXTURE));
+        this.head.render(stack, consumer, light, overlay, color);
     }
 }

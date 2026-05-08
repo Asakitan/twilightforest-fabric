@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import twilightforest.TwilightForestMod;
+import twilightforest.client.particle.data.LeafParticleData;
 
 public final class TFParticleTypes {
     public static final SimpleParticleType LARGE_FLAME = register("large_flame");
@@ -28,7 +29,17 @@ public final class TFParticleTypes {
     public static final SimpleParticleType FIREFLY = register("firefly");
     public static final SimpleParticleType WANDERING_FIREFLY = register("wandering_firefly");
     public static final SimpleParticleType PARTICLE_SPAWNER_FIREFLY = register("particle_spawner_firefly");
-    public static final SimpleParticleType FALLEN_LEAF = register("fallen_leaf");
+    public static final ParticleType<LeafParticleData> FALLEN_LEAF = register("fallen_leaf", new ParticleType<LeafParticleData>(false) {
+        @Override
+        public MapCodec<LeafParticleData> codec() {
+            return LeafParticleData.CODEC;
+        }
+
+        @Override
+        public StreamCodec<? super RegistryFriendlyByteBuf, LeafParticleData> streamCodec() {
+            return LeafParticleData.STREAM_CODEC;
+        }
+    });
     public static final SimpleParticleType DIM_FLAME = register("dim_flame");
     public static final SimpleParticleType OMINOUS_FLAME = register("ominous_flame");
     public static final SimpleParticleType SORTING_PARTICLE = register("sorting_particle");

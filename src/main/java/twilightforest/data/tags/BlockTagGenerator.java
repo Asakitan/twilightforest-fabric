@@ -31,6 +31,7 @@ public final class BlockTagGenerator {
     public static final TagKey<Block> PENGUINS_SPAWNABLE_ON = create("penguins_spawnable_on");
     public static final TagKey<Block> GIANTS_SPAWNABLE_ON = create("giants_spawnable_on");
     public static final TagKey<Block> BANISTERS = create("banisters");
+    public static final TagKey<Block> TF_CHESTS = create("chests");
     public static final TagKey<Block> DRYING_RACKS = create("drying_racks");
     public static final TagKey<Block> HOLLOW_LOGS = create("hollow_logs");
     public static final TagKey<Block> TOWERWOOD = create("towerwood");
@@ -40,12 +41,21 @@ public final class BlockTagGenerator {
     public static final TagKey<Block> TROPHY_PEDESTAL_ACTIVATION_BLOCKS = create("trophy_pedestal_activation_blocks");
     public static final TagKey<Block> FIRE_JET_FUEL = create("fire_jet_fuel");
     public static final TagKey<Block> MAZESTONE = create("mazestone");
+    public static final TagKey<Block> MAZEBREAKER_ACCELERATED = create("mazebreaker_accelerated_mining");
     public static final TagKey<Block> ANTIBUILDER_IGNORES = create("antibuilder_ignores");
     public static final TagKey<Block> CARMINITE_REACTOR_IMMUNE = create("carminite_reactor_immune");
     public static final TagKey<Block> CARMINITE_REACTOR_ORES = create("carminite_reactor_ores");
     public static final TagKey<Block> BLOCK_AND_CHAIN_NEVER_BREAKS = create("block_and_chain_never_breaks");
     public static final TagKey<Block> MINEABLE_WITH_BLOCK_AND_CHAIN = create("mineable_with_block_and_chain");
+    public static final TagKey<Block> STRUCTURE_BANNED_INTERACTIONS = create("structure_banned_interactions");
+    public static final TagKey<Block> PROGRESSION_ALLOW_BREAKING = create("progression_allow_breaking");
     public static final TagKey<Block> ORE_METER_TARGETABLE = create("ore_meter_targetable");
+    public static final TagKey<Block> ORE_MAGNET_IGNORE = create("ore_magnet/ignored_ores");
+    public static final TagKey<Block> MINING_CORE_EXCLUDED = create("mining_tree_excluded");
+    public static final TagKey<Block> STORAGE_BLOCKS_FIERY = common("storage_blocks/fiery");
+    public static final TagKey<Block> STORAGE_BLOCKS_IRONWOOD = common("storage_blocks/ironwood");
+    public static final TagKey<Block> STORAGE_BLOCKS_KNIGHTMETAL = common("storage_blocks/knightmetal");
+    public static final TagKey<Block> STORAGE_BLOCKS_STEELEAF = common("storage_blocks/steeleaf");
     public static final TagKey<Block> INCORRECT_FOR_IRONWOOD_TOOL = create("incorrect_for_ironwood_tool");
     public static final TagKey<Block> INCORRECT_FOR_FIERY_TOOL = create("incorrect_for_fiery_tool");
     public static final TagKey<Block> INCORRECT_FOR_STEELEAF_TOOL = create("incorrect_for_steeleaf_tool");
@@ -61,7 +71,6 @@ public final class BlockTagGenerator {
         return TagKey.create(Registries.BLOCK, TwilightForestMod.prefix(path));
     }
 
-    @SuppressWarnings("unused")
     private static TagKey<Block> common(String path) {
         return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", path));
     }

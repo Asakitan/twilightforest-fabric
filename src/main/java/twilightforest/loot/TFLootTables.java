@@ -14,7 +14,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import twilightforest.TwilightForestMod;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 public final class TFLootTables {
+    private static final Set<ResourceKey<LootTable>> TF_LOOT_TABLES = new HashSet<>();
+    private static final Set<ResourceKey<LootTable>> TF_IMMUTABLE_LOCATIONS = Collections.unmodifiableSet(TF_LOOT_TABLES);
     public static final int DEFAULT_PLACE_FLAG = Block.UPDATE_CLIENTS;
 
     /**
@@ -33,6 +39,9 @@ public final class TFLootTables {
                 .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DAMAGE_SOURCE, damageSource);
         if (damageSource.getEntity() != null) builder.withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ATTACKING_ENTITY, damageSource.getEntity());
         if (damageSource.getDirectEntity() != null) builder.withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DIRECT_ATTACKING_ENTITY, damageSource.getDirectEntity());
+        if (wasKilled && boss.getKillCredit() instanceof net.minecraft.world.entity.player.Player player) {
+            builder.withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.LAST_DAMAGE_PLAYER, player).withLuck(player.getLuck());
+        }
         return builder;
     }
 
@@ -58,7 +67,15 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> LARGE_HOLLOW_HILL = register("hill_3");
     public static final ResourceKey<LootTable> LIFEDRAIN_SCEPTER_KILL_BONUS = register("items/lifedrain_scepter_kill_bonus");
     public static final ResourceKey<LootTable> MEDIUM_HOLLOW_HILL = register("hill_2");
-    public static final ResourceKey<LootTable> QUEST_GROVE = register("quest_grove");
+    public static final ResourceKey<LootTable> QUEST_GROVE = register("quest_grove_dropper");
+    public static final ResourceKey<LootTable> SUSPICIOUS_STEW = register("chests/suspicious_stew");
+    public static final ResourceKey<LootTable> JUST_BONES = register("chests/just_bones");
+    public static final ResourceKey<LootTable> TOWER_GRAVE_LOWER = register("chests/tower_grave_lower");
+    public static final ResourceKey<LootTable> TOWER_GRAVE_UPPER = register("chests/tower_grave_upper");
+    public static final ResourceKey<LootTable> CASKET_LOOT = register("chests/casket_loot");
+    public static final ResourceKey<LootTable> DARKTOWER_BOSS = register("darktower_boss");
+    public static final ResourceKey<LootTable> USELESS_LOOT = register("useless");
+    public static final ResourceKey<LootTable> CAMP_TENT = register("camp_tent");
     public static final ResourceKey<LootTable> BIGHORN_SHEEP_WHITE = register("entities/bighorn_sheep/white");
     public static final ResourceKey<LootTable> BIGHORN_SHEEP_ORANGE = register("entities/bighorn_sheep/orange");
     public static final ResourceKey<LootTable> BIGHORN_SHEEP_MAGENTA = register("entities/bighorn_sheep/magenta");
@@ -76,6 +93,9 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> BIGHORN_SHEEP_RED = register("entities/bighorn_sheep/red");
     public static final ResourceKey<LootTable> BIGHORN_SHEEP_BLACK = register("entities/bighorn_sheep/black");
     public static final ResourceKey<LootTable> QUESTING_RAM_REWARDS = register("entities/questing_ram_rewards");
+    public static final ResourceKey<LootTable> QUESTING_RAM_REWARD_BLOCKS = register("entities/questing_ram_reward_blocks");
+    public static final ResourceKey<LootTable> DEATH_TOME_HURT = register("entities/death_tome_hurt");
+    public static final ResourceKey<LootTable> DEATH_TOME_BOOKS = register("entities/death_tome_books");
     public static final ResourceKey<LootTable> SMALL_HOLLOW_HILL = register("hill_1");
     public static final ResourceKey<LootTable> STRONGHOLD_CACHE = register("stronghold_cache");
     public static final ResourceKey<LootTable> STRONGHOLD_ROOM = register("stronghold_room");
@@ -92,7 +112,9 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> WELL = register("well");
     public static final ResourceKey<LootTable> CICADA_SQUISH_DROPS = register("blocks/cicada_squish");
     public static final ResourceKey<LootTable> FIREFLY_SQUISH_DROPS = register("blocks/firefly_squish");
+    public static final ResourceKey<LootTable> MOONWORM_FAILED_TO_PLACE_DROPS = register("blocks/moonworm_failed_to_place");
     public static final ResourceKey<LootTable> MOONWORM_SQUISH_DROPS = register("blocks/moonworm_squish");
+    public static final ResourceKey<LootTable> KNIGHT_PHANTOM_DEFEATED = register("entities/knight_phantom_defeated");
     public static final ResourceKey<LootTable> BLACKBERRY_BUSH_BERRIES = register("blocks/blackberry_bush_berries");
     public static final ResourceKey<LootTable> BLUEBERRY_BUSH_BERRIES = register("blocks/blueberry_bush_berries");
     public static final ResourceKey<LootTable> RASPBERRY_BUSH_BERRIES = register("blocks/raspberry_bush_berries");
@@ -101,6 +123,18 @@ public final class TFLootTables {
     public static final ResourceKey<LootTable> DUSKBERRY_BUSH_BERRIES = register("blocks/duskberry_bush_berries");
     public static final ResourceKey<LootTable> SKYBERRY_BUSH_BERRIES = register("blocks/skyberry_bush_berries");
     public static final ResourceKey<LootTable> STINGBERRY_BUSH_BERRIES = register("blocks/stingberry_bush_berries");
+    public static final ResourceKey<LootTable> BLACKBERRY_BUSH_DROPS = BLACKBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> BLUEBERRY_BUSH_DROPS = BLUEBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> RASPBERRY_BUSH_DROPS = RASPBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> MALOBERRY_BUSH_DROPS = MALOBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> BLIGHTBERRY_BUSH_DROPS = BLIGHTBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> DUSKBERRY_BUSH_DROPS = DUSKBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> SKYBERRY_BUSH_DROPS = SKYBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> STINGBERRY_BUSH_DROPS = STINGBERRY_BUSH_BERRIES;
+    public static final ResourceKey<LootTable> COPPER_OREBERRY_BUSH_DROPS = register("blocks/copper_oreberry_bush_berries");
+    public static final ResourceKey<LootTable> IRON_OREBERRY_BUSH_DROPS = register("blocks/iron_oreberry_bush_berries");
+    public static final ResourceKey<LootTable> GOLD_OREBERRY_BUSH_DROPS = register("blocks/gold_oreberry_bush_berries");
+    public static final ResourceKey<LootTable> ESSENCE_BERRY_BUSH_DROPS = register("blocks/essence_berry_bush_berries");
     public static final ResourceKey<LootTable> OMINOUS_SPAWNER_DROPS = register("blocks/ominous_spawner_drops");
 
     private TFLootTables() {
@@ -125,7 +159,18 @@ public final class TFLootTables {
         }
     }
 
+    public static Set<ResourceKey<LootTable>> allBuiltin() {
+        return TF_IMMUTABLE_LOCATIONS;
+    }
+
     private static ResourceKey<LootTable> register(String id) {
-        return ResourceKey.create(Registries.LOOT_TABLE, TwilightForestMod.prefix(id));
+        return register(ResourceKey.create(Registries.LOOT_TABLE, TwilightForestMod.prefix(id)));
+    }
+
+    private static ResourceKey<LootTable> register(ResourceKey<LootTable> id) {
+        if (TF_LOOT_TABLES.add(id)) {
+            return id;
+        }
+        throw new IllegalArgumentException(id + " is already a registered built-in loot table");
     }
 }

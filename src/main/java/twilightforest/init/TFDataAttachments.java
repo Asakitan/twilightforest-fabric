@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Entity;
@@ -42,6 +43,9 @@ public final class TFDataAttachments {
 
     public static final AttachmentType<Unit> LEASH_PATHFINDER_OVERRIDE = unit("leashed_pathfinder_override");
     public static final AttachmentType<Unit> BANISHED_TO_TWILIGHT_FOREST = unit("twilightforest_banished");
+    public static final AttachmentType<CompoundTag> CHARM_PLAYER_DATA = AttachmentRegistry.create(
+        TwilightForestMod.prefix("charm_player_data"),
+        builder -> builder.initializer(CompoundTag::new).persistent(CompoundTag.CODEC));
     public static final AttachmentType<TravellersWingsAttachment> TRAVELLERS_WINGS = AttachmentRegistry.createDefaulted(
         TwilightForestMod.prefix("travellers_wings"), TravellersWingsAttachment::new);
     public static final AttachmentType<SlimySolesAttachment> SLIMY_SOLES_BOUNCE_INFO = AttachmentRegistry.create(

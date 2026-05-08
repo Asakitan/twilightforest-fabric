@@ -1,12 +1,25 @@
 package com.codex.twilight.client.render;
 
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twilightforest.client.renderer.block.BrazierRenderer;
+import twilightforest.client.renderer.block.CandelabraRenderer;
+import twilightforest.client.renderer.block.CicadaRenderer;
+import twilightforest.client.renderer.block.DryingRackRenderer;
+import twilightforest.client.renderer.block.FireflyRenderer;
 import twilightforest.client.renderer.block.JarRenderer;
+import twilightforest.client.renderer.block.KeepsakeCasketRenderer;
+import twilightforest.client.renderer.block.MoonwormRenderer;
+import twilightforest.client.renderer.block.OminousCandleRenderer;
 import twilightforest.client.renderer.block.ReactorDebrisRenderer;
+import twilightforest.client.renderer.block.RedThreadRenderer;
+import twilightforest.client.renderer.block.SinisterSpawnerRenderer;
 import twilightforest.client.renderer.block.SkullCandleRenderer;
+import twilightforest.client.renderer.block.SkullChestRenderer;
+import twilightforest.client.renderer.block.TFChestRenderer;
+import twilightforest.client.renderer.block.TrophyRenderer;
 import twilightforest.init.TFBlockEntities;
 
 /**
@@ -52,11 +65,24 @@ public final class ClientBlockEntityRendererBootstrap {
     }
 
     public static void bootstrap() {
+        BlockEntityRendererRegistry.register(BlockEntityType.CHEST, TFChestRenderer::new);
+        BlockEntityRendererRegistry.register(BlockEntityType.TRAPPED_CHEST, TFChestRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.MASON_JAR, JarRenderer.MasonJarRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.BRAZIER, BrazierRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.CANDELABRA, CandelabraRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.CICADA, CicadaRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.DRYING_RACK, DryingRackRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.FIREFLY, FireflyRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.KEEPSAKE_CASKET, KeepsakeCasketRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.MOONWORM, MoonwormRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.OMINOUS_CANDLE, OminousCandleRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.RED_THREAD, RedThreadRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.REACTOR_DEBRIS, ReactorDebrisRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.SINISTER_SPAWNER, SinisterSpawnerRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.SKULL_CANDLE, SkullCandleRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.SKULL_CHEST, SkullChestRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.TROPHY, TrophyRenderer::new);
 
-        LOGGER.debug("F2.5 BER scaffold loaded with Brazier, ReactorDebris, and SkullCandle renderers.");
+        LOGGER.debug("F2.5 BER scaffold loaded with TFChest, ambient critter, casket, trophy, spawner, DryingRack, Candelabra, Brazier, OminousCandle, RedThread, ReactorDebris, and SkullCandle renderers.");
     }
 }

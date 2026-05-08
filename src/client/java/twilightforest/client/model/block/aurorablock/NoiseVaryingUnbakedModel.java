@@ -61,7 +61,7 @@ public class NoiseVaryingUnbakedModel implements UnbakedModel {
 			BakedModel b = baker.bake(id, modelState);
 			baked[i] = b != null ? b : baker.bake(ModelBakery.MISSING_MODEL_LOCATION, modelState);
 		}
-		return new NoiseVaryingBakedModel(baked);
+		return new NoiseVaryingModel(baked);
 	}
 
 	// We override the legacy 4-arg bake signature too in case mod / mixin paths invoke it.

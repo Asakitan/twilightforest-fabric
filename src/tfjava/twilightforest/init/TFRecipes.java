@@ -1,9 +1,11 @@
 package twilightforest.init;
 
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import twilightforest.item.recipe.ComponentsIngredient;
 import twilightforest.TwilightForestMod;
 import twilightforest.item.recipe.DryingRecipe;
 import twilightforest.item.recipe.CasketRepairRecipe;
@@ -114,6 +116,6 @@ public final class TFRecipes {
 	private TFRecipes() {}
 
 	public static void bootstrap() {
-		// Class-init triggers registration; this method just ensures the class is loaded.
+		CustomIngredientSerializer.register(ComponentsIngredient.SERIALIZER);
 	}
 }

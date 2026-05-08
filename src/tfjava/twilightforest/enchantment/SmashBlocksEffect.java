@@ -18,15 +18,17 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import io.github.fabricators_of_create.porting_lib.block.EntityDestroyBlock;
+import twilightforest.entity.projectile.ChainBlock;
+import twilightforest.init.TFDataAttachments;
 
 import java.util.Optional;
 
 /**
  * Fabric port — codec is 1:1 with upstream so {@code destruction.json} parses
- * cleanly. Runtime simplified: removes NeoForge {@code BlockEvent.BreakEvent}
- * dispatch, the per-entity {@code TFDataAttachments.SMASH_BLOCKS} counter, and
- * {@code ChainBlock.canBreakBlockAt}; instead just iterates the radius and
- * destroys non-immune blocks the player is allowed to mine.
+ * cleanly. Runtime uses the upstream smash counter and {@link ChainBlock}
+ * breakability rules; block destruction is routed through the player's game
+ * mode so Fabric's normal block-break hooks still see the break.
  */
 public record SmashBlocksEffect(LevelBasedValue maxSmash, LevelBasedValue radius,
                                 Optional<HolderSet<Block>> immuneBlocks,
@@ -45,25 +47,33 @@ public record SmashBlocksEffect(LevelBasedValue maxSmash, LevelBasedValue radius
     public void apply(ServerLevel level, int enchantmentLevel, EnchantedItemInUse item, Entity entity, Vec3 position) {
         if (!(item.owner() instanceof ServerPlayer player)) return;
 
+        var attachment = TFDataAttachments.get(entity, TFDataAttachments.SMASH_BLOCKS);
+        int smashed = attachment.getBlocksSmashed();
         int maxSmash = Math.round(this.maxSmash.calculate(enchantmentLevel));
         int radius = Math.round(this.radius.calculate(enchantmentLevel));
-        if (maxSmash <= 0 || radius <= 0) return;
+        if (smashed >= maxSmash || maxSmash <= 0 || radius <= 0) return;
 
         BlockPos start = BlockPos.containing(position);
-        int smashed = 0;
+        boolean restrictedPlaceMode = player.gameMode.getGameModeForPlayer().isBlockPlacingRestricted();
 
         for (BlockPos pos : BlockPos.betweenClosed(start.offset(-radius, 0, -radius), start.offset(radius, 0, radius))) {
             if (smashed >= maxSmash) break;
             BlockState state = level.getBlockState(pos);
             if (state.isAir()) continue;
             if (this.immuneBlocks.isPresent() && this.immuneBlocks.get().contains(state.getBlockHolder())) continue;
-            if (state.getDestroySpeed(level, pos) < 0) continue;
-            level.destroyBlock(pos, !player.isCreative(), player);
-            if (this.smashSound.isPresent()) {
-                level.playSound(null, pos, this.smashSound.get().value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            if (!ChainBlock.canBreakBlockAt(level, pos, state, item.itemStack(), restrictedPlaceMode) || !canEntityDestroy(state, level, pos, player)) continue;
+            if (player.gameMode.destroyBlock(pos)) {
+                if (this.smashSound.isPresent()) {
+                    level.playSound(null, pos, this.smashSound.get().value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                }
+                smashed++;
             }
-            smashed++;
         }
+        attachment.setBlocksSmashed(smashed);
+    }
+
+    private static boolean canEntityDestroy(BlockState state, ServerLevel level, BlockPos pos, Entity entity) {
+        return !(state.getBlock() instanceof EntityDestroyBlock guarded) || guarded.canEntityDestroy(state, level, pos, entity);
     }
 
     @Override

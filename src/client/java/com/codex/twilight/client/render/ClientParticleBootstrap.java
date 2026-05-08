@@ -1,34 +1,36 @@
 package com.codex.twilight.client.render;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.client.particle.SuspendedTownParticle;
+import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.particles.SimpleParticleType;
+import twilightforest.client.particle.AngryLichParticle;
+import twilightforest.client.particle.AnnihilateParticle;
+import twilightforest.client.particle.CloudPuffParticle;
+import twilightforest.client.particle.CustomTextureParticle;
+import twilightforest.client.particle.DoubleJumpParticle;
+import twilightforest.client.particle.DryingRackParticle;
+import twilightforest.client.particle.FireflyParticle;
+import twilightforest.client.particle.GhastTearParticle;
+import twilightforest.client.particle.GhastTrapParticle;
+import twilightforest.client.particle.IceBeamParticle;
+import twilightforest.client.particle.LargeFlameParticle;
+import twilightforest.client.particle.LeafParticle;
+import twilightforest.client.particle.LeafRuneParticle;
+import twilightforest.client.particle.LogCoreParticle;
 import twilightforest.client.particle.MagicEffectParticle;
+import twilightforest.client.particle.PerfectDodgeParticle;
+import twilightforest.client.particle.ProtectionParticle;
+import twilightforest.client.particle.SmokeScaleParticle;
+import twilightforest.client.particle.SnowGuardianParticle;
+import twilightforest.client.particle.SnowParticle;
+import twilightforest.client.particle.SnowWarningParticle;
+import twilightforest.client.particle.SortingParticle;
+import twilightforest.client.particle.TransformationParticle;
 import twilightforest.init.TFParticleTypes;
 
 /**
- * F2.6 — paired client-side particle providers for TF custom particles.
- *
- * <p>Most TF {@link SimpleParticleType} ids are bound to vanilla
- * {@link SuspendedTownParticle.Provider}: a small 2D sprite-based particle
- * with gentle drift physics. The provider receives the {@code SpriteSet}
- * auto-loaded by the vanilla particle atlas from
- * {@code assets/twilightforest/textures/particle/<id>.png} (shipped inside
- * the codex-twilight mod jar after F2.1a's asset migration), so when a TF
- * particle id reaches the client, it renders with the genuine upstream
- * Twilight Forest texture.
- *
- * <p>The motion is intentionally generic; upstream's per-particle motion
- * logic (firefly buzzing, leaf-rune spiral, boss-tear gravity) would need
- * an IP-clean adaptation of upstream particle classes, which is deferred to
- * a future F2.6e iteration. For now, sprite-correct stationary particles
- * are visually identifiable and correctly distinguishable from vanilla.
- *
- * <p>Runtime atmosphere reaches these providers through normal client-side
- * biome and particle rendering. Server-side ambient particle payloads and
- * vanilla fallback substitutions have been removed for paired-client mode.
+ * Paired client-side particle providers for Twilight Forest custom particles.
  */
 public final class ClientParticleBootstrap {
 
@@ -37,52 +39,39 @@ public final class ClientParticleBootstrap {
 
     public static void bootstrap() {
         ParticleFactoryRegistry registry = ParticleFactoryRegistry.getInstance();
-        register(registry, TFParticleTypes.LARGE_FLAME);
-        register(registry, TFParticleTypes.LEAF_RUNE);
-        register(registry, TFParticleTypes.BOSS_TEAR);
-        register(registry, TFParticleTypes.GHAST_TRAP);
-        register(registry, TFParticleTypes.PROTECTION);
-        register(registry, TFParticleTypes.SNOW);
-        register(registry, TFParticleTypes.SNOW_WARNING);
-        register(registry, TFParticleTypes.EXTENDED_SNOW_WARNING);
-        register(registry, TFParticleTypes.SNOW_GUARDIAN);
-        register(registry, TFParticleTypes.ICE_BEAM);
-        register(registry, TFParticleTypes.ANNIHILATE);
-        register(registry, TFParticleTypes.PERFECT_DODGE);
-        register(registry, TFParticleTypes.DOUBLE_JUMP);
-        register(registry, TFParticleTypes.HUGE_SMOKE);
-        register(registry, TFParticleTypes.FIREFLY);
-        register(registry, TFParticleTypes.WANDERING_FIREFLY);
-        register(registry, TFParticleTypes.PARTICLE_SPAWNER_FIREFLY);
-        register(registry, TFParticleTypes.FALLEN_LEAF);
-        register(registry, TFParticleTypes.DIM_FLAME);
-        register(registry, TFParticleTypes.OMINOUS_FLAME);
-        register(registry, TFParticleTypes.SORTING_PARTICLE);
-        register(registry, TFParticleTypes.TRANSFORMATION_PARTICLE);
-        register(registry, TFParticleTypes.LOG_CORE_PARTICLE);
-        register(registry, TFParticleTypes.CLOUD_PUFF);
+        registry.register(TFParticleTypes.LARGE_FLAME, LargeFlameParticle.Factory::new);
+        registry.register(TFParticleTypes.LEAF_RUNE, LeafRuneParticle.Factory::new);
+        registry.register(TFParticleTypes.BOSS_TEAR, new GhastTearParticle.Factory());
+        registry.register(TFParticleTypes.GHAST_TRAP, GhastTrapParticle.Factory::new);
+        registry.register(TFParticleTypes.PROTECTION, ProtectionParticle.Factory::new);
+        registry.register(TFParticleTypes.SNOW, SnowParticle.Factory::new);
+        registry.register(TFParticleTypes.SNOW_GUARDIAN, SnowGuardianParticle.Factory::new);
+        registry.register(TFParticleTypes.SNOW_WARNING, SnowWarningParticle.SimpleFactory::new);
+        registry.register(TFParticleTypes.EXTENDED_SNOW_WARNING, SnowWarningParticle.ExtendedFactory::new);
+        registry.register(TFParticleTypes.ICE_BEAM, IceBeamParticle.Factory::new);
+        registry.register(TFParticleTypes.ANNIHILATE, AnnihilateParticle.Factory::new);
+        registry.register(TFParticleTypes.PERFECT_DODGE, PerfectDodgeParticle.Provider::new);
+        registry.register(TFParticleTypes.DOUBLE_JUMP, DoubleJumpParticle.Provider::new);
+        registry.register(TFParticleTypes.HUGE_SMOKE, SmokeScaleParticle.Factory::new);
+        registry.register(TFParticleTypes.FIREFLY, FireflyParticle.StationaryProvider::new);
+        registry.register(TFParticleTypes.WANDERING_FIREFLY, FireflyParticle.WanderingProvider::new);
+        registry.register(TFParticleTypes.PARTICLE_SPAWNER_FIREFLY, FireflyParticle.ParticleSpawnerProvider::new);
+        registry.register(TFParticleTypes.FALLEN_LEAF, LeafParticle.Factory::new);
+        registry.register(TFParticleTypes.DIM_FLAME, FlameParticle.SmallFlameProvider::new);
+        registry.register(TFParticleTypes.OMINOUS_FLAME, FlameParticle.SmallFlameProvider::new);
+        registry.register(TFParticleTypes.SORTING_PARTICLE, SortingParticle.Factory::new);
+        registry.register(TFParticleTypes.TRANSFORMATION_PARTICLE, TransformationParticle.Factory::new);
+        registry.register(TFParticleTypes.LOG_CORE_PARTICLE, LogCoreParticle.Factory::new);
+        registry.register(TFParticleTypes.CLOUD_PUFF, CloudPuffParticle.Factory::new);
         registerMagicEffect(registry, TFParticleTypes.MAGIC_EFFECT);
-        register(registry, TFParticleTypes.ANGRY_LICH);
-        register(registry, TFParticleTypes.TWILIGHT_ORB);
-        register(registry, TFParticleTypes.SHIELD_BREAK);
-        register(registry, TFParticleTypes.DRYING_RACK);
-    }
-
-    private static void register(ParticleFactoryRegistry registry, SimpleParticleType type) {
-        if (type == null) return;
-        try {
-            registry.register(type, SuspendedTownParticle.Provider::new);
-        } catch (Throwable ignored) {
-            // Defensive — never let one bad provider abort the bootstrap.
-        }
+        registry.register(TFParticleTypes.ANGRY_LICH, AngryLichParticle.Factory::new);
+        registry.register(TFParticleTypes.TWILIGHT_ORB, sprite -> new CustomTextureParticle.Factory(sprite, true));
+        registry.register(TFParticleTypes.SHIELD_BREAK, CustomTextureParticle.ShieldBreak::new);
+        registry.register(TFParticleTypes.DRYING_RACK, DryingRackParticle.Provider::new);
     }
 
     private static void registerMagicEffect(ParticleFactoryRegistry registry, ParticleType<ColorParticleOption> type) {
         if (type == null) return;
-        try {
-            registry.register(type, MagicEffectParticle.Factory::new);
-        } catch (Throwable ignored) {
-            // Defensive — never let one bad provider abort the bootstrap.
-        }
+        registry.register(type, MagicEffectParticle.Factory::new);
     }
 }

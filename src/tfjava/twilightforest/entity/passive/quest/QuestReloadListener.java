@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -23,15 +24,23 @@ import java.util.Map;
  * {@link QuestingRamCurrentContext}. Falls back to {@link QuestingRamContext#FALLBACK}
  * if no datapack provides one.
  */
-public class QuestReloadListener extends SimpleJsonResourceReloadListener {
+public class QuestReloadListener extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 
-	@Autowired
-	private static QuestingRamCurrentContext questingRamCurrentContext;
+	private static QuestingRamCurrentContext questingRamCurrentContext = new QuestingRamCurrentContext();
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	public QuestReloadListener() {
 		super(GSON, "twilight/quests");
+	}
+
+	public static QuestingRamCurrentContext currentContext() {
+		return questingRamCurrentContext;
+	}
+
+	@Override
+	public ResourceLocation getFabricId() {
+		return TwilightForestMod.prefix("questing_ram");
 	}
 
 	@Override

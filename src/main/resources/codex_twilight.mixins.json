@@ -5,18 +5,27 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "PlayerMixin",
+    "AxeItemAccessor",
+    "FlowerPotBlockInvoker",
     "LivingEntityMixin",
+    "MobAccessor",
+    "ParrotAccessor",
     "DamageSourcesMixin",
+    "EntityStopRidingMixin",
     "WrittenBookItemMixin",
     "AbstractArrowMixin",
     "BushBlockMixin",
     "FireBlockMixin",
     "LootTableMixin",
-    "GrassColorModifierCodecMixin"
+    "GrassColorModifierCodecMixin",
+    "BeardifierAccessor",
+    "BeardifierMixin"
   ],
   "client": [
     "client.LevelRendererMultipartMixin",
-    "client.EntityRenderDispatcherMultipartMixin"
+    "client.EntityRenderDispatcherMultipartMixin",
+    "client.MapRendererAccessor",
+    "client.MapRendererMapInstanceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

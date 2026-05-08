@@ -53,6 +53,7 @@ public final class TFSounds {
     public static final SoundEvent SLIDER = register("block.twilightforest.slider.move");
     public static final SoundEvent CANDELABRA_LIGHT = register("block.twilightforest.candelabra.light");
     public static final SoundEvent CANDELABRA_OMINOUS = register("block.twilightforest.candelabra.ominous");
+    public static final SoundEvent OMINOUS_FIRE = register("block.twilightforest.ominous_fire.light");
     public static final SoundEvent REACTOR_AMBIENT = register("block.twilightforest.reactor.ambient");
     public static final SoundEvent SMOKER_START = register("block.twilightforest.smoker.start");
     public static final SoundEvent DOOR_ACTIVATED = register("block.twilightforest.castle_door.activated");
@@ -172,6 +173,7 @@ public final class TFSounds {
     public static final SoundEvent SHIELD_BLOCK = FORTIFICATION_SHIELD_BLOCK;
     public static final SoundEvent SHIELD_BREAK = FORTIFICATION_SHIELD_BREAK;
     public static final SoundEvent SHIELD_ADD = register("entity.twilightforest.fortification_shield.add");
+    public static final SoundEvent TEAR_BREAK = register("entity.twilightforest.tear.break");
     public static final SoundEvent HYDRA_DEATH = register("entity.twilightforest.hydra.death");
     public static final SoundEvent HYDRA_GROWL = register("entity.twilightforest.hydra.growl");
     public static final SoundEvent HYDRA_HURT = register("entity.twilightforest.hydra.hurt");
@@ -294,6 +296,8 @@ public final class TFSounds {
     public static final SoundEvent MOONWORM_SHOOT = register("item.twilightforest.moonworm.shoot");
     public static final SoundEvent MOONWORM_SQUISH = register("item.twilightforest.moonworm.squish");
     public static final SoundEvent CHARM_USE = register("item.twilightforest.charm.use");
+    public static final SoundEvent CHARM_LIFE = CHARM_USE;
+    public static final SoundEvent CHARM_KEEP = CHARM_USE;
     public static final SoundEvent CICADA = register("block.twilightforest.cicada");
     public static final SoundEvent CICADA_AMBIENT = CICADA;
     public static final SoundEvent FLASK_BREW = register("item.twilightforest.flask.brew");
@@ -311,11 +315,13 @@ public final class TFSounds {
     public static final SoundEvent MAGIC_MAP_USE = register("item.twilightforest.magic_map.use");
     public static final SoundEvent MAZE_MAP_USE = register("item.twilightforest.maze_map.use");
     public static final SoundEvent TRANSFORMATION_POWDER_USE = register("item.twilightforest.transformation_powder.use");
+    public static final SoundEvent POWDER_USE = TRANSFORMATION_POWDER_USE;
     public static final SoundEvent TRIPLE_BOW_FIRED = register("item.twilightforest.triple_bow.fired");
     public static final SoundEvent SEEKER_BOW_FIRED = register("item.twilightforest.seeker_bow.fired");
     public static final SoundEvent ENDER_BOW_FIRED = register("item.twilightforest.ender_bow.fired");
     public static final SoundEvent ICE_BOW_FIRED = register("item.twilightforest.ice_bow.fired");
     public static final SoundEvent CUBE_OF_ANNIHILATION_USE = register("item.twilightforest.cube_of_annihilation.use");
+    public static final SoundEvent BLOCK_ANNIHILATED = register("block.twilightforest.generic.annihilation");
     public static final SoundEvent KEEPSAKE_CASKET_OPEN = CASKET_OPEN;
     public static final SoundEvent CASKET_BREAK = register("block.twilightforest.keepsake_casket.break");
     public static final SoundEvent GLASS_SWORD_BREAK = register("item.twilightforest.glass_sword.break");
@@ -327,6 +333,7 @@ public final class TFSounds {
     public static final SoundEvent WROUGHT_IRON_FENCE_EXTENDED = register("block.twilightforest.wrought_iron_fence.extend");
     public static final SoundEvent SIDE_STEP = register("item.twilightforest.travellers_gear.side_step");
     public static final SoundEvent SIDE_STEP_CHARGED = register("item.twilightforest.travellers_gear.side_step_ready");
+    public static final SoundEvent PERFECT_DODGE = register("item.twilightforest.travellers_gear.perfect_dodge");
     public static final SoundEvent SWAP_HOTBAR = register("item.twilightforest.travellers_gear.swap_hotbar");
     public static final SoundEvent CYCLE_MAPS = register("item.twilightforest.travellers_gear.cycle_maps");
     public static final SoundEvent CYCLE_MAPS_EMPTY = register("item.twilightforest.travellers_gear.cycle_maps_empty");
@@ -341,6 +348,19 @@ public final class TFSounds {
     public static final SoundEvent MUSIC_DISC_MAKER = register("music_disc.twilightforest.maker");
     public static final SoundEvent MUSIC_DISC_THREAD = register("music_disc.twilightforest.thread");
     public static final SoundEvent MUSIC_DISC_MOTION = register("music_disc.twilightforest.motion");
+    public static final SoundEvent ALPHA_YETI_PARROT = register("entity.twilightforest.parrot.imitate.alpha_yeti");
+    public static final SoundEvent CARMINITE_GOLEM_PARROT = register("entity.twilightforest.parrot.imitate.carminite_golem");
+    public static final SoundEvent DEATH_TOME_PARROT = register("entity.twilightforest.parrot.imitate.death_tome");
+    public static final SoundEvent HOSTILE_WOLF_PARROT = register("entity.twilightforest.parrot.imitate.hostile_wolf");
+    public static final SoundEvent HYDRA_PARROT = register("entity.twilightforest.parrot.imitate.hydra");
+    public static final SoundEvent ICE_CORE_PARROT = register("entity.twilightforest.parrot.imitate.ice_core");
+    public static final SoundEvent KOBOLD_PARROT = register("entity.twilightforest.parrot.imitate.kobold");
+    public static final SoundEvent MINOTAUR_PARROT = register("entity.twilightforest.parrot.imitate.minotaur");
+    public static final SoundEvent MOSQUITO_PARROT = register("entity.twilightforest.parrot.imitate.mosquito");
+    public static final SoundEvent NAGA_PARROT = register("entity.twilightforest.parrot.imitate.naga");
+    public static final SoundEvent REDCAP_PARROT = register("entity.twilightforest.parrot.imitate.redcap");
+    public static final SoundEvent WRAITH_PARROT = register("entity.twilightforest.parrot.imitate.wraith");
+    public static final SoundEvent SHIELD_EXPIRE = register("entity.twilightforest.fortification_shield.expire");
 
     private TFSounds() {
     }

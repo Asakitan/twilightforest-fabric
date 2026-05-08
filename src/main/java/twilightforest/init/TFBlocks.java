@@ -160,7 +160,7 @@ public final class TFBlocks {
     public static final TFRegistryObject<Block> SNOWY_OAK_SAPLING = saplingBlock("snowy_oak_sapling", Blocks.OAK_SAPLING, TreeGrower.OAK);
     public static final TFRegistryObject<Block> RAINBOW_OAK_SAPLING = saplingBlock("rainbow_oak_sapling", Blocks.OAK_SAPLING, TFTreeGrowers.RAINBOW_OAK);
     public static final TFRegistryObject<Block> DARKWOOD_SAPLING = saplingBlock("darkwood_sapling", Blocks.DARK_OAK_SAPLING, TFTreeGrowers.DARK);
-    public static final TFRegistryObject<Block> FALLEN_LEAVES = snowLayerBlock("fallen_leaves", Blocks.SNOW);
+    public static final TFRegistryObject<Block> FALLEN_LEAVES = fallenLeavesBlock("fallen_leaves", Blocks.SNOW);
     public static final TFRegistryObject<Block> HOLLOW_LOG_HORIZONTAL = pillarBlock("hollow_log_horizontal", Blocks.OAK_LOG);
     public static final TFRegistryObject<Block> HUGE_LILY_PAD = hugeLilyPadBlock("huge_lily_pad", Blocks.LILY_PAD);
     public static final TFRegistryObject<Block> HUGE_WATER_LILY = hugeWaterLilyBlock("huge_water_lily", Blocks.LILY_PAD);
@@ -1150,6 +1150,21 @@ public final class TFBlocks {
 
     private static TFRegistryObject<Block> snowLayerBlock(String path, Block fallback) {
         Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new CodexSnowLayerBlock(BlockBehaviour.Properties.ofFullCopy(fallback), fallback.defaultBlockState()));
+        registerBlockItem(path, block, fallback);
+        return new TFRegistryObject<>(block);
+    }
+
+    private static TFRegistryObject<Block> fallenLeavesBlock(String path, Block fallback) {
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path),
+                new twilightforest.block.FallenLeavesBlock(BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.PLANT)
+                        .replaceable()
+                        .noCollission()
+                        .noOcclusion()
+                        .instabreak()
+                        .sound(SoundType.AZALEA_LEAVES)
+                        .ignitedByLava()
+                        .pushReaction(PushReaction.DESTROY)));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }

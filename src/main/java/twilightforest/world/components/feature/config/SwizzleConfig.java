@@ -32,15 +32,6 @@ public record SwizzleConfig(HolderSet<WoodPalette> targets, WeightedRandomList<W
 
 	@NotNull
 	public static WeightedRandomList<WeightedEntry.Wrapper<HolderSet<WoodPalette>>> buildRarityPalette(HolderGetter<WoodPalette> paletteHolders) {
-		// Old code with chances:
-		//  getRandomWeighted(RandomSource random) {
-		//	  int randomVal = random.nextInt();
-		//	  if ((randomVal & 0b1) == 0) return ArrayUtil.wrapped(COMMON, randomVal >> 1); // 50% chance
-		//	  if ((randomVal & 0b10) == 0) return ArrayUtil.wrapped(UNCOMMON, randomVal >> 2); // 25% chance
-		//	  if ((randomVal & 0b1100) != 0) return ArrayUtil.wrapped(RARE, randomVal >> 4); // 18.75% chance
-		//	  return ArrayUtil.wrapped(TREASURE, randomVal >> 4); // 6.25% chance
-		//  }
-
 		WeightedEntry.Wrapper<HolderSet<WoodPalette>> common = // 50% chance
 			WeightedEntry.wrap(paletteHolders.get(CustomTagGenerator.WoodPaletteTagGenerator.COMMON_PALETTES).get(), 8);
 		WeightedEntry.Wrapper<HolderSet<WoodPalette>> uncommon = // 25% chance

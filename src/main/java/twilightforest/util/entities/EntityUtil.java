@@ -73,15 +73,15 @@ public final class EntityUtil {
 
     public static void killLavaAround(Entity entity) {
         AABB bounds = entity.getBoundingBox().inflate(9.0D);
-        for (double x = bounds.minX; x < bounds.maxX; x++) {
-            for (double z = bounds.minZ; z < bounds.maxZ; z++) {
-                for (double y = bounds.minY; y < bounds.maxY; y++) {
-                    BlockPos pos = BlockPos.containing(x, y, z);
-                    BlockState state = entity.level().getBlockState(pos);
-                    if (state.is(Blocks.LAVA)) {
-                        entity.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-                    }
-                }
+        BlockPos min = BlockPos.containing(bounds.minX, bounds.minY, bounds.minZ);
+        BlockPos max = BlockPos.containing(bounds.maxX, bounds.maxY, bounds.maxZ);
+        if (!entity.level().hasChunksAt(min, max)) {
+            return;
+        }
+        for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
+            BlockState state = entity.level().getBlockState(pos);
+            if (state.is(Blocks.LAVA)) {
+                entity.level().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             }
         }
     }

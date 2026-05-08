@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "twilightforest:travellers_belt",
+    "minecraft:bundle",
+    "minecraft:shulker_box",
+    "#minecraft:shulker_boxes"
+  ]
+}

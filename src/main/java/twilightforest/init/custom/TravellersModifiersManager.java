@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
@@ -92,6 +93,10 @@ public final class TravellersModifiersManager {
     }
 
     private TravellersModifiersManager() {
+    }
+
+    public static void bootstrap(BootstrapContext<TravellersModifier> context) {
+        MODIFIERS.forEach(context::register);
     }
 
     private static ResourceKey<TravellersModifier> makeKey(String name) {

@@ -175,6 +175,22 @@ public final class TFDataMaps {
 		return biome.unwrapKey().map(MAGIC_MAP_BIOME_COLORS::get).orElse(null);
 	}
 
+	public static Map<Block, CrumbledBlock> crumbleHornEntries() {
+		return Map.copyOf(CRUMBLE_HORN);
+	}
+
+	public static Map<EntityType<?>, EntityTransformation> transformationPowderEntries() {
+		return Map.copyOf(TRANSFORMATION_POWDER);
+	}
+
+	public static Map<EntityType<?>, EntityTransformation> ominousFireEntries() {
+		return Map.copyOf(OMINOUS_FIRE);
+	}
+
+	public static Map<ResourceKey<Biome>, MagicMapBiomeColor> magicMapBiomeColorEntries() {
+		return MAGIC_MAP_BIOME_COLORS;
+	}
+
 	@Nullable
 	public static CrumbledBlock getCrumbleHorn(BlockState state) {
 		return CRUMBLE_HORN.get(state.getBlock());
