@@ -1578,7 +1578,7 @@ public final class TFBlocks {
     }
 
     private static TFRegistryObject<Block> chestBlock(String path, Block fallback) {
-        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new CodexChestBlock(BlockBehaviour.Properties.ofFullCopy(fallback), () -> BlockEntityType.CHEST, fallback.defaultBlockState()));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, TwilightForestMod.prefix(path), new CodexChestBlock(BlockBehaviour.Properties.ofFullCopy(fallback), fallback == Blocks.TRAPPED_CHEST ? () -> BlockEntityType.TRAPPED_CHEST : () -> BlockEntityType.CHEST, fallback.defaultBlockState()));
         registerBlockItem(path, block, fallback);
         return new TFRegistryObject<>(block);
     }

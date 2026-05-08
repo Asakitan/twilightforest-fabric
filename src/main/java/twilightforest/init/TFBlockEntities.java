@@ -344,17 +344,44 @@ public final class TFBlockEntities {
                 TFBlocks.NAGA_SPAWNER.get(),
                 TFBlocks.LICH_SPAWNER.get(),
                 TFBlocks.SINISTER_SPAWNER.get());
+        includeVanillaChestBlocks();
         ChiseledCanopyBookshelfWrapper.register();
     }
 
-    private static void includeVanillaSpawnerBlocks(Block... blocks) {
-        Set<Block> validBlocks = new HashSet<>(BlockEntityType.MOB_SPAWNER.validBlocks);
-        boolean changed = false;
-        for (Block block : blocks) {
-            changed |= validBlocks.add(block);
-        }
-        if (changed) {
-            BlockEntityType.MOB_SPAWNER.validBlocks = Set.copyOf(validBlocks);
-        }
+    private static void includeVanillaChestBlocks() {
+        includeVanillaBlockEntityBlocks(BlockEntityType.CHEST,
+                TFBlocks.TWILIGHT_OAK_CHEST.get(),
+                TFBlocks.CANOPY_CHEST.get(),
+                TFBlocks.MANGROVE_CHEST.get(),
+                TFBlocks.DARK_CHEST.get(),
+                TFBlocks.MINING_CHEST.get(),
+                TFBlocks.TIME_CHEST.get(),
+                TFBlocks.TRANSFORMATION_CHEST.get(),
+                TFBlocks.SORTING_CHEST.get(),
+                TFBlocks.TF_CHEST.get());
+        includeVanillaBlockEntityBlocks(BlockEntityType.TRAPPED_CHEST,
+                TFBlocks.CANOPY_TRAPPED_CHEST.get(),
+                TFBlocks.MANGROVE_TRAPPED_CHEST.get(),
+                TFBlocks.DARK_TRAPPED_CHEST.get(),
+                TFBlocks.MINING_TRAPPED_CHEST.get(),
+                TFBlocks.TIME_TRAPPED_CHEST.get(),
+                TFBlocks.TRANSFORMATION_TRAPPED_CHEST.get(),
+                TFBlocks.SORTING_TRAPPED_CHEST.get(),
+                TFBlocks.TWILIGHT_OAK_TRAPPED_CHEST.get());
     }
+
+        private static void includeVanillaSpawnerBlocks(Block... blocks) {
+                includeVanillaBlockEntityBlocks(BlockEntityType.MOB_SPAWNER, blocks);
+        }
+
+        private static void includeVanillaBlockEntityBlocks(BlockEntityType<?> type, Block... blocks) {
+                Set<Block> validBlocks = new HashSet<>(type.validBlocks);
+                boolean changed = false;
+                for (Block block : blocks) {
+                        changed |= validBlocks.add(block);
+                }
+                if (changed) {
+                        type.validBlocks = Set.copyOf(validBlocks);
+                }
+        }
 }

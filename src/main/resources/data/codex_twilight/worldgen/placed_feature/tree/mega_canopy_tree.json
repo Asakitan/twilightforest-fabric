@@ -2,6 +2,9 @@
   "feature": "codex_twilight:tree/mega_canopy_tree",
   "placement": [
     {
+      "type": "twilightforest:chunk_centerer"
+    },
+    {
       "type": "minecraft:rarity_filter",
       "chance": 20
     },
@@ -14,11 +17,22 @@
       "heightmap": "OCEAN_FLOOR"
     },
     {
+      "type": "twilightforest:no_structure",
+      "additional_clearance": 0,
+      "occupies_surface": true,
+      "occupies_underground": false,
+      "occupies_vegetation": false,
+      "structures_allowed": []
+    },
+    {
       "type": "minecraft:block_predicate_filter",
       "predicate": {
         "type": "minecraft:would_survive",
         "state": {
-          "Name": "minecraft:dark_oak_sapling"
+          "Name": "twilightforest:canopy_sapling",
+          "Properties": {
+            "stage": "0"
+          }
         }
       }
     },

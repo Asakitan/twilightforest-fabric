@@ -2,19 +2,31 @@ package twilightforest.util;
 
 import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import twilightforest.block.CodexSixWayBlock;
 
 /**
  * Utility class for Huge Mushroom blocks. Contains presets
  */
 public class HugeMushroomUtil {
 	public static BlockState getState(HugeMushroomType type, BlockState base) {
-		return base
-			.setValue(HugeMushroomBlock.UP, type.top)
-			.setValue(HugeMushroomBlock.DOWN, type.bottom)
-			.setValue(HugeMushroomBlock.NORTH, type.north)
-			.setValue(HugeMushroomBlock.SOUTH, type.south)
-			.setValue(HugeMushroomBlock.EAST, type.east)
-			.setValue(HugeMushroomBlock.WEST, type.west);
+		BlockState state = base;
+		state = setValueIfPresent(state, HugeMushroomBlock.UP, type.top);
+		state = setValueIfPresent(state, HugeMushroomBlock.DOWN, type.bottom);
+		state = setValueIfPresent(state, HugeMushroomBlock.NORTH, type.north);
+		state = setValueIfPresent(state, HugeMushroomBlock.SOUTH, type.south);
+		state = setValueIfPresent(state, HugeMushroomBlock.EAST, type.east);
+		state = setValueIfPresent(state, HugeMushroomBlock.WEST, type.west);
+		state = setValueIfPresent(state, CodexSixWayBlock.UP, type.top);
+		state = setValueIfPresent(state, CodexSixWayBlock.DOWN, type.bottom);
+		state = setValueIfPresent(state, CodexSixWayBlock.NORTH, type.north);
+		state = setValueIfPresent(state, CodexSixWayBlock.SOUTH, type.south);
+		state = setValueIfPresent(state, CodexSixWayBlock.EAST, type.east);
+		return setValueIfPresent(state, CodexSixWayBlock.WEST, type.west);
+	}
+
+	private static BlockState setValueIfPresent(BlockState state, BooleanProperty property, boolean value) {
+		return state.hasProperty(property) ? state.setValue(property, value) : state;
 	}
 
 	public enum HugeMushroomType {
