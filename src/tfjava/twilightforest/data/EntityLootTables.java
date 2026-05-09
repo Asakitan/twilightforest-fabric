@@ -612,7 +612,7 @@ public class EntityLootTables extends EntityLootSubProvider {
 
 	protected Stream<EntityType<?>> getKnownEntityTypes() {
 		return BuiltInRegistries.ENTITY_TYPE.entrySet().stream()
-			.filter(entry -> entry.getKey().location().getNamespace().equals(TwilightForestMod.ID))
+			.filter(entry -> entry.getKey().location().getNamespace().equals(TwilightForestMod.TF_ID))
 			.map(java.util.Map.Entry::getValue);
 	}
 }

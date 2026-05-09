@@ -27,6 +27,6 @@ public abstract class TFKeyBinds {
 	}
 
 	private static String addPrefix(String name) {
-		return "key." + TwilightForestMod.ID + "." + name;
+		return "key." + TwilightForestMod.TF_ID + "." + name;
 	}
 }

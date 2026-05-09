@@ -33,12 +33,11 @@ public final class TravellersGearEvents {
 		if (bootstrapped) return;
 		bootstrapped = true;
 
+		ServerEntityTracker.bootstrap();
 		ServerTickEvents.END_WORLD_TICK.register(level -> {
-			for (net.minecraft.world.entity.Entity entity : level.getAllEntities()) {
-				if (entity instanceof LivingEntity living) {
-					updateMovementModifiers(living);
-					updateOtherModifiers(living);
-				}
+			for (LivingEntity living : ServerEntityTracker.living(level)) {
+				updateMovementModifiers(living);
+				updateOtherModifiers(living);
 			}
 		});
 

@@ -38,7 +38,7 @@ public class TextureGeneratorReloadListener implements ResourceManagerReloadList
 					int vanillaScale = vanillaImage.getWidth() / defaultScale;
 					for (Boat.Type type : Boat.Type.values()) {
 						ResourceLocation location = getTextureLocation(type);
-						if (location.getNamespace().equals(TwilightForestMod.ID)) { // We only want to do this to our boats
+						if (location.getNamespace().equals(TwilightForestMod.TF_ID)) { // We only want to do this to our boats
 							manager.getResource(location).ifPresent(tfResource -> {
 								try (InputStream tfStream = tfResource.open()) {
 									try (NativeImage tfImage = NativeImage.read(tfStream)) {

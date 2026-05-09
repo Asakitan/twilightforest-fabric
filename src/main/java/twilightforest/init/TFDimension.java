@@ -19,6 +19,6 @@ public final class TFDimension {
     }
 
     public static boolean isTwilightWorldOnClient(Level clientWorld) {
-        return TwilightForestMod.ID.equals(clientWorld.dimension().location().getNamespace()) || isTwilightPortalDestination(clientWorld);
+        return TwilightForestMod.TF_ID.equals(clientWorld.dimension().location().getNamespace()) || isTwilightPortalDestination(clientWorld);
     }
 }

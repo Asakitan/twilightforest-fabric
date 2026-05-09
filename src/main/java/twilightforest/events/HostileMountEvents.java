@@ -23,12 +23,11 @@ public final class HostileMountEvents {
 		if (bootstrapped) return;
 		bootstrapped = true;
 
+		ServerEntityTracker.bootstrap();
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register(HostileMountEvents::handleMountDamage);
 		ServerTickEvents.END_WORLD_TICK.register(level -> {
-			for (Entity entity : level.getAllEntities()) {
-				if (entity instanceof IHostileMount) {
-					entity.getPassengers().forEach(passenger -> passenger.setShiftKeyDown(false));
-				}
+			for (Entity entity : ServerEntityTracker.matching(level, entity -> entity instanceof IHostileMount)) {
+				entity.getPassengers().forEach(passenger -> passenger.setShiftKeyDown(false));
 			}
 		});
 	}

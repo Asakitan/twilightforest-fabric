@@ -9,6 +9,6 @@ public abstract class TFKeyBindsCategories {
 	public static final Category TRAVELLERS_GEAR = new Category(addCategoryPrefix("travellers_gear"));
 
 	private static String addCategoryPrefix(String name) {
-		return "key." + TwilightForestMod.ID + ".categories." + name;
+		return "key." + TwilightForestMod.TF_ID + ".categories." + name;
 	}
 }

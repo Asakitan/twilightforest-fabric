@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Unit;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
 import twilightforest.components.entity.FortificationShieldAttachment;
@@ -32,6 +31,7 @@ public final class CapabilityEvents {
 		if (bootstrapped) return;
 		bootstrapped = true;
 
+		ServerEntityTracker.bootstrap();
 		ServerTickEvents.END_WORLD_TICK.register(CapabilityEvents::updateShields);
 		ServerTickEvents.END_SERVER_TICK.register(server -> server.getPlayerList().getPlayers().forEach(CapabilityEvents::updatePlayerCaps));
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register(CapabilityEvents::absorbShieldHits);
@@ -49,9 +49,8 @@ public final class CapabilityEvents {
 	}
 
 	private static void updateShields(ServerLevel level) {
-		for (Entity entity : level.getAllEntities()) {
-			if (entity instanceof LivingEntity living
-					&& ((AttachmentTarget) living).hasAttached(TFDataAttachments.FORTIFICATION_SHIELDS)) {
+		for (LivingEntity living : ServerEntityTracker.living(level)) {
+			if (((AttachmentTarget) living).hasAttached(TFDataAttachments.FORTIFICATION_SHIELDS)) {
 				TFDataAttachments.get(living, TFDataAttachments.FORTIFICATION_SHIELDS).tick(living);
 			}
 		}

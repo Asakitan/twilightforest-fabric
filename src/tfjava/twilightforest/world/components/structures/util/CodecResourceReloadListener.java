@@ -42,7 +42,7 @@ public abstract class CodecResourceReloadListener<T> extends SimpleJsonResourceR
 			if (location.getPath().contains("entries"))
 				continue;
 
-			if (TwilightForestMod.ID.equals(location.getNamespace())) {
+			if (TwilightForestMod.TF_ID.equals(location.getNamespace())) {
 				JsonElement jsonElement = entry.getValue();
 				this.deserialize(manager, this.initDynamicOps(), location, jsonElement);
 			} else {

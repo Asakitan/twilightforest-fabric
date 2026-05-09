@@ -34,7 +34,7 @@ public class RedThreadRenderer<T extends RedThreadBlockEntity> implements BlockE
 	private final RedThreadModel redThreadModel;
 
 	private static final RenderType GLOW = RenderType.create(
-		TwilightForestMod.ID + ":glow",
+		TwilightForestMod.TF_ID + ":glow",
 		DefaultVertexFormat.BLOCK,
 		VertexFormat.Mode.QUADS,
 		2097152,

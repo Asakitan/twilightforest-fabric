@@ -38,7 +38,7 @@ public final class TFCreativeTabs {
 
 	private static void acceptTwilightItems(java.util.function.Consumer<ItemLike> output, Predicate<Item> filter) {
 		BuiltInRegistries.ITEM.entrySet().stream()
-			.filter(entry -> entry.getKey().location().getNamespace().equals(TwilightForestMod.ID))
+			.filter(entry -> entry.getKey().location().getNamespace().equals(TwilightForestMod.TF_ID))
 			.sorted(Comparator.comparing(entry -> entry.getKey().location().toString()))
 			.map(Map.Entry<ResourceKey<Item>, Item>::getValue)
 			.filter(filter)
