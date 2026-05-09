@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import twilightforest.TwilightForestMod;
@@ -26,8 +27,15 @@ public class JarBlockEntity extends BlockEntity {
 
     private Item lid = TFBlocks.TWILIGHT_OAK_LOG.get().asItem();
 
+    public DecoratedPotBlockEntity.WobbleStyle lastWobbleStyle;
+    public long wobbleStartedAtTick;
+
     public JarBlockEntity(BlockPos pos, BlockState state) {
-        super(TFBlockEntities.MASON_JAR, pos, state);
+        super(TFBlockEntities.JAR, pos, state);
+    }
+
+    protected JarBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public Item getLid() {
@@ -53,7 +61,17 @@ public class JarBlockEntity extends BlockEntity {
 
     @Override
     public boolean triggerEvent(int id, int type) {
-        return id == 1 || super.triggerEvent(id, type);
+        if (id == 1) {
+            DecoratedPotBlockEntity.WobbleStyle[] styles = DecoratedPotBlockEntity.WobbleStyle.values();
+            if (type >= 0 && type < styles.length) {
+                this.lastWobbleStyle = styles[type];
+                if (this.level != null) {
+                    this.wobbleStartedAtTick = this.level.getGameTime();
+                }
+            }
+            return true;
+        }
+        return super.triggerEvent(id, type);
     }
 
     @Override

@@ -68,6 +68,7 @@ public final class ClientBlockEntityRendererBootstrap {
         BlockEntityRendererRegistry.register(BlockEntityType.CHEST, TFChestRenderer::new);
         BlockEntityRendererRegistry.register(BlockEntityType.TRAPPED_CHEST, TFChestRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.MASON_JAR, JarRenderer.MasonJarRenderer::new);
+        BlockEntityRendererRegistry.register(TFBlockEntities.JAR, JarRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.BRAZIER, BrazierRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.CANDELABRA, CandelabraRenderer::new);
         BlockEntityRendererRegistry.register(TFBlockEntities.CICADA, CicadaRenderer::new);

@@ -199,9 +199,7 @@ public final class TFBlockEntities {
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             TwilightForestMod.prefix("mason_jar"),
             FabricBlockEntityTypeBuilder.create(MasonJarBlockEntity::new,
-                    TFBlocks.MASON_JAR.get(),
-                    TFBlocks.FIREFLY_JAR.get(),
-                    TFBlocks.CICADA_JAR.get()).build());
+                    TFBlocks.MASON_JAR.get()).build());
 
     public static final BlockEntityType<DryingRackBlockEntity> DRYING_RACK = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,

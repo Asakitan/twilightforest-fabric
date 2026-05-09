@@ -701,8 +701,25 @@ public final class CodexTwilightClient implements ClientModInitializer {
         java.util.Map<net.minecraft.resources.ResourceLocation, twilightforest.client.model.item.TravellersGearItemModel> travellersGearModels =
                 createTravellersGearModels();
 
+        java.util.List<twilightforest.client.renderer.block.JarRenderer.LidResource> lidList =
+                twilightforest.client.renderer.block.JarRenderer.lidLocationList();
+        // Lid models are loaded as standalone JSONs (resourceId), NOT block-state variants (topLevelId).
+        // Per fabric-model-loading-api-v1 2.0.0 docs: "Models with a resource ID are loaded directly from
+        // JSON or a ModelModifier" — addModels(rl) lands here. So we key by ResourceLocation and read
+        // resourceId() in the bake callback.
+        java.util.Map<net.minecraft.resources.ResourceLocation, net.minecraft.world.item.Item> lidModelToItem =
+                new java.util.HashMap<>();
+        for (twilightforest.client.renderer.block.JarRenderer.LidResource lid : lidList) {
+            lidModelToItem.put(
+                    twilightforest.TwilightForestMod.prefix("block/lid/" + twilightforest.client.renderer.block.JarRenderer.lidPath(lid)),
+                    lid.lid());
+        }
+
         ModelLoadingPlugin.register(plugin -> {
             plugin.addModels(twilightforest.client.model.item.TrollsteinnModel.LIT_TROLLSTEINN_ID);
+            for (twilightforest.client.renderer.block.JarRenderer.LidResource lid : lidList) {
+                plugin.addModels(twilightforest.TwilightForestMod.prefix("block/lid/" + twilightforest.client.renderer.block.JarRenderer.lidPath(lid)));
+            }
             plugin.resolveModel().register(context -> {
                 net.minecraft.resources.ResourceLocation id = context.id();
                 if (id.equals(auroraBlockModel) || id.equals(auroraBlockModelCodex)) {
@@ -747,8 +764,16 @@ public final class CodexTwilightClient implements ClientModInitializer {
                 return null;
             });
             plugin.modifyModelAfterBake().register((model, context) -> {
-                if (context.topLevelId() != null && context.topLevelId().equals(net.minecraft.client.resources.model.ModelResourceLocation.inventory(TwilightForestMod.prefix("trollsteinn")))) {
+                net.minecraft.client.resources.model.ModelResourceLocation topId = context.topLevelId();
+                if (topId != null && topId.equals(net.minecraft.client.resources.model.ModelResourceLocation.inventory(TwilightForestMod.prefix("trollsteinn")))) {
                     return new twilightforest.client.model.item.TrollsteinnModel(model);
+                }
+                net.minecraft.resources.ResourceLocation resId = context.resourceId();
+                if (resId != null) {
+                    net.minecraft.world.item.Item lidItem = lidModelToItem.get(resId);
+                    if (lidItem != null) {
+                        twilightforest.client.renderer.block.JarRenderer.LIDS.put(lidItem, model);
+                    }
                 }
                 return model;
             });

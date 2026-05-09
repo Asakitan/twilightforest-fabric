@@ -34,12 +34,7 @@ public class MasonJarBlockEntity extends JarBlockEntity {
     private int itemRotation = 0;
 
     public MasonJarBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
-    }
-
-    @Override
-    public net.minecraft.world.level.block.entity.BlockEntityType<?> getType() {
-        return TFBlockEntities.MASON_JAR;
+        super(TFBlockEntities.MASON_JAR, pos, state);
     }
 
     public MasonJarItemStackHandler getItemHandler() {
