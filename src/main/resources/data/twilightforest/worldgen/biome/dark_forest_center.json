@@ -32,30 +32,30 @@
     [],
     [],
     [
-      "codex_twilight:legacy_coal_ore",
-      "codex_twilight:legacy_iron_ore",
-      "codex_twilight:legacy_gold_ore",
-      "codex_twilight:legacy_redstone_ore",
-      "codex_twilight:legacy_diamond_ore",
-      "codex_twilight:legacy_lapis_ore",
-      "codex_twilight:legacy_copper_ore"
+      "twilightforest:legacy_coal_ore",
+      "twilightforest:legacy_iron_ore",
+      "twilightforest:legacy_gold_ore",
+      "twilightforest:legacy_redstone_ore",
+      "twilightforest:legacy_diamond_ore",
+      "twilightforest:legacy_lapis_ore",
+      "twilightforest:legacy_copper_ore"
     ],
     [
-      "codex_twilight:plant_roots",
-      "codex_twilight:torch_berries"
+      "twilightforest:plant_roots",
+      "twilightforest:torch_berries"
     ],
     [],
     [
       "minecraft:patch_grass_normal",
-      "codex_twilight:tree/selector/dark_forest_tree_mix",
-      "codex_twilight:tree/selector/dark_forest_trees",
-      "codex_twilight:tree/darkwood_tree",
-      "codex_twilight:dark_grass",
-      "codex_twilight:dark_dead_bushes",
-      "codex_twilight:dark_pumpkins",
-      "codex_twilight:dark_mushglooms",
-      "codex_twilight:dark_brown_mushrooms",
-      "codex_twilight:dark_red_mushrooms"
+      "twilightforest:tree/selector/dark_forest_tree_mix",
+      "twilightforest:tree/selector/dark_forest_trees",
+      "twilightforest:tree/darkwood_tree",
+      "twilightforest:dark_grass",
+      "twilightforest:dark_dead_bushes",
+      "twilightforest:dark_pumpkins",
+      "twilightforest:dark_mushglooms",
+      "twilightforest:dark_brown_mushrooms",
+      "twilightforest:dark_red_mushrooms"
     ]
   ],
   "has_precipitation": true,

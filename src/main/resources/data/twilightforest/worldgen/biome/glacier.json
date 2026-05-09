@@ -30,17 +30,17 @@
     [],
     [],
     [
-      "codex_twilight:legacy_coal_ore",
-      "codex_twilight:legacy_iron_ore",
-      "codex_twilight:legacy_gold_ore",
-      "codex_twilight:legacy_redstone_ore",
-      "codex_twilight:legacy_diamond_ore",
-      "codex_twilight:legacy_lapis_ore",
-      "codex_twilight:legacy_copper_ore"
+      "twilightforest:legacy_coal_ore",
+      "twilightforest:legacy_iron_ore",
+      "twilightforest:legacy_gold_ore",
+      "twilightforest:legacy_redstone_ore",
+      "twilightforest:legacy_diamond_ore",
+      "twilightforest:legacy_lapis_ore",
+      "twilightforest:legacy_copper_ore"
     ],
     [
-      "codex_twilight:plant_roots",
-      "codex_twilight:torch_berries"
+      "twilightforest:plant_roots",
+      "twilightforest:torch_berries"
     ],
     [],
     [],

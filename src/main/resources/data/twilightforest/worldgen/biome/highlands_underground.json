@@ -29,20 +29,20 @@
     [],
     [],
     [
-      "codex_twilight:legacy_coal_ore",
-      "codex_twilight:legacy_iron_ore",
-      "codex_twilight:legacy_gold_ore",
-      "codex_twilight:legacy_redstone_ore",
-      "codex_twilight:legacy_diamond_ore",
-      "codex_twilight:legacy_lapis_ore",
-      "codex_twilight:legacy_copper_ore"
+      "twilightforest:legacy_coal_ore",
+      "twilightforest:legacy_iron_ore",
+      "twilightforest:legacy_gold_ore",
+      "twilightforest:legacy_redstone_ore",
+      "twilightforest:legacy_diamond_ore",
+      "twilightforest:legacy_lapis_ore",
+      "twilightforest:legacy_copper_ore"
     ],
     [
-      "codex_twilight:troll_roots"
+      "twilightforest:troll_roots"
     ],
     [],
     [
-      "codex_twilight:troll_mushglooms"
+      "twilightforest:troll_mushglooms"
     ]
   ],
   "has_precipitation": true,

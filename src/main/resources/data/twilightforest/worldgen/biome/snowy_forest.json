@@ -27,34 +27,34 @@
   "features": [
     [],
     [
-      "codex_twilight:frozen_lake"
+      "twilightforest:frozen_lake"
     ],
     [],
     [],
     [],
     [],
     [
-      "codex_twilight:legacy_coal_ore",
-      "codex_twilight:legacy_iron_ore",
-      "codex_twilight:legacy_gold_ore",
-      "codex_twilight:legacy_redstone_ore",
-      "codex_twilight:legacy_diamond_ore",
-      "codex_twilight:legacy_lapis_ore",
-      "codex_twilight:legacy_copper_ore"
+      "twilightforest:legacy_coal_ore",
+      "twilightforest:legacy_iron_ore",
+      "twilightforest:legacy_gold_ore",
+      "twilightforest:legacy_redstone_ore",
+      "twilightforest:legacy_diamond_ore",
+      "twilightforest:legacy_lapis_ore",
+      "twilightforest:legacy_copper_ore"
     ],
     [
-      "codex_twilight:plant_roots",
-      "codex_twilight:torch_berries"
+      "twilightforest:plant_roots",
+      "twilightforest:torch_berries"
     ],
     [],
     [
-      "codex_twilight:snowy_blueberry_bushes",
-      "codex_twilight:maloberry_bushes",
-      "codex_twilight:tree/selector/snowy_forest_trees",
-      "codex_twilight:spruce_fallen_log"
+      "twilightforest:snowy_blueberry_bushes",
+      "twilightforest:maloberry_bushes",
+      "twilightforest:tree/selector/snowy_forest_trees",
+      "twilightforest:spruce_fallen_log"
     ],
     [
-      "codex_twilight:snow_under_trees",
+      "twilightforest:snow_under_trees",
       "minecraft:freeze_top_layer"
     ]
   ],

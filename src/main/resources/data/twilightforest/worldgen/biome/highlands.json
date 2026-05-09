@@ -28,43 +28,43 @@
     [],
     [],
     [
-      "codex_twilight:druid_hut",
-      "codex_twilight:well_placer",
-      "codex_twilight:foundation"
+      "twilightforest:druid_hut",
+      "twilightforest:well_placer",
+      "twilightforest:foundation"
     ],
     [],
     [
-      "codex_twilight:legacy_coal_ore",
-      "codex_twilight:legacy_iron_ore",
-      "codex_twilight:legacy_gold_ore",
-      "codex_twilight:legacy_redstone_ore",
-      "codex_twilight:legacy_diamond_ore",
-      "codex_twilight:legacy_lapis_ore",
-      "codex_twilight:legacy_copper_ore",
-      "codex_twilight:small_andesite",
-      "codex_twilight:small_diorite",
-      "codex_twilight:small_granite"
+      "twilightforest:legacy_coal_ore",
+      "twilightforest:legacy_iron_ore",
+      "twilightforest:legacy_gold_ore",
+      "twilightforest:legacy_redstone_ore",
+      "twilightforest:legacy_diamond_ore",
+      "twilightforest:legacy_lapis_ore",
+      "twilightforest:legacy_copper_ore",
+      "twilightforest:small_andesite",
+      "twilightforest:small_diorite",
+      "twilightforest:small_granite"
     ],
     [
-      "codex_twilight:troll_roots"
+      "twilightforest:troll_roots"
     ],
     [],
     [
-      "codex_twilight:blueberry_bushes",
+      "twilightforest:blueberry_bushes",
       "minecraft:patch_grass_taiga",
       "minecraft:patch_large_fern",
-      "codex_twilight:grove_ruins",
-      "codex_twilight:stone_circle",
-      "codex_twilight:outside_stalagmite",
-      "codex_twilight:monolith",
-      "codex_twilight:hollow_stump",
-      "codex_twilight:hollow_log",
-      "codex_twilight:tree/selector/highlands_trees",
+      "twilightforest:grove_ruins",
+      "twilightforest:stone_circle",
+      "twilightforest:outside_stalagmite",
+      "twilightforest:monolith",
+      "twilightforest:hollow_stump",
+      "twilightforest:hollow_log",
+      "twilightforest:tree/selector/highlands_trees",
       "minecraft:forest_rock",
-      "codex_twilight:sparse_mushglooms",
-      "codex_twilight:spruce_fallen_log",
-      "codex_twilight:dark_ferns",
-      "codex_twilight:troll_mushglooms"
+      "twilightforest:sparse_mushglooms",
+      "twilightforest:spruce_fallen_log",
+      "twilightforest:dark_ferns",
+      "twilightforest:troll_mushglooms"
     ]
   ],
   "has_precipitation": true,

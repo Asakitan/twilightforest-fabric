@@ -9,7 +9,7 @@
       "required": false
     },
     {
-      "id": "#codex_twilight:common_protections",
+      "id": "#twilightforest:common_protections",
       "required": false
     },
     "minecraft:bedrock",

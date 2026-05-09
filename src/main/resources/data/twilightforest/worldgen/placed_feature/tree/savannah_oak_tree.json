@@ -1,4 +1,4 @@
-﻿{
+{
   "feature": "twilightforest:tree/twilight_oak_tree",
   "placement": [
     {
@@ -41,7 +41,7 @@
       "predicate": {
         "type": "minecraft:would_survive",
         "state": {
-          "Name": "minecraft:oak_sapling",
+          "Name": "twilightforest:twilight_oak_sapling",
           "Properties": {
             "stage": "0"
           }

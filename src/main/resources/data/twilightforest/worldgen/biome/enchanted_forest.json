@@ -34,62 +34,62 @@
   "features": [
     [],
     [
-      "codex_twilight:dense_water_lake"
+      "twilightforest:dense_water_lake"
     ],
     [],
     [],
     [
-      "codex_twilight:druid_hut",
-      "codex_twilight:well_placer",
-      "codex_twilight:foundation"
+      "twilightforest:druid_hut",
+      "twilightforest:well_placer",
+      "twilightforest:foundation"
     ],
     [],
     [
       "minecraft:disk_sand",
       "minecraft:disk_clay",
       "minecraft:disk_gravel",
-      "codex_twilight:wood_roots",
-      "codex_twilight:legacy_coal_ore",
-      "codex_twilight:legacy_iron_ore",
-      "codex_twilight:legacy_gold_ore",
-      "codex_twilight:legacy_redstone_ore",
-      "codex_twilight:legacy_diamond_ore",
-      "codex_twilight:legacy_lapis_ore",
-      "codex_twilight:legacy_copper_ore",
-      "codex_twilight:small_andesite",
-      "codex_twilight:small_diorite",
-      "codex_twilight:small_granite"
+      "twilightforest:wood_roots",
+      "twilightforest:legacy_coal_ore",
+      "twilightforest:legacy_iron_ore",
+      "twilightforest:legacy_gold_ore",
+      "twilightforest:legacy_redstone_ore",
+      "twilightforest:legacy_diamond_ore",
+      "twilightforest:legacy_lapis_ore",
+      "twilightforest:legacy_copper_ore",
+      "twilightforest:small_andesite",
+      "twilightforest:small_diorite",
+      "twilightforest:small_granite"
     ],
     [
-      "codex_twilight:plant_roots",
-      "codex_twilight:torch_berries",
-      "codex_twilight:iron_oreberries_enchanted_forest",
-      "codex_twilight:gold_oreberries_enchanted_forest",
-      "codex_twilight:copper_oreberries_enchanted_forest",
-      "codex_twilight:essence_oreberries_enchanted_forest"
+      "twilightforest:plant_roots",
+      "twilightforest:torch_berries",
+      "twilightforest:iron_oreberries_enchanted_forest",
+      "twilightforest:gold_oreberries_enchanted_forest",
+      "twilightforest:copper_oreberries_enchanted_forest",
+      "twilightforest:essence_oreberries_enchanted_forest"
     ],
     [],
     [
       "minecraft:patch_grass_badlands",
       "minecraft:patch_sugar_cane",
-      "codex_twilight:dense_ferns",
-      "codex_twilight:dense_large_ferns",
-      "codex_twilight:flower_placer",
-      "codex_twilight:grove_ruins",
-      "codex_twilight:stone_circle",
-      "codex_twilight:outside_stalagmite",
-      "codex_twilight:monolith",
-      "codex_twilight:hollow_stump",
-      "codex_twilight:hollow_log",
+      "twilightforest:dense_ferns",
+      "twilightforest:dense_large_ferns",
+      "twilightforest:flower_placer",
+      "twilightforest:grove_ruins",
+      "twilightforest:stone_circle",
+      "twilightforest:outside_stalagmite",
+      "twilightforest:monolith",
+      "twilightforest:hollow_stump",
+      "twilightforest:hollow_log",
       "twilightforest:tree/selector/enchanted_forest_trees",
       "twilightforest:tree/selector/dense_canopy_trees",
-      "codex_twilight:fiddlehead",
+      "twilightforest:fiddlehead",
       "twilightforest:tree/selector/canopy_trees",
-      "codex_twilight:default_fallen_logs"
+      "twilightforest:default_fallen_logs"
     ],
     [
       "minecraft:freeze_top_layer",
-      "codex_twilight:enchanted_forest_vines"
+      "twilightforest:enchanted_forest_vines"
     ]
   ],
   "has_precipitation": false,

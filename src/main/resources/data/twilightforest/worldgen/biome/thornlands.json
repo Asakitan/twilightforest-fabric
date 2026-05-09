@@ -30,12 +30,12 @@
     [],
     [],
     [
-      "codex_twilight:stone_circle",
-      "codex_twilight:outside_stalagmite",
-      "codex_twilight:monolith",
-      "codex_twilight:hollow_stump",
-      "codex_twilight:hollow_log",
-      "codex_twilight:thorns"
+      "twilightforest:stone_circle",
+      "twilightforest:outside_stalagmite",
+      "twilightforest:monolith",
+      "twilightforest:hollow_stump",
+      "twilightforest:hollow_log",
+      "twilightforest:thorns"
     ]
   ],
   "has_precipitation": true,
