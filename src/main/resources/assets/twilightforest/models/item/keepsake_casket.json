@@ -1,5 +1,5 @@
 {
-  "parent": "twilightforest:block/keepsake_casket",
+  "parent": "minecraft:builtin/entity",
   "textures": {
     "particle": "block/netherite_block"
   },

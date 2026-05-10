@@ -1,5 +1,5 @@
 ﻿{
-  "parent": "codex_twilight:block/moonworm",
+  "parent": "minecraft:builtin/entity",
   "textures": {
     "particle": "minecraft:block/slime_block"
   },

@@ -3,6 +3,12 @@ plugins {
     id 'java'
 }
 
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
+
 group = 'com.codex'
 version = '0.1.0'
 
@@ -194,21 +200,42 @@ tasks.named('jar') {
 tasks.named('remapJar') {
     doLast {
         def jarFile = archiveFile.get().asFile
-        def mirrorDir = layout.buildDirectory.dir('mmGrassStructMirror').get().asFile
-
-        delete mirrorDir
-        copy {
-            from zipTree(jarFile)
-            include 'twilightforest/asm/grass/*GrassColorModifier.class'
-            into mirrorDir
-        }
+        def tempFile = new File(jarFile.parentFile, "${jarFile.name}.mm-tmp")
+        def mirroredEntries = [:]
 
         // Manningham Mills resolves enum-subclass struct bytecode relative to its own
         // package (me/shedaniel/mm). Mirror the already-remapped bytes into that resource
         // path after remapJar runs, avoiding duplicate internal class names during remap.
-        ant.zip(destfile: jarFile, update: true) {
-            zipfileset(dir: mirrorDir, prefix: 'me/shedaniel/mm')
+        new ZipFile(jarFile).withCloseable { zip ->
+            zip.entries().each { entry ->
+                if (!entry.directory
+                        && entry.name.startsWith('twilightforest/asm/grass/')
+                        && entry.name.endsWith('GrassColorModifier.class')) {
+                    def mirrorName = "me/shedaniel/mm/${entry.name.substring(entry.name.lastIndexOf('/') + 1)}"
+                    mirroredEntries[mirrorName] = zip.getInputStream(entry).withCloseable { it.readAllBytes() }
+                }
+            }
+
+            new ZipOutputStream(Files.newOutputStream(tempFile.toPath())).withCloseable { out ->
+                zip.entries().each { entry ->
+                    if (mirroredEntries.containsKey(entry.name)) {
+                        return
+                    }
+                    out.putNextEntry(new ZipEntry(entry.name))
+                    if (!entry.directory) {
+                        zip.getInputStream(entry).withCloseable { input -> input.transferTo(out) }
+                    }
+                    out.closeEntry()
+                }
+
+                mirroredEntries.each { name, bytes ->
+                    out.putNextEntry(new ZipEntry(name))
+                    out.write(bytes)
+                    out.closeEntry()
+                }
+            }
         }
+        Files.move(tempFile.toPath(), jarFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
     }
 }
 

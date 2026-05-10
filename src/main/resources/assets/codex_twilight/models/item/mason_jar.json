@@ -1,5 +1,5 @@
 ﻿{
-  "parent": "codex_twilight:block/mason_jar",
+  "parent": "minecraft:builtin/entity",
   "textures": {
     "particle": "codex_twilight:block/jar_side"
   },

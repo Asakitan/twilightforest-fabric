@@ -1,5 +1,5 @@
 ﻿{
-  "parent": "twilightforest:block/brazier",
+  "parent": "minecraft:builtin/entity",
   "textures": {
     "particle": "codex_twilight:block/wood/planks_canopy_0"
   },

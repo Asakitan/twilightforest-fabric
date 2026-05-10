@@ -1,6 +1,7 @@
 package com.codex.twilight.client;
 
 import com.codex.twilight.client.render.ClientBlockEntityRendererBootstrap;
+import com.codex.twilight.client.render.ClientItemRendererBootstrap;
 import com.codex.twilight.client.render.ClientParticleBootstrap;
 import com.codex.twilight.client.render.CodexModelLayers;
 import com.codex.twilight.client.render.entity.KoboldEntityRenderer;
@@ -618,6 +619,7 @@ public final class CodexTwilightClient implements ClientModInitializer {
     private static void bootstrapModelDependentClientRenderers(Minecraft client) {
         CuriosClientCompat.bootstrap();
         KnightmetalShieldItemRenderer.bootstrap();
+        ClientItemRendererBootstrap.bootstrap();
         LOGGER.info("Model-dependent item/trinket renderers deferred until CLIENT_STARTED.");
     }
 

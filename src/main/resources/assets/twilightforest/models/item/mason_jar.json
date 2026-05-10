@@ -1,5 +1,5 @@
 {
-  "parent": "twilightforest:block/mason_jar",
+  "parent": "minecraft:builtin/entity",
   "textures": {
     "particle": "twilightforest:block/jar_side"
   },
