@@ -22,6 +22,11 @@ public final class ConfigSetup {
 	}
 
 	public static void syncUncraftingConfig(ServerPlayer player) {
+		// Guard against vanilla / pre-mod clients: silently skip if the receiver isn't registered
+		// instead of letting Fabric log "Unknown custom packet payload: twilightforest:sync_uncrafting_config".
+		if (!ServerPlayNetworking.canSend(player, SyncUncraftingTableConfigPacket.TYPE)) {
+			return;
+		}
 		ServerPlayNetworking.send(player, new SyncUncraftingTableConfigPacket(
 			COMMON_CONFIG.UNCRAFTING_STUFFS.uncraftingXpCostMultiplier.get(),
 			COMMON_CONFIG.UNCRAFTING_STUFFS.repairingXpCostMultiplier.get(),

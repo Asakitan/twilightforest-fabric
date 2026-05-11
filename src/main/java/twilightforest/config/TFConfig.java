@@ -112,6 +112,19 @@ public final class TFConfig {
     }
 
     public static boolean bossDropChests = true;
+    /**
+     * Codex addition: re-place the boss spawner block at every killed TF boss's
+     * recorded position after {@link #dailyBossRespawnDelayDays} in-world days.
+     * Per-spawner, persisted via {@code DailyBossRespawnState}.
+     *
+     * <p>Does NOT touch first-kill advancements / quest triggers / structure
+     * conquered flag. Subsequent kills go through the same {@code BaseTFBoss.die}
+     * loot path, but criteria-triggers on already-granted advancements are
+     * vanilla idempotent.
+     */
+    public static boolean dailyBossRespawn = true;
+    /** Number of in-world days to wait after kill before placing the spawner back. */
+    public static int dailyBossRespawnDelayDays = 1;
     public static boolean newPlayersSpawnInTF = false;
     public static boolean portalForNewPlayerSpawn = false;
     public static String originDimension = Level.OVERWORLD.location().toString();
@@ -287,6 +300,8 @@ public final class TFConfig {
     private static final class ConfigData {
         boolean enforcedProgression = TFConfig.enforcedProgression;
         boolean bossDropChests = TFConfig.bossDropChests;
+        boolean dailyBossRespawn = TFConfig.dailyBossRespawn;
+        int dailyBossRespawnDelayDays = TFConfig.dailyBossRespawnDelayDays;
         String originDimension = TFConfig.originDimension;
         String portalLockingAdvancement = TFConfig.portalLockingAdvancement;
         boolean checkPortalPlacement = TFConfig.checkPortalPlacement;
@@ -354,6 +369,8 @@ public final class TFConfig {
         void apply() {
             TFConfig.enforcedProgression = this.enforcedProgression;
             TFConfig.bossDropChests = this.bossDropChests;
+            TFConfig.dailyBossRespawn = this.dailyBossRespawn;
+            TFConfig.dailyBossRespawnDelayDays = Math.max(1, this.dailyBossRespawnDelayDays);
             TFConfig.originDimension = this.originDimension == null || this.originDimension.isBlank()
                     ? Level.OVERWORLD.location().toString()
                     : this.originDimension;

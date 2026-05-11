@@ -432,6 +432,9 @@ public final class CharmEvents {
 	}
 
 	private static void sendCharmPacket(ServerPlayer player, ItemStack charm, SoundEvent sound) {
+		if (!ServerPlayNetworking.canSend(player, SpawnCharmPacket.TYPE)) {
+			return;
+		}
 		ResourceKey<SoundEvent> key = ResourceKey.create(Registries.SOUND_EVENT, BuiltInRegistries.SOUND_EVENT.getKey(sound));
 		ServerPlayNetworking.send(player, new SpawnCharmPacket(charm, key));
 	}

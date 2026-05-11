@@ -36,7 +36,8 @@
   },
   "accessWidener": "codex_twilight.accesswidener",
   "mixins": [
-    "codex_twilight.mixins.json"
+    "codex_twilight.mixins.json",
+    "codex_twilight_vs2.mixins.json"
   ],
   "depends": {
     "fabric-api-base": "*",

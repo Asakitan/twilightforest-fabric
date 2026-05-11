@@ -9,6 +9,10 @@
     {
       "id": "twilightforest:twilightforest_type",
       "required": false
+    },
+    {
+      "id": "catty:twilight_realm",
+      "required": false
     }
   ]
 }

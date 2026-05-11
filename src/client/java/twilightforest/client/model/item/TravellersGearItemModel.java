@@ -18,6 +18,7 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -37,6 +38,7 @@ import twilightforest.item.travellers_gear.modifiers.TravellersModifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +106,14 @@ public class TravellersGearItemModel implements UnbakedModel {
 		}
 
 		TextureAtlasSprite particle = baseSprite != null ? baseSprite : spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation()));
-		return new SimpleBakedModel(quads, Map.of(), false, false, false, particle, net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS, ItemOverrides.EMPTY);
+		// Sodium fast item path queries getQuads(state, dir, rng) for every Direction; vanilla
+		// SimpleBakedModel#getQuads returns culledFaces.get(dir), which is null when the map
+		// is Map.of(). Pre-populate an EnumMap with empty lists so per-face lookups never NPE.
+		EnumMap<Direction, List<net.minecraft.client.renderer.block.model.BakedQuad>> culledFaces = new EnumMap<>(Direction.class);
+		for (Direction dir : Direction.values()) {
+			culledFaces.put(dir, List.of());
+		}
+		return new SimpleBakedModel(quads, culledFaces, false, false, false, particle, net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS, ItemOverrides.EMPTY);
 	}
 
 	@Nullable

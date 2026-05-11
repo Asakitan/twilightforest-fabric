@@ -231,8 +231,8 @@ public class MazeMapItem extends MapItem {
 	@Override
 	@Nullable
 	public Packet<?> getUpdatePacket(ItemStack stack, Level level, Player player) {
-		MapId mapId = stack.get(DataComponents.MAP_ID);
 		TFMazeMapData mapdata = this.getCustomMapData(stack, level);
+		MapId mapId = stack.get(DataComponents.MAP_ID);
 		return mapId == null || mapdata == null ? null : mapdata.getUpdatePacket(mapId, player);
 	}
 

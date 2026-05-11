@@ -35,7 +35,9 @@ public class ServerTFBossBar extends ServerBossEvent {
 	@Override
 	public void addPlayer(ServerPlayer player) {
 		if (this.players.add(player) && this.isVisible()) {
-			ServerPlayNetworking.send(player, new TFBossBarPacket.AddTFBossBarPacket(this));
+			if (ServerPlayNetworking.canSend(player, TFBossBarPacket.AddTFBossBarPacket.TYPE)) {
+				ServerPlayNetworking.send(player, new TFBossBarPacket.AddTFBossBarPacket(this));
+			}
 		}
 	}
 
@@ -49,6 +51,10 @@ public class ServerTFBossBar extends ServerBossEvent {
 			this.overlay = overlay;
 			change = true;
 		}
-		if (change) this.players.forEach(serverPlayer -> ServerPlayNetworking.send(serverPlayer, new TFBossBarPacket.UpdateTFBossBarStylePacket(this, allowLerp)));
+		if (change) this.players.forEach(serverPlayer -> {
+			if (ServerPlayNetworking.canSend(serverPlayer, TFBossBarPacket.UpdateTFBossBarStylePacket.TYPE)) {
+				ServerPlayNetworking.send(serverPlayer, new TFBossBarPacket.UpdateTFBossBarStylePacket(this, allowLerp));
+			}
+		});
 	}
 }

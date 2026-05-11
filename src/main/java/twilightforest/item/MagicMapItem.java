@@ -11,6 +11,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -98,6 +100,18 @@ public class MagicMapItem extends MapItem {
 	}
 
 	@Override
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+		if (stack.get(DataComponents.MAP_ID) == null) {
+			if (!level.isClientSide()) {
+				getCustomMapData(stack, level);
+			}
+			return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+		}
+		return super.use(level, player, hand);
+	}
+
+	@Override
 	public void update(Level level, Entity viewer, MapItemSavedData data) {
 		if (level.dimension() == data.dimension && viewer instanceof Player && !level.isClientSide()) {
 			int biomesPerPixel = 4;
@@ -175,8 +189,8 @@ public class MagicMapItem extends MapItem {
 	@Override
 	@Nullable
 	public Packet<?> getUpdatePacket(ItemStack stack, Level level, Player player) {
-		MapId mapId = stack.get(DataComponents.MAP_ID);
 		TFMagicMapData mapdata = getCustomMapData(stack, level);
+		MapId mapId = stack.get(DataComponents.MAP_ID);
 		return mapId == null || mapdata == null ? null : mapdata.getUpdatePacket(mapId, player);
 	}
 

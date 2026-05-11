@@ -53,6 +53,8 @@ accessible field net/minecraft/client/gui/components/BossHealthOverlay OVERLAY_B
 accessible field net/minecraft/client/gui/components/BossHealthOverlay OVERLAY_PROGRESS_SPRITES [Lnet/minecraft/resources/ResourceLocation;
 accessible field net/minecraft/client/gui/components/LerpingBossEvent setTime J
 mutable field net/minecraft/client/gui/components/LerpingBossEvent setTime J
+# Client TFBossBar receiver: insert ClientTFBossBar into the boss-bar map directly.
+accessible field net/minecraft/client/gui/components/BossHealthOverlay events Ljava/util/Map;
 accessible method net/minecraft/client/gui/Gui renderFood (Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/entity/player/Player;II)V
 accessible method net/minecraft/client/gui/Gui canRenderCrosshairForSpectator (Lnet/minecraft/world/phys/HitResult;)Z
 accessible field net/minecraft/world/entity/LivingEntity jumping Z

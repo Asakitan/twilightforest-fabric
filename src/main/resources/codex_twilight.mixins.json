@@ -19,14 +19,16 @@
     "LootTableMixin",
     "GrassColorModifierCodecMixin",
     "BeardifierAccessor",
-    "BeardifierMixin"
+    "BeardifierMixin",
+    "AttributeMapMixin"
   ],
   "client": [
     "client.BoatRendererMixin",
     "client.LevelRendererMultipartMixin",
     "client.EntityRenderDispatcherMultipartMixin",
     "client.MapRendererAccessor",
-    "client.MapRendererMapInstanceMixin"
+    "client.MapRendererMapInstanceMixin",
+    "client.ClientLanguageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,8 +1,12 @@
 ﻿{
-    "values":  [
-                   {
-                       "id":  "codex_twilight:twilight_forest_type",
-                       "required":  false
-                   }
-               ]
+  "values": [
+    {
+      "id": "catty:twilight_realm",
+      "required": false
+    },
+    {
+      "id": "twilightforest:twilight_forest_type",
+      "required": false
+    }
+  ]
 }

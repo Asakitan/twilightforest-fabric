@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -145,7 +146,9 @@ public final class TFLootTables {
     }
 
     public static void generateLootContainer(WorldGenLevel world, BlockPos pos, BlockState state, int flags, ResourceKey<LootTable> lootTable) {
-        world.setBlock(pos, state, flags);
+        if (!world.setBlock(pos, state, flags)) {
+            return;
+        }
         generateChestContents(world, pos, lootTable);
     }
 
@@ -154,6 +157,9 @@ public final class TFLootTables {
     }
 
     public static void generateChestContents(LevelAccessor level, BlockPos pos, long seed, ResourceKey<LootTable> lootTable) {
+        if (level instanceof WorldGenRegion region && !region.ensureCanWrite(pos)) {
+            return;
+        }
         if (level.getBlockEntity(pos) instanceof RandomizableContainerBlockEntity lootContainer) {
             lootContainer.setLootTable(lootTable, seed);
         }

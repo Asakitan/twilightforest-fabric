@@ -1,0 +1,13 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "twilightforest.mixin.vs2",
+  "plugin": "twilightforest.mixin.vs2.VS2MixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "VS2BoxesBlockShapeBuilderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

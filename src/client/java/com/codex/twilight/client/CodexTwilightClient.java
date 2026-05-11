@@ -158,10 +158,17 @@ import twilightforest.network.MovePlayerPacket;
 import twilightforest.network.ParticlePacket;
 import twilightforest.network.SetMasonJarItemPacket;
 import twilightforest.network.AreaProtectionPacket;
+import twilightforest.network.BiomeNamesPayload;
 import twilightforest.network.CreateMovingCicadaSoundPacket;
+import twilightforest.network.EnforceProgressionStatusPacket;
+import twilightforest.network.SpawnCharmPacket;
 import twilightforest.network.SpawnFallenLeafFromPacket;
 import twilightforest.network.StructureProtectionPacket;
+import twilightforest.network.SyncQuestsPacket;
+import twilightforest.network.SyncUncraftingTableConfigPacket;
+import twilightforest.network.TFBossBarPacket;
 import twilightforest.network.TravellersWingsStatePacket;
+import twilightforest.network.UpdateDeathTimePacket;
 import twilightforest.network.UpdateThrownPacket;
 
 /**
@@ -186,6 +193,13 @@ public final class CodexTwilightClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LOGGER.info("Codex Twilight client init (F2.4 — batch renderer registration for TF mob roster).");
+        // Force TFDataAttachments static-init NOW so the syncable bool attachments
+        // (feather_fan_falling, has_double_jump, is_using_goggles_zoom_modifier,
+        // travellers_goggles_red_thread_vision, is_gradually_gliding) are present in
+        // the client-side Fabric attachment registry BEFORE the play handshake. Without
+        // this the server logs "Client does not support the syncable attachments ..."
+        // for every join (observed in remote latest.log).
+        twilightforest.init.TFDataAttachments.bootstrap();
         MenuScreens.register(TFMenuTypes.UNCRAFTING, twilightforest.client.UncraftingScreen::new);
         CodexModelLayers.bootstrap();
         // F2.1b — Kobold pilot keeps its dedicated renderer with explicit armor layers.
@@ -478,6 +492,98 @@ public final class CodexTwilightClient implements ClientModInitializer {
                         random.nextFloat() * -0.5F * motion.z());
             });
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(BiomeNamesPayload.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            // Apply the server-pushed biome name overlay. Vanilla resource-pack
+            // translations still take precedence (the ClientLanguage mixin
+            // checks the storage map first); this only fills in keys the client
+            // doesn't know yet — covers terralith / yggdrasil / candycraftce
+            // biomes whose mod jar shipped no lang entries, and the case where
+            // I18nUpdateMod's resource pack download failed.
+            twilightforest.client.translations.BiomeNamesClientStore.apply(payload.entries());
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(SyncUncraftingTableConfigPacket.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            // Mirror upstream: server pushes uncrafting-table config so the client GUI matches.
+            twilightforest.config.TFConfig.uncraftingXpCostMultiplier = payload.uncraftingMultiplier();
+            twilightforest.config.TFConfig.repairingXpCostMultiplier = payload.repairingMultiplier();
+            twilightforest.config.TFConfig.allowShapelessUncrafting = payload.allowShapeless();
+            twilightforest.config.TFConfig.disableIngredientSwitching = payload.disableIngredientSwitching();
+            twilightforest.config.TFConfig.disableUncraftingOnly = payload.disabledUncrafting();
+            twilightforest.config.TFConfig.disableEntireTable = payload.disabledTable();
+            twilightforest.config.TFConfig.disableUncraftingRecipes.clear();
+            twilightforest.config.TFConfig.disableUncraftingRecipes.addAll(payload.disabledRecipes());
+            twilightforest.config.TFConfig.reverseRecipeBlacklist = payload.flipRecipeList();
+            twilightforest.config.TFConfig.blacklistedUncraftingModIds.clear();
+            twilightforest.config.TFConfig.blacklistedUncraftingModIds.addAll(payload.disabledModids());
+            twilightforest.config.TFConfig.flipUncraftingModIdList = payload.flipModidList();
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(SyncQuestsPacket.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            // Mirror datapack-resolved Questing Ram context onto the client so the
+            // QuestingRamIndicatorOverlay can render the actual remaining wool list.
+            twilightforest.entity.passive.quest.QuestReloadListener.currentContext().setContext(payload.ram());
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(EnforceProgressionStatusPacket.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            // Mirror tfEnforcedProgression game-rule onto the client so progression-locked
+            // tooltips/HUD elements (e.g. structure conquered checks) read the right value.
+            twilightforest.config.TFConfig.enforcedProgression = payload.enforce();
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(UpdateDeathTimePacket.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            net.minecraft.client.Minecraft mc = ctx.client();
+            if (mc.level == null) return;
+            net.minecraft.world.entity.Entity entity = mc.level.getEntity(payload.entityID());
+            if (entity instanceof net.minecraft.world.entity.LivingEntity living) {
+                living.deathTime = payload.deathTime();
+            }
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(SpawnCharmPacket.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            net.minecraft.client.Minecraft mc = ctx.client();
+            if (mc.player == null || mc.level == null) return;
+            net.minecraft.sounds.SoundEvent sound = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(payload.event().location());
+            if (twilightforest.config.TFConfig.spawnCharmAnimationAsTotem) {
+                // Vanilla totem-style use animation borrow: trigger the totem-of-undying flash with
+                // the charm stack as the trigger item. Matches upstream Q5.config-toggle behavior.
+                mc.gameRenderer.displayItemActivation(payload.charm());
+                if (sound != null) {
+                    mc.player.playSound(sound, 1.0F, 1.0F);
+                }
+            } else {
+                // Default: spawn the orbiter CharmEffect entity client-side.
+                twilightforest.entity.CharmEffect effect = new twilightforest.entity.CharmEffect(
+                    twilightforest.init.TFEntities.CHARM_EFFECT.get(), mc.level, mc.player, payload.charm());
+                effect.offset = mc.level.random.nextFloat() * (float) Math.PI * 2.0F;
+                mc.level.addEntity(effect);
+                if (sound != null) {
+                    mc.player.playSound(sound, 1.0F, 1.0F);
+                }
+            }
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(TFBossBarPacket.AddTFBossBarPacket.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            net.minecraft.client.Minecraft mc = ctx.client();
+            if (mc.gui == null) return;
+            twilightforest.entity.boss.bar.ClientTFBossBar bar = new twilightforest.entity.boss.bar.ClientTFBossBar(
+                payload.id(), payload.name(), payload.progress(), payload.color(), payload.overlay(),
+                payload.darkenScreen(), payload.playMusic(), payload.createWorldFog());
+            mc.gui.getBossOverlay().events.put(payload.id(), bar);
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(TFBossBarPacket.UpdateTFBossBarStylePacket.TYPE, (payload, ctx) -> ctx.client().execute(() -> {
+            net.minecraft.client.Minecraft mc = ctx.client();
+            if (mc.gui == null) return;
+            net.minecraft.client.gui.components.LerpingBossEvent existing = mc.gui.getBossOverlay().events.get(payload.id());
+            if (existing instanceof twilightforest.entity.boss.bar.ClientTFBossBar tfBar) {
+                tfBar.setBarColor(payload.color());
+                tfBar.setOverlay(payload.overlay());
+                if (payload.allowLerp()) {
+                    tfBar.setSetTime(net.minecraft.Util.getMillis());
+                }
+            }
+        }));
 
         ClientPlayNetworking.registerGlobalReceiver(MovePlayerPacket.TYPE, (payload, ctx) -> {
             Minecraft mc = ctx.client();

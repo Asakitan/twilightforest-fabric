@@ -101,8 +101,47 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
         super.die(source);
         this.getBossBar().setProgress(0.0F);
         if (this.shouldSpawnLoot() && this.level() instanceof ServerLevel server) {
-            this.postmortem(server, source);
+            try {
+                this.postmortem(server, source);
+            } catch (Throwable t) {
+                // Defensive: if postmortem (loot roll into dyingInventory + structure-conquered
+                // marking) throws, the death animation must still complete and remove() must still
+                // fire so the boss doesn't sit frozen mid-death with health=0.
+                twilightforest.TwilightForestMod.LOGGER.error("BaseTFBoss.postmortem threw for {} at {}: {}",
+                    net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()),
+                    this.blockPosition(), t.toString(), t);
+            }
+            // Codex addition: record the boss's spawner position for daily respawn. This is
+            // strictly additive — only places the boss spawner block back after the configured
+            // day delay, does NOT touch the structure conquered flag, does NOT re-fire any
+            // first-kill criteria. Subsequent kills go through this same path; structure
+            // conquered=true is now idempotent on LandmarkUtil.markStructureConquered, and
+            // CriteriaTriggers are vanilla idempotent on already-granted advancements.
+            try {
+                this.codex$recordKillForDailyRespawn(server);
+            } catch (Throwable t) {
+                twilightforest.TwilightForestMod.LOGGER.warn("Daily boss respawn record failed for {}: {}",
+                    net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()), t.toString());
+            }
         }
+    }
+
+    /**
+     * Stash this boss's spawner position into the per-level {@code DailyBossRespawnState}
+     * so the spawner block can be re-placed after {@code TFConfig.dailyBossRespawnDelayDays}
+     * in-world days. The boss's restriction point is set during initial spawn by
+     * {@code BossSpawnerBlockEntity.initializeCreature} to the spawner's block position;
+     * we use that here as the canonical respawn position.
+     */
+    private void codex$recordKillForDailyRespawn(ServerLevel server) {
+        if (!twilightforest.config.TFConfig.dailyBossRespawn) return;
+        Block spawnerBlock = this.getBossSpawner();
+        if (spawnerBlock == null) return;
+        net.minecraft.core.GlobalPos home = this.getRestrictionPoint();
+        if (home == null) return;
+        if (home.dimension() != server.dimension()) return;  // boss moved cross-dim; skip
+        twilightforest.util.boss.DailyBossRespawnState.get(server)
+            .recordKill(spawnerBlock, home.pos(), server);
     }
 
     @Override
@@ -124,9 +163,40 @@ public abstract class BaseTFBoss extends Monster implements IBossLootBuffer, Enf
     @Override
     public void remove(RemovalReason reason) {
         if (this.level() instanceof ServerLevel serverLevel) {
-            this.postRemoval(serverLevel, reason);
+            try {
+                this.postRemoval(serverLevel, reason);
+            } catch (Throwable t) {
+                // Defensive: if postRemoval (chest deposit) throws, dump every dyingInventory
+                // item on the ground at the boss's current position so players still get their
+                // loot. super.remove() must still fire so the entity is actually removed and
+                // tickDeath stops looping forever at deathTime=200.
+                twilightforest.TwilightForestMod.LOGGER.error("BaseTFBoss.postRemoval threw for {} at {}: {}",
+                    net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()),
+                    this.blockPosition(), t.toString(), t);
+                this.codex$dropLootOnGroundFallback(serverLevel);
+            }
         }
         super.remove(reason);
+    }
+
+    /**
+     * Last-resort: drop every non-empty dyingInventory item as a vanilla ItemEntity at the
+     * boss's current position. Called from the {@link #remove(RemovalReason)} catch branch when
+     * the chest-deposit chain throws, so the player still gets the loot.
+     */
+    private void codex$dropLootOnGroundFallback(ServerLevel serverLevel) {
+        net.minecraft.core.BlockPos pos = this.blockPosition();
+        for (int i = 0; i < IBossLootBuffer.CONTAINER_SIZE; i++) {
+            ItemStack stack = this.getItem(i);
+            if (!stack.isEmpty()) {
+                try {
+                    Block.popResource(serverLevel, pos, stack);
+                } catch (Throwable inner) {
+                    // Per-item failure must not block the rest of the inventory.
+                    twilightforest.TwilightForestMod.LOGGER.warn("Failed to popResource boss loot slot {}: {}", i, inner.toString());
+                }
+            }
+        }
     }
 
     @Override

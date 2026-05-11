@@ -90,6 +90,7 @@ public final class CodexNetworking {
         PayloadTypeRegistry.playS2C().register(twilightforest.network.ParticlePacket.TYPE, twilightforest.network.ParticlePacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(twilightforest.network.AreaProtectionPacket.TYPE, twilightforest.network.AreaProtectionPacket.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(twilightforest.network.StructureProtectionPacket.TYPE, twilightforest.network.StructureProtectionPacket.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(twilightforest.network.BiomeNamesPayload.TYPE, twilightforest.network.BiomeNamesPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(UncraftingGuiPacket.TYPE, UncraftingGuiPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PerformDoubleJumpPacket.TYPE, PerformDoubleJumpPacket.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PerformSidestepPacket.TYPE, PerformSidestepPacket.STREAM_CODEC);

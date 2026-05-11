@@ -78,6 +78,24 @@ public final class TFDataAttachments {
     private TFDataAttachments() {
     }
 
+    /**
+     * Force static-init of this class. All {@link AttachmentRegistry#create} calls run as
+     * static-field initialisers; if nothing references the class before the first chunk
+     * deserialises, those registrations have not happened yet and Fabric attachment-api
+     * logs <code>"Unknown attachment type ..."</code> for any persisted attachment in
+     * entity NBT (observed in remote server log: 37x last_damage_armor_time + 37x
+     * slimy_soles_bounce_info during spawn-area preload). Calling this from the main
+     * mod entry-point before world load resolves the timing.
+     */
+    public static void bootstrap() {
+        // Touch one field in each declaration block so the JVM finishes the
+        // <clinit> pass before chunk loaders look up attachments by id.
+        java.util.Objects.requireNonNull(LAST_DAMAGE_ARMOR_TIME);
+        java.util.Objects.requireNonNull(SLIMY_SOLES_BOUNCE_INFO);
+        java.util.Objects.requireNonNull(FORTIFICATION_SHIELDS);
+        java.util.Objects.requireNonNull(FEATHER_FAN);
+    }
+
     public static <T> T get(Entity entity, AttachmentType<T> type) {
         return ((AttachmentTarget) entity).getAttachedOrCreate(type);
     }

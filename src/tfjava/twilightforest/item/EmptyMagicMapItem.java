@@ -22,7 +22,7 @@ public class EmptyMagicMapItem extends ComplexItem {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack emptyMapStack = player.getItemInHand(hand);
 		if (level.isClientSide())
-			return InteractionResultHolder.pass(emptyMapStack);
+			return InteractionResultHolder.success(emptyMapStack);
 
 		//TF - only allow magic maps to be created in allowed dimensions (controlled via tag)
 		if (!level.dimensionTypeRegistration().is(CustomTagGenerator.DimensionTypeTagGenerator.ALLOWS_MAGIC_MAP_CHARTING)) {

@@ -71,6 +71,10 @@ public final class CodexTwilight implements ModInitializer {
         DynamicRegistries.registerSynced(TFRegistries.Keys.DWARF_RABBIT_VARIANT,
             twilightforest.entity.passive.DwarfRabbitVariant.DIRECT_CODEC);
         TFDataSerializers.bootstrap();
+        // Force TFDataAttachments static-init NOW so attachment ids are present in the
+        // Fabric attachment registry BEFORE chunks deserialise during spawn-area preload.
+        // Otherwise saved entity NBT logs "Unknown attachment type ..." per attachment.
+        twilightforest.init.TFDataAttachments.bootstrap();
         twilightforest.config.TFConfig.load(net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir());
         twilightforest.config.ConfigSetup.loadConfigs();
         twilightforest.util.TFRemapper.addRegistryAliases();
@@ -80,8 +84,24 @@ public final class CodexTwilight implements ModInitializer {
         twilightforest.init.custom.TemplateMarkerHandlers.bootstrapTypes();
         // F2.8 — register S2C payload type early so it's available before any TF mob hits arrive.
         com.codex.twilight.network.CodexNetworking.bootstrapServer();
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-            twilightforest.config.ConfigSetup.syncUncraftingConfig(handler.player));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            twilightforest.config.ConfigSetup.syncUncraftingConfig(handler.player);
+            // Push biome name overlay so paired clients can render modded biome
+            // names on minimaps even when their lang resource pack failed to
+            // load (e.g. I18nUpdateMod download blocked) or when the mod jar
+            // itself never shipped translations (terralith / yggdrasil etc.).
+            try {
+                if (net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.canSend(
+                        handler.player, twilightforest.network.BiomeNamesPayload.TYPE)) {
+                    java.util.Map<String, String> map = twilightforest.translations.BiomeNamesService
+                        .resolveForPlayer(server, handler.player);
+                    net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(
+                        handler.player, new twilightforest.network.BiomeNamesPayload(map));
+                }
+            } catch (Throwable ignored) {
+                // Defensive — never let the overlay push abort player join.
+            }
+        });
         TFAttributes.bootstrap();
         TFEntities.ARMORED_GIANT.get();
         TFEntities.addEntityAttributes();
@@ -145,6 +165,14 @@ public final class CodexTwilight implements ModInitializer {
         // ===== END LANE_B_BOOTSTRAP =====
 
         ServerLifecycleEvents.SERVER_STARTING.register(ServerLifecycleHooks::setCurrentServer);
+        // Codex addition: tick the per-level daily boss respawn state each world tick. State
+        // is loaded lazily on first access via SavedData.computeIfAbsent so cold-start cost is
+        // zero until a TF boss actually dies in that level.
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_WORLD_TICK.register(level -> {
+            if (twilightforest.config.TFConfig.dailyBossRespawn) {
+                twilightforest.util.boss.DailyBossRespawnState.get(level).tickRespawn(level);
+            }
+        });
         // Phase F1.4 — /codex ops command
         net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback.EVENT.register(
                 twilightforest.command.CodexCommand::register);
