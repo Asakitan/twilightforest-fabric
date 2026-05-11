@@ -26,6 +26,7 @@
     "client.BoatRendererMixin",
     "client.LevelRendererMultipartMixin",
     "client.EntityRenderDispatcherMultipartMixin",
+    "client.ItemInHandRendererMapMixin",
     "client.MapRendererAccessor",
     "client.MapRendererMapInstanceMixin",
     "client.ClientLanguageMixin"

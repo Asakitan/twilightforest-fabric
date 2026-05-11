@@ -4,6 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import twilightforest.TwilightForestMod;
+import twilightforest.block.JarBlock;
 import twilightforest.components.item.JarLid;
 import twilightforest.init.TFBlockEntities;
 import twilightforest.init.TFBlocks;
@@ -25,17 +30,20 @@ public class JarBlockEntity extends BlockEntity {
     public static final ResourceLocation JAR_LID = TwilightForestMod.prefix("jar_lid");
     public static final Map<Item, BooleanSupplier> REGISTERED_LOG_LIDS = new HashMap<>();
 
-    private Item lid = TFBlocks.TWILIGHT_OAK_LOG.get().asItem();
+    private Item lid;
 
     public DecoratedPotBlockEntity.WobbleStyle lastWobbleStyle;
     public long wobbleStartedAtTick;
 
     public JarBlockEntity(BlockPos pos, BlockState state) {
-        super(TFBlockEntities.JAR, pos, state);
+        this(TFBlockEntities.JAR, pos, state);
     }
 
     protected JarBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        this.lid = state.getBlock() instanceof JarBlock jarBlock
+                ? jarBlock.getDefaultLid()
+                : TFBlocks.TWILIGHT_OAK_LOG.get().asItem();
     }
 
     public Item getLid() {
@@ -45,6 +53,16 @@ public class JarBlockEntity extends BlockEntity {
     public void setLid(Item lid) {
         this.lid = lid;
         this.setChanged();
+        if (this.level != null && !this.level.isClientSide()) {
+            BlockState state = this.getBlockState();
+            this.level.sendBlockUpdated(this.worldPosition, state, state, 3);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     public ItemStack getJarAsItem() {

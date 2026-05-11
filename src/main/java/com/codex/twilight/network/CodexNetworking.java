@@ -165,6 +165,9 @@ public final class CodexNetworking {
                     if (player == null || player != sender) {
                         return;
                     }
+                    if (payload.isGraduallyGliding() && !TravellersModifiersManager.isGradualGlideActive(player)) {
+                        return;
+                    }
                     TFDataAttachments.set(player, TFDataAttachments.IS_GRADUALLY_GLIDING, payload.isGraduallyGliding());
                     GradualGlidePacket update = new GradualGlidePacket(payload.isGraduallyGliding(), player.getUUID());
                     for (ServerPlayer viewer : PlayerLookup.tracking(player)) {

@@ -1,5 +1,6 @@
 package twilightforest.events;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.core.component.DataComponents;
@@ -19,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import twilightforest.init.TFAttributeModifiers;
 import twilightforest.init.TFDataAttachments;
+import twilightforest.init.TFDataComponents;
 import twilightforest.init.TFItems;
 import twilightforest.init.custom.TravellersModifiersManager;
 import twilightforest.item.travellers_gear.TravellersGearLogic;
@@ -44,6 +46,22 @@ public final class TravellersGearEvents {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			for (net.minecraft.server.level.ServerPlayer player : server.getPlayerList().getPlayers()) {
 				tickPlayerModifiers(player);
+			}
+		});
+
+		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
+			if (damageTaken <= 0.0F || blocked) {
+				return;
+			}
+			for (EquipmentSlot slot : EquipmentSlot.values()) {
+				if (!slot.isArmor()) {
+					continue;
+				}
+				ItemStack stack = entity.getItemBySlot(slot);
+				if (stack.has(TFDataComponents.IS_TRAVELLERS_GEAR) && stack.isDamaged()) {
+					TFDataAttachments.set(entity, TFDataAttachments.LAST_DAMAGE_ARMOR_TIME, entity.level().getGameTime());
+					return;
+				}
 			}
 		});
 
