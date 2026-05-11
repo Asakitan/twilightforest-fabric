@@ -16,6 +16,10 @@ import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.joml.Matrix4f;
+import twilightforest.item.MagicMapItem;
+import twilightforest.item.MazeMapItem;
+import twilightforest.item.mapdata.TFMagicMapData;
+import twilightforest.item.mapdata.TFMazeMapData;
 
 public class MapDisplay implements ItemDisplay {
 
@@ -29,7 +33,14 @@ public class MapDisplay implements ItemDisplay {
 		if (mapid == null)
 			return;
 
-		MapItemSavedData data = MapItem.getSavedData(item, minecraft.level);
+		MapItemSavedData data;
+		if (item.getItem() instanceof MagicMapItem) {
+			data = TFMagicMapData.getClientMagicMapData(MagicMapItem.getMapName(mapid.id()));
+		} else if (item.getItem() instanceof MazeMapItem) {
+			data = TFMazeMapData.getClientMagicMapData(MazeMapItem.getMapName(mapid.id()));
+		} else {
+			data = MapItem.getSavedData(item, minecraft.level);
+		}
 		if (data == null)
 			return;
 		VertexConsumer consumer = graphics.bufferSource().getBuffer(MAP_BACKGROUND_CHECKERBOARD);

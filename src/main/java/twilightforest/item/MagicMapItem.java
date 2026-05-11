@@ -173,6 +173,22 @@ public class MagicMapItem extends MapItem {
 		}
 	}
 
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean isSelected) {
+		if (!level.isClientSide()) {
+			TFMagicMapData mapdata = getCustomMapData(stack, level);
+			if (mapdata != null) {
+				if (entity instanceof Player player) {
+					mapdata.tickCarriedBy(player, stack);
+				}
+
+				if (!mapdata.locked && (isSelected || entity instanceof Player player && player.getOffhandItem() == stack)) {
+					this.update(level, entity, mapdata);
+				}
+			}
+		}
+	}
+
 	public static String makeName(Holder<MapDecorationType> type, int x, int z) {
 		return type.value().assetId() + "_" + x + "_" + z;
 	}

@@ -30,20 +30,23 @@ public class EmptyMagicMapItem extends ComplexItem {
 			return InteractionResultHolder.fail(emptyMapStack);
 		}
 
-		emptyMapStack.consume(1, player);
 		player.awardStat(Stats.ITEM_USED.get(this));
 		player.level().playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
 
 		// TF - scale at 4
 		ItemStack newMapStack = MagicMapItem.setupNewMap(level, Mth.floor(player.getX()), Mth.floor(player.getZ()), (byte) 4, true, false);
+		ItemStack remainingBlankMaps = emptyMapStack.copy();
 
-		if (emptyMapStack.isEmpty()) {
-			return InteractionResultHolder.success(newMapStack);
-		} else {
-			if (!player.getInventory().add(newMapStack.copy())) {
-				player.drop(newMapStack, false);
-			}
-			return InteractionResultHolder.success(emptyMapStack);
+		if (!player.getAbilities().instabuild) {
+			remainingBlankMaps.shrink(1);
 		}
+
+		player.setItemInHand(hand, newMapStack);
+
+		if (!remainingBlankMaps.isEmpty() && !player.getInventory().add(remainingBlankMaps)) {
+			player.drop(remainingBlankMaps, false);
+		}
+
+		return InteractionResultHolder.success(newMapStack);
 	}
 }

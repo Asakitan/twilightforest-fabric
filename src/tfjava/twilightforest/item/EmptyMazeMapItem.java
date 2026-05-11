@@ -21,20 +21,26 @@ public class EmptyMazeMapItem extends ComplexItem {
 	// [VanillaCopy] MapItem.onItemRightClick calling own setup method
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		ItemStack itemstack = MazeMapItem.setupNewMap(level, Mth.floor(player.getX()), Mth.floor(player.getZ()), (byte) 0, true, false, Mth.floor(player.getY()), this.mapOres);
-		ItemStack itemstack1 = player.getItemInHand(hand);
-		itemstack1.consume(1, player);
+		ItemStack emptyMapStack = player.getItemInHand(hand);
+		if (level.isClientSide()) {
+			return InteractionResultHolder.success(emptyMapStack);
+		}
+
+		ItemStack newMapStack = MazeMapItem.setupNewMap(level, Mth.floor(player.getX()), Mth.floor(player.getZ()), (byte) 0, true, false, Mth.floor(player.getY()), this.mapOres);
+		ItemStack remainingBlankMaps = emptyMapStack.copy();
+
+		if (!player.getAbilities().instabuild) {
+			remainingBlankMaps.shrink(1);
+		}
+
 		player.awardStat(Stats.ITEM_USED.get(this));
 		player.level().playSound(null, player, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, player.getSoundSource(), 1.0F, 1.0F);
+		player.setItemInHand(hand, newMapStack);
 
-		if (itemstack1.isEmpty()) {
-			return InteractionResultHolder.success(itemstack);
-		} else {
-			if (!player.getInventory().add(itemstack.copy())) {
-				player.drop(itemstack, false);
-			}
-
-			return InteractionResultHolder.success(itemstack1);
+		if (!remainingBlankMaps.isEmpty() && !player.getInventory().add(remainingBlankMaps)) {
+			player.drop(remainingBlankMaps, false);
 		}
+
+		return InteractionResultHolder.success(newMapStack);
 	}
 }
