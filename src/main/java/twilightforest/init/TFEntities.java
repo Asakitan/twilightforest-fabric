@@ -188,7 +188,7 @@ public final class TFEntities {
     public static final TFRegistryObject<EntityType<twilightforest.entity.projectile.MoonwormShot>> MOONWORM_SHOT = projectile("moonworm_shot", EntityType.Builder.<twilightforest.entity.projectile.MoonwormShot>of(twilightforest.entity.projectile.MoonwormShot::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(5).updateInterval(2));
     public static final TFRegistryObject<EntityType<ThrownBlock>> THROWN_BLOCK = projectile("thrown_block", EntityType.Builder.<ThrownBlock>of(ThrownBlock::new, MobCategory.MISC).sized(0.75F, 0.75F).clientTrackingRange(8).updateInterval(3));
     public static final TFRegistryObject<EntityType<TinyBird>> TINY_BIRD = entity("tiny_bird", EntityType.Builder.of(TinyBird::new, MobCategory.CREATURE).sized(0.4F, 0.7F));
-    public static final TFRegistryObject<EntityType<PlateauBoss>> PLATEAU_BOSS = entity("plateau_boss", EntityType.Builder.<PlateauBoss>of((type, level) -> new PlateauBoss(type, level), MobCategory.MONSTER).sized(1.0F, 1.0F).clientTrackingRange(10));
+    public static final TFRegistryObject<EntityType<PlateauBoss>> PLATEAU_BOSS = entity("plateau_boss", EntityType.Builder.<PlateauBoss>of((type, level) -> new PlateauBoss(type, level), MobCategory.MONSTER).sized(1.4F, 2.6F).fireImmune().clientTrackingRange(80));
 
     private TFEntities() {
     }

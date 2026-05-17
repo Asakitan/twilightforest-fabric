@@ -92,7 +92,47 @@ public class MagicMapItem extends MapItem {
 		TFMagicMapData mapdata = new TFMagicMapData(pos.x(), pos.z(), (byte) scale, trackingPosition, unlimitedTracking, false, dimension);
 		TFMagicMapData.registerMagicMapData(level, mapdata, getMapName(freeMapId.id()));
 		stack.set(DataComponents.MAP_ID, freeMapId);
+		// Codex fix: prefill the entire 128×128 map at creation time so the player
+		// sees the full magic map immediately, instead of only the viewer's 32-radius
+		// patch (which leaves new maps looking 99% empty until the player walks the
+		// 2048×2048 grid). Upstream relied on the player gradually filling the map,
+		// which produced an empty-looking map on first use; this prefill matches the
+		// effective "always-filled" feel.
+		if (!level.isClientSide()) {
+			prefillEntireMap(level, mapdata);
+		}
 		return mapdata;
+	}
+
+	private static void prefillEntireMap(Level level, TFMagicMapData data) {
+		int blocksPerPixel = 16;
+		int centerX = data.centerX;
+		int centerZ = data.centerZ;
+
+		Registry<Structure> structureRegistry = level.registryAccess().registryOrThrow(Registries.STRUCTURE);
+		for (int xPixel = 0; xPixel < 128; ++xPixel) {
+			for (int zPixel = 0; zPixel < 128; ++zPixel) {
+				int worldX = (centerX / blocksPerPixel + xPixel - 64) * blocksPerPixel;
+				int worldZ = (centerZ / blocksPerPixel + zPixel - 64) * blocksPerPixel;
+				Holder<Biome> biome = level.getBiome(new BlockPos(worldX, 0, worldZ));
+				MagicMapBiomeColor cb = TFDataMaps.getMagicMapBiomeColor(biome);
+				if (cb == null) cb = new MagicMapBiomeColor(MapColor.COLOR_MAGENTA);
+				byte newPixel = (byte) (cb.color().id * 4 + cb.brightness());
+				if (data.colors[xPixel + zPixel * 128] != newPixel) {
+					data.setColor(xPixel, zPixel, newPixel);
+				}
+
+				if (LegacyLandmarkPlacements.blockIsInLandmarkCenter(worldX, worldZ)) {
+					ResourceKey<Structure> structureKey = LegacyLandmarkPlacements.pickLandmarkAtBlock(worldX, worldZ, level);
+					structureRegistry.getHolder(structureKey).ifPresent(structureRef -> {
+						if (structureRef.is(StructureTagGenerator.LANDMARK) && structureRef.value() instanceof LandmarkStructure landmark) {
+							landmark.getMapIcon().ifPresent(icon -> data.addTFDecoration(icon, level, makeName(icon, worldX, worldZ), worldX, worldZ, 0.0F, LandmarkUtil.isConquered(level, worldX, worldZ)));
+						}
+					});
+				}
+			}
+		}
+		data.setDirty();
 	}
 
 	public static String getMapName(int id) {
@@ -120,7 +160,14 @@ public class MagicMapItem extends MapItem {
 			int centerZ = data.centerZ;
 			int viewerX = Mth.floor(viewer.getX() - centerX) / blocksPerPixel + 64;
 			int viewerZ = Mth.floor(viewer.getZ() - centerZ) / blocksPerPixel + 64;
-			int viewRadiusPixels = 512 / blocksPerPixel;
+			// Codex fix: was 512 / 16 = 32 (only the viewer's 32-radius patch updates per
+			// tick, so newly-created maps look 99% empty until the player walks the
+			// 2048×2048 grid). Bumped to 256 (large enough that the in-bounds distance
+			// check `xDist² + zDist² < viewRadiusPixels²` and the fuzz boundary
+			// `xDist² + zDist² > (viewRadiusPixels-2)²` both pass for every pixel even
+			// when viewer is at a map corner, so every inventoryTick refreshes the full
+			// 128×128 map — matches the "always-filled" feel reported as upstream.
+			int viewRadiusPixels = 256;
 			int startX = (centerX / blocksPerPixel - 64) * biomesPerPixel;
 			int startZ = (centerZ / blocksPerPixel - 64) * biomesPerPixel;
 			Holder<Biome>[] biomes = CACHE.computeIfAbsent(new ChunkPos(startX, startZ), pos -> {
@@ -162,7 +209,7 @@ public class MagicMapItem extends MapItem {
 								ResourceKey<Structure> structureKey = LegacyLandmarkPlacements.pickLandmarkAtBlock(worldX, worldZ, level);
 								structureRegistry.getHolder(structureKey).ifPresent(structureRef -> {
 									if (structureRef.is(StructureTagGenerator.LANDMARK) && structureRef.value() instanceof LandmarkStructure landmark) {
-										landmark.getMapIcon().ifPresent(icon -> ((TFMagicMapData) data).addTFDecoration(icon, level, makeName(icon, worldX, worldZ), worldX, worldZ, 180.0F, LandmarkUtil.isConquered(level, worldX, worldZ)));
+										landmark.getMapIcon().ifPresent(icon -> ((TFMagicMapData) data).addTFDecoration(icon, level, makeName(icon, worldX, worldZ), worldX, worldZ, 0.0F, LandmarkUtil.isConquered(level, worldX, worldZ)));
 									}
 								});
 							}

@@ -1,6 +1,8 @@
 package twilightforest.entity.boss;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -8,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -27,25 +30,36 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import twilightforest.TwilightForestMod;
 import twilightforest.entity.ai.goal.PhantomAttackStartGoal;
 import twilightforest.entity.ai.goal.PhantomThrowWeaponGoal;
 import twilightforest.entity.ai.goal.PhantomUpdateFormationAndMoveGoal;
 import twilightforest.entity.ai.goal.PhantomWatchAndAttackGoal;
+import twilightforest.init.TFAdvancements;
 import twilightforest.init.TFBlocks;
 import twilightforest.init.TFDamageTypes;
 import twilightforest.init.TFItemVisuals;
 import twilightforest.init.TFItems;
 import twilightforest.init.TFSounds;
 import twilightforest.init.TFStructures;
+import twilightforest.loot.TFLootTables;
+import twilightforest.util.entities.EntityUtil;
+import twilightforest.util.landmarks.LandmarkUtil;
 
 import java.util.List;
 
@@ -63,6 +77,11 @@ public class KnightPhantom extends BaseTFBoss {
     private int ticksProgress;
     private Formation currentFormation = Formation.HOVER;
     private BlockPos chargePos = BlockPos.ZERO;
+    // Marks the last knight standing — set inside postmortem on the kill that ends the formation.
+    // Gates the chest deposit in postRemoval so only the final knight actually places the loot chest,
+    // matching upstream Twilight Forest behaviour where all prior knights' loot accumulates onto the
+    // surviving one and only that survivor's postRemoval drops the chest.
+    private boolean itIsOver;
 
     public KnightPhantom(EntityType<? extends KnightPhantom> type, Level level) {
         super(type, level);
@@ -355,15 +374,125 @@ public class KnightPhantom extends BaseTFBoss {
         return 30;
     }
 
+    /**
+     * Override BaseTFBoss default loot path entirely. Upstream Twilight Forest's
+     * Knight Phantom uses a multi-knight redistribution model: every dying knight
+     * passes its rolled loot table + accumulated stash to the nearest still-alive
+     * knight (so the last survivor holds everyone's loot), and the final knight
+     * additionally rolls the {@code KNIGHT_PHANTOM_DEFEATED} bonus table, fires the
+     * {@link TFAdvancements#KILL_ALL_PHANTOMS} criterion for nearby players, and
+     * marks the Knight Stronghold conquered (which fires {@code STRUCTURE_CLEARED}
+     * + flips the structure's conquered flag).
+     *
+     * <p>Skipping this override is what caused the user-reported "knights drop
+     * nothing + the magic-circle protection never lifts" bug — without the
+     * markStructureConquered call the next progression area stayed locked.
+     */
     @Override
-    protected boolean shouldSpawnLoot() {
-        return super.shouldSpawnLoot() && this.level().getEntitiesOfClass(KnightPhantom.class, this.getBoundingBox().inflate(64.0D), knight -> knight != this && knight.isAlive()).isEmpty();
+    protected void postmortem(ServerLevel serverLevel, DamageSource cause) {
+        List<KnightPhantom> knights = this.getNearbyKnights();
+        knights.removeIf(knight -> knight == this || !knight.isAlive());
+
+        LootParams params = TFLootTables.createLootParams(this, true, cause).create(LootContextParamSets.ENTITY);
+        LootTable table = serverLevel.getServer().reloadableRegistries().getLootTable(this.getLootTable());
+
+        if (!knights.isEmpty()) {
+            // Not the last knight — pile the loot onto the nearest alive knight.
+            ObjectArrayList<ItemStack> items = table.getRandomItems(params);
+            for (ItemStack stack : this.getItemStacks()) {
+                if (!stack.isEmpty()) items.add(stack);
+            }
+            List<Integer> slots = this.getAvailableSlots(this.getRandom());
+            table.shuffleAndSplitItems(items, slots.size(), this.getRandom());
+            giveKnightLoot(knights.get(0), items, serverLevel, slots, this.position());
+            // Clear our inventory so the chest deposit in our own postRemoval does nothing.
+            this.getItemStacks().clear();
+            for (int i = 0; i < IBossLootBuffer.CONTAINER_SIZE; i++) {
+                this.getItemStacks().add(ItemStack.EMPTY);
+            }
+            return;
+        }
+
+        // Last knight standing — accumulate own loot + bonus defeated-table + mark conquered.
+        this.getBossBar().setProgress(0.0F);
+
+        ObjectArrayList<ItemStack> items = table.getRandomItems(params);
+
+        LootParams.Builder builder = new LootParams.Builder(serverLevel)
+                .withParameter(LootContextParams.THIS_ENTITY, this)
+                .withParameter(LootContextParams.ORIGIN, this.getEyePosition())
+                .withParameter(LootContextParams.DAMAGE_SOURCE, cause);
+        if (this.lastHurtByPlayer != null) {
+            builder = builder.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, this.lastHurtByPlayer)
+                    .withLuck(this.lastHurtByPlayer.getLuck());
+        }
+        if (cause.getEntity() != null) {
+            builder = builder.withParameter(LootContextParams.ATTACKING_ENTITY, cause.getEntity());
+        }
+        if (cause.getDirectEntity() != null) {
+            builder = builder.withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, cause.getDirectEntity());
+        }
+
+        items.addAll(serverLevel.getServer().reloadableRegistries().getLootTable(TFLootTables.KNIGHT_PHANTOM_DEFEATED).getRandomItems(builder.create(LootContextParamSets.ENTITY)));
+        List<Integer> slots = this.getAvailableSlots(this.getRandom());
+        table.shuffleAndSplitItems(items, slots.size(), this.getRandom());
+        giveKnightLoot(this, items, serverLevel, slots, this.position());
+
+        BlockPos treasurePos = this.getRestrictionPoint() != null ? this.getRestrictionPoint().pos() : this.blockPosition();
+        if (cause.getEntity() instanceof ServerPlayer player) {
+            TFAdvancements.KILL_ALL_PHANTOMS.get().trigger(player);
+            for (ServerPlayer otherPlayer : serverLevel.getEntitiesOfClass(ServerPlayer.class, new AABB(treasurePos).inflate(32.0D))) {
+                TFAdvancements.KILL_ALL_PHANTOMS.get().trigger(otherPlayer);
+            }
+        }
+
+        // Mark stronghold conquered → fires STRUCTURE_CLEARED → unlocks Knight Stronghold
+        // magic-circle protection. Without this call the area stays advancement-locked
+        // even after the last knight dies.
+        LandmarkUtil.markStructureConquered(serverLevel, this, TFStructures.KNIGHT_STRONGHOLD, true);
+
+        this.itIsOver = true;
+    }
+
+    /**
+     * Distribute {@code items} into {@code phantom}'s 27-slot dying inventory using the
+     * pre-shuffled {@code slots} list; once slots are exhausted, overflow drops as
+     * pickup-ready ItemEntities at {@code dropOff}.
+     */
+    private static void giveKnightLoot(KnightPhantom phantom, ObjectArrayList<ItemStack> items, ServerLevel serverLevel, List<Integer> slots, Vec3 dropOff) {
+        for (ItemStack itemstack : items) {
+            if (!slots.isEmpty()) {
+                while (!slots.isEmpty()) {
+                    int index = slots.remove(slots.size() - 1);
+                    if (phantom.getItemStacks().get(index).isEmpty()) {
+                        ItemStack stack = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack;
+                        phantom.getItemStacks().set(index, itemstack);
+                        if (!stack.isEmpty() && stack.getCount() > stack.getMaxStackSize()) {
+                            stack.setCount(stack.getMaxStackSize());
+                        }
+                        break;
+                    }
+                }
+            } else {
+                ItemEntity item = new ItemEntity(serverLevel, dropOff.x(), dropOff.y(), dropOff.z(), itemstack);
+                item.setExtendedLifetime();
+                item.setNoPickUpDelay();
+                serverLevel.addFreshEntity(item);
+            }
+        }
     }
 
     @Override
     protected void postRemoval(ServerLevel serverLevel, RemovalReason reason) {
-        if (reason != RemovalReason.KILLED || this.shouldSpawnLoot()) {
-            super.postRemoval(serverLevel, reason);
+        // Gate chest deposit on itIsOver so only the last knight actually places the chest —
+        // earlier knights have already pushed their loot onto the surviving knight via postmortem.
+        if (reason == RemovalReason.KILLED && this.itIsOver && this.shouldSpawnLoot()) {
+            Block container = this.getDeathContainer(this.getRandom());
+            if (container != null) {
+                IBossLootBuffer.depositDropsIntoChest(this,
+                        container.defaultBlockState().setValue(ChestBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(this.level().getRandom())),
+                        EntityUtil.bossChestLocation(this), serverLevel);
+            }
         }
     }
 
@@ -392,6 +521,7 @@ public class KnightPhantom extends BaseTFBoss {
         tag.putInt("Formation", this.currentFormation.ordinal());
         tag.putInt("TicksProgress", this.ticksProgress);
         tag.putLong("ChargePos", this.chargePos.asLong());
+        tag.putBoolean("IsItOver", this.itIsOver);
     }
 
     @Override
@@ -409,6 +539,7 @@ public class KnightPhantom extends BaseTFBoss {
         if (tag.contains("ChargePos")) {
             this.chargePos = BlockPos.of(tag.getLong("ChargePos"));
         }
+        this.itIsOver = tag.getBoolean("IsItOver");
     }
 
     public enum Formation {

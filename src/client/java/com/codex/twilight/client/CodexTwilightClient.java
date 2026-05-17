@@ -315,6 +315,10 @@ public final class CodexTwilightClient implements ClientModInitializer {
         });
         EntityRendererRegistry.register(TFEntities.LICH.get(), ctx ->
             new LichRenderer<>(ctx, new LichModel<>(ctx.bakeLayer(CodexModelLayers.LICH)), 0.6F));
+        EntityRendererRegistry.register(TFEntities.PLATEAU_BOSS.get(), ctx ->
+            new twilightforest.client.renderer.entity.PlateauBossRenderer<>(ctx,
+                new twilightforest.client.model.entity.PlateauBossModel<>(ctx.bakeLayer(CodexModelLayers.PLATEAU_BOSS)),
+                0.8F));
         EntityRendererRegistry.register(TFEntities.NAGA.get(), ctx ->
             {
                 BakedMultiPartRenderers.bakeMultiPartRenderers(ctx);

@@ -26,9 +26,12 @@ public class YetiThrowAttachment {
 		if (this.throwCooldown > 0) {
 			if (!player.level().isClientSide() && this.throwCooldown == THROW_COOLDOWN - 1) {
 				player.push(this.throwVector.x(), this.throwVector.y(), this.throwVector.z());
-				if (player instanceof ServerPlayer server && ServerPlayNetworking.canSend(server, MovePlayerPacket.TYPE)) {
-					ServerPlayNetworking.send(server, new MovePlayerPacket(this.throwVector.x(), this.throwVector.y(), this.throwVector.z()));
-				}
+				// Codex fix: upstream NeoForge only does the server-side push here and lets the
+				// vanilla MovePlayer packet sync the motion to the client. Codex previously also
+				// fired an extra MovePlayerPacket here, which made the client push twice (once
+				// from this packet and once from ThrowRiderGoal.stop's own packet), so the player
+				// got launched a second time and appeared to "fly up infinitely". Drop the extra
+				// packet — vanilla sync handles it.
 				this.throwVector = Vec3.ZERO;
 			}
 			this.throwCooldown--;

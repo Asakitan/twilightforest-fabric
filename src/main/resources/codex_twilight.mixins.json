@@ -20,7 +20,10 @@
     "GrassColorModifierCodecMixin",
     "BeardifierAccessor",
     "BeardifierMixin",
-    "AttributeMapMixin"
+    "AttributeMapMixin",
+    "ProjectileUtilMixin",
+    "ServerLevelMixin",
+    "StructureStartLoadStaticMixin"
   ],
   "client": [
     "client.BoatRendererMixin",

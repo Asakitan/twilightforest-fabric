@@ -76,15 +76,26 @@ public final class LandmarkUtil {
 	}
 
 	public static void markStructureConquered(Level level, @Nullable GlobalPos pos, ResourceKey<Structure> structureKey, boolean conquered) {
-		if (pos != null && level.dimension() == pos.dimension()) {
-			Optional<StructureStart> nearStart = locateNearestLandmarkStart(level, structureKey, pos.pos());
-			if (nearStart.isEmpty() || !(nearStart.get() instanceof TFStructureStart twilightStart)) return;
+		if (pos == null || level.dimension() != pos.dimension()) return;
+		Optional<StructureStart> nearStart = locateNearestLandmarkStart(level, structureKey, pos.pos());
+		if (nearStart.isEmpty()) return;
 
+		// Set the conquered NBT flag if we got the TFStructureStart subclass. After a
+		// chunk save→load cycle the in-memory StructureStart may be plain vanilla
+		// when StructureStartLoadStaticMixin isn't applied (or for structures that
+		// never declared CustomStructureData) — in that case the flag is lost, but
+		// the STRUCTURE_CLEARED trigger below still fires for any nearby player so
+		// downstream advancement chains aren't blocked by the persistence gap.
+		if (nearStart.get() instanceof TFStructureStart twilightStart) {
 			twilightStart.setConquered(conquered, level);
+		}
 
-			for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos.pos()).inflate(32.0F))) {
-				TFAdvancements.STRUCTURE_CLEARED.get().trigger(player, structureKey);
-			}
+		// Always fire STRUCTURE_CLEARED for nearby players, even if the StructureStart
+		// wasn't TFStructureStart. The trigger is per-player advancement progress and
+		// should fire on the actual boss kill regardless of whether the structure
+		// kept its conquered flag across reloads.
+		for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos.pos()).inflate(32.0F))) {
+			TFAdvancements.STRUCTURE_CLEARED.get().trigger(player, structureKey);
 		}
 	}
 

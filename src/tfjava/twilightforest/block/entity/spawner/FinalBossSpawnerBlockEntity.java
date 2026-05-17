@@ -15,11 +15,7 @@ public class FinalBossSpawnerBlockEntity extends BossSpawnerBlockEntity<PlateauB
 		super(TFBlockEntities.FINAL_BOSS_SPAWNER, TFEntities.PLATEAU_BOSS.get(), pos, state);
 	}
 
-	//no spawning for you
-	@Override
-	protected boolean spawnMyBoss(ServerLevelAccessor accessor) {
-		return false;
-	}
+	// Inherit default spawnMyBoss() — boss now spawns when a player enters range.
 
 	@Override
 	public ParticleOptions getSpawnerParticle() {

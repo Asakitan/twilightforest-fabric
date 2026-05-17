@@ -282,6 +282,10 @@ public final class CodexModelLayers {
             ResourceLocation.fromNamespaceAndPath("twilightforest", "lich"),
             "main");
 
+    public static final ModelLayerLocation PLATEAU_BOSS = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath("codex_twilight", "plateau_boss"),
+            "main");
+
     public static final ModelLayerLocation NAGA = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath("twilightforest", "naga"),
             "main");
@@ -534,6 +538,7 @@ public final class CodexModelLayers {
                                                                                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(KNIGHT_PHANTOM, KnightPhantomModel::create);
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(SNOW_QUEEN, SnowQueenModel::checkForPack);
                                                                                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(LICH, LichModel::create);
+                                                                                                                                                                                                                                                                EntityModelLayerRegistry.registerModelLayer(PLATEAU_BOSS, twilightforest.client.model.entity.PlateauBossModel::create);
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(NAGA, NagaModel::checkForPack);
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(NAGA_BODY, NagaModel::checkForPack);
                                                                                                                                                                                                 EntityModelLayerRegistry.registerModelLayer(HYDRA, HydraModel::checkForPack);
